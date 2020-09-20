@@ -56,7 +56,15 @@ class SceheRenderer():
         self.light_renderer.apply_lights(self.primary_target, self.final_target)
 
         #render emissive to final texure
-        #TODO:
+        if self.draw_emissive_callback is not None:
+            self.final_target.bind_as_framebuffer()
+            self.context.enable_only(self.context.BLEND)
+            self.context.blend_func = self.context.BLEND_ADDITIVE
+
+            self.draw_emissive_callback()
+
+            #reset context settings
+            self.context.enable_only()
 
         #run post processing on final texture
         final_image = self.post_processing.apply_chain(self.final_target)
@@ -64,7 +72,11 @@ class SceheRenderer():
         #blit final image to screen
         self.window.use()
         final_image.blit_to_current_target()
-        pass
+
+        #draw after post processing callback
+        if self.draw_after_post_callback is not None
+            self.draw_after_post_callback()
+
 
     @property
     def scene_lights(self):
