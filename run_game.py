@@ -3,9 +3,6 @@ import arcade
 from Constants.Game import SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE
 from Core.GameInstance import GameInstance
 
-from Graphics.SceneRenderer import SceheRenderer
-
-from Graphics.PostProcessing.Tonemap import Tonemap
 
 class GameWindow(arcade.Window):
     """ Main Window """
@@ -14,7 +11,17 @@ class GameWindow(arcade.Window):
         """ Create the variables """
 
         super().__init__(width, height, title)
+
         self.game_instance: Optional[GameInstance] = None
+
+        # Tracking key presses
+        self.left_pressed: bool = False
+        self.right_pressed: bool = False
+        self.up_pressed: bool = False
+        self.down_pressed: bool = False
+
+        # Set background color
+        arcade.set_background_color(arcade.color.AMAZON)
 
     def setup(self):
         """ Set up everything with the game """
@@ -22,44 +29,27 @@ class GameWindow(arcade.Window):
         window_size = self.get_size()
         self.game_instance = GameInstance()
 
-        self.test_sprite = arcade.Sprite('Graphics/test_image.png')
-        self.test_sprite.center_x = 100
-        self.test_sprite.center_y = 300
-        self.test_list = arcade.SpriteList()
-        self.test_list.append(self.test_sprite)
+    def on_key_press(self, key, modifiers):
+        """Called whenever a key is pressed. """
+        self.game_instance.on_key_press(key, modifiers)
 
-        self.scene_renderer = SceheRenderer(self, self.get_size())
-        #bind rendering callbacks
-        self.scene_renderer.draw_primary_callback = self.on_draw_scene
-        self.scene_renderer.draw_emissive_callback = self.on_draw_emissive
-        self.scene_renderer.draw_after_post_callback = self.on_draw_after_post
+    def on_key_release(self, key, modifiers):
+        """Called when the user releases a key. """
+        self.game_instance.on_key_release(key, modifiers)
 
-        self.scene_renderer.background_color = (0.5,0.5,0.5,1.0)
-        self.scene_renderer.light_renderer.ambient_light = (1.0, 0.6, 0.3)
+    def on_mouse_motion(self, x, y, dx, dy):
+        self.game_instance.on_mouse_motion(x, y, dx, dy)
 
-        self.light = self.scene_renderer.light_renderer.create_point_light(
-            (400,400),
-            (1.0,1.0,1.0),
-            128.0)
-
-        self.tonemap = Tonemap()
-        self.scene_renderer.post_processing.add_effect(self.tonemap)
-
-        self.tonemap.white_point = 2.0
+    def on_update(self, delta_time):
+        """ Movement and game logic """
+        self.game_instance.on_update(delta_time)
 
     def on_draw(self):
-        #draw the game
-        self.scene_renderer.draw_scene()
+        """ Draw everything """
+        self.game_instance.on_draw()
 
-    def on_draw_scene(self):
-        self.test_list.draw()
-        pass
-
-    def on_draw_emissive(self):
-        pass
-
-    def on_draw_after_post(self):
-        pass
+    def on_draw_game(self):
+        self.game_instance.on_draw_game()
 
 
 def main():
