@@ -4,7 +4,7 @@
 GRAVITY = 1500
 
 # Damping - Amount of speed lost per second
-DEFAULT_DAMPING = 1.0
+DEFAULT_DAMPING = .0001
 PLAYER_DAMPING = 0.4
 
 # Friction between objects
