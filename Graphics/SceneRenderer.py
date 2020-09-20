@@ -1,6 +1,7 @@
 import arcade
 from Graphics.RenderTarget import RenderTarget
 from Graphics.LightRenderer import LightRenderer
+from Graphics.PostProcessingChain import PostProcessingChain
 #Class that controlls all rendering to ensure lighting and post processing works correctly
 #it will invoke a number of callbacks to allow the application to draw during various parts of the
 #rendering process
@@ -21,6 +22,7 @@ class SceheRenderer():
 
         #Allocate other renderers
         self.light_renderer = LightRenderer(self.context, size)
+        self.post_processing = PostProcessingChain(self.context, size)
 
         self.draw_primary_callback = None
         self.draw_emissive_callback = None
@@ -32,6 +34,7 @@ class SceheRenderer():
         self.final_target.resize(size)
 
         self.light_renderer.resize(size)
+        self.post_processing.resize(size)
         
     def draw_scene(self):
         #Clear target
@@ -45,19 +48,22 @@ class SceheRenderer():
         #draw scene
         if self.draw_primary_callback is not None:
             self.draw_primary_callback()
-            
+
         #render lights texture
         self.light_renderer.draw_lights(self.context.projection_2d_matrix)
 
         #light to final texture
         self.light_renderer.apply_lights(self.primary_target, self.final_target)
+
         #render emissive to final texure
+        #TODO:
 
-        #run post processing
+        #run post processing on final texture
+        final_image = self.post_processing.apply_chain(self.final_target)
 
-        #temp code, blit primary to screen
+        #blit final image to screen
         self.window.use()
-        self.final_target.blit_to_current_target()
+        final_image.blit_to_current_target()
         pass
 
     @property

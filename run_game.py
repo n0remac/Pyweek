@@ -5,6 +5,8 @@ from Core.GameInstance import GameInstance
 
 from Graphics.SceneRenderer import SceheRenderer
 
+from Graphics.PostProcessing.Tonemap import Tonemap
+
 class GameWindow(arcade.Window):
     """ Main Window """
 
@@ -39,6 +41,11 @@ class GameWindow(arcade.Window):
             (400,400),
             (1.0,1.0,1.0),
             128.0)
+
+        self.tonemap = Tonemap()
+        self.scene_renderer.post_processing.add_effect(self.tonemap)
+
+        self.tonemap.white_point = 2.0
 
     def on_draw(self):
         #draw the game
