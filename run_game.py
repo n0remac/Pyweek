@@ -11,16 +11,8 @@ class GameWindow(arcade.Window):
         """ Create the variables """
 
         super().__init__(width, height, title)
+
         self.game_instance: Optional[GameInstance] = None
-
-        # Player sprite
-        self.player_sprite: Optional[arcade.Sprite] = None
-
-        # Sprite lists
-        self.player_list: Optional[arcade.SpriteList] = None
-        self.wall_list: Optional[arcade.SpriteList] = None
-        self.bullet_list: Optional[arcade.SpriteList] = None
-        self.item_list: Optional[arcade.SpriteList] = None
 
         # Tracking key presses
         self.left_pressed: bool = False
