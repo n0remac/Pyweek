@@ -60,7 +60,6 @@ class GameWindow(arcade.Window):
         self.game_instance.on_draw_game()
 
 
-
 def main():
     """ Main method """
     window = GameWindow(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
