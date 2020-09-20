@@ -1,6 +1,8 @@
 import arcade
 
 class RenderTarget():
+    blit_shader = None
+    blit_quad = None
 
     def __init__(self, context, size, format):
 
@@ -14,6 +16,13 @@ class RenderTarget():
         self.is_valid = False
         #resize triggers allocatio so re-use code here
         self.resize(size)
+
+    def init_quad(self):
+        if RenderTarget.blit_shader is not None:
+            return
+
+        RenderTarget.blit_quad = arcade.gl.geometry.quad_2d_fs()
+        RenderTarget.blit_shader = arcade.gl.P
 
     def resize(self, size):
         #Release stuff before resize
@@ -50,3 +59,8 @@ class RenderTarget():
     #Bind the render target as the current target for rendering
     def bind_as_framebuffer(self):
         self.framebuffer_object.use()
+
+    #Copy the contents of this render target to the current render target
+    def blit_to_current_target(self):
+        geo = arcade.gl.geometry.quad_2d_fs()
+        geo.rende
