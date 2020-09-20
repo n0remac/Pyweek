@@ -32,7 +32,13 @@ class GameWindow(arcade.Window):
         self.scene_renderer.draw_emissive_callback = self.on_draw_emissive
         self.scene_renderer.draw_after_post_callback = self.on_draw_after_post
 
+        self.scene_renderer.background_color = (0.5,0.5,0.5,1.0)
         self.scene_renderer.light_renderer.ambient_light = (1.0, 0.6, 0.3)
+
+        self.light = self.scene_renderer.light_renderer.create_point_light(
+            (400,400),
+            (1.0,1.0,1.0),
+            128.0)
 
     def on_draw(self):
         #draw the game

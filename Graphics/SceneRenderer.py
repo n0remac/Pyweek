@@ -10,6 +10,7 @@ class SceheRenderer():
     def __init__(self, window, size):
         self.window = window
         self.context = window.ctx
+        self.background_color = (0.0, 0.0, 0.0, 1.0)
         #TODO: init any subsystems and allocate render targets
 
         #lit scene things are drawn to this
@@ -34,15 +35,19 @@ class SceheRenderer():
         
     def draw_scene(self):
         #Clear target
-        self.primary_target.clear((0.0, 0.0, 0.0, 1.0))
-        self.final_target.clear((0.0, 0.0, 0.0, 0.0))
+        self.primary_target.clear(self.background_color)
+
+        #don't need to clear due to blit
+        #self.final_target.clear((0.0, 0.0, 0.0, 0.0))
 
         #bind primary target
         self.primary_target.bind_as_framebuffer()
         #draw scene
         if self.draw_primary_callback is not None:
             self.draw_primary_callback()
+            
         #render lights texture
+        self.light_renderer.draw_lights(self.context.projection_2d_matrix)
 
         #light to final texture
         self.light_renderer.apply_lights(self.primary_target, self.final_target)
