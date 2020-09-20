@@ -20,14 +20,11 @@ class GameWindow(arcade.Window):
         self.up_pressed: bool = False
         self.down_pressed: bool = False
 
-        # Set background color
-        arcade.set_background_color(arcade.color.AMAZON)
-
     def setup(self):
         """ Set up everything with the game """
 
         window_size = self.get_size()
-        self.game_instance = GameInstance()
+        self.game_instance = GameInstance(self)
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed. """
@@ -47,9 +44,6 @@ class GameWindow(arcade.Window):
     def on_draw(self):
         """ Draw everything """
         self.game_instance.on_draw()
-
-    def on_draw_game(self):
-        self.game_instance.on_draw_game()
 
 
 def main():
