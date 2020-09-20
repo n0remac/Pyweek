@@ -28,14 +28,14 @@ class RendererFactory():
         scene_renderer.post_processing.add_effect(bloom)
 
         #TEMP
-        bloom.power = 5.0
-        bloom.threshold = 0.5
+        bloom.power = 1.5
+        bloom.threshold = 0.8
 
 
         tonemap = Tonemap()
         scene_renderer.post_processing.add_effect(tonemap)
 
         #Set what HDR value gets mapped to 100% white on your monitor
-        tonemap.white_point = 2.0
+        tonemap.white_point = 3.0
 
     
