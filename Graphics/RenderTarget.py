@@ -30,7 +30,7 @@ class RenderTarget():
             fragment_shader='Graphics/CoreShaders/blit.fs'
         )
 
-        RenderTarget.blit_shader['s_texture'] = 0
+        RenderTarget.blit_shader['t_texture'] = 0
 
     def resize(self, size):
         #Release stuff before resize
