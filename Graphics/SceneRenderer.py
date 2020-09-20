@@ -74,7 +74,7 @@ class SceheRenderer():
         final_image.blit_to_current_target()
 
         #draw after post processing callback
-        if self.draw_after_post_callback is not None
+        if self.draw_after_post_callback is not None:
             self.draw_after_post_callback()
 
 
