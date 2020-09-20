@@ -8,6 +8,6 @@ Create virtual environment
 Enter directory and start virtual environment  
 `cd Pyweek && source venv/bin/activate`  
 Install dependencies  
-'pip install -r requirements.txt'  
+`pip install -r requirements.txt`  
 Export enviroment dependencies to requirements.txt  
 `pip freeze > requirements.txt`
