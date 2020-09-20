@@ -29,7 +29,7 @@ class RendererFactory():
 
         #TEMP
         bloom.power = 1.5
-        bloom.threshold = 0.8
+        bloom.threshold = 0.75
 
 
         tonemap = Tonemap()

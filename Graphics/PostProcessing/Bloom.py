@@ -157,5 +157,5 @@ class Bloom(PostEffect):
 
     @power.setter
     def power(self, value):
-        self._power = value
-        self.blur_y_power['u_power'] = value
+        self._power = value * 0.5
+        self.blur_y_power['u_power'] = value * 0.5
