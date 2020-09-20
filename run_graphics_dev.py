@@ -45,6 +45,13 @@ class GameWindow(arcade.Window):
             (1.0,1.0,1.0), #Color, 0 = black, 1 = white, 0.5 = grey, order is RGB
             128.0) #Radius
 
+        self.lightb = self.scene_renderer.light_renderer.create_point_light(
+            (300,300), #Position
+            (0.0,1.0,1.0), #Color, 0 = black, 1 = white, 0.5 = grey, order is RGB
+            96.0) #Radius
+
+        self.light.destroy()
+
         self.tonemap = Tonemap()
         self.scene_renderer.post_processing.add_effect(self.tonemap)
 

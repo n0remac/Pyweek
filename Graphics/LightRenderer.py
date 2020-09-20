@@ -104,4 +104,7 @@ class LightRenderer():
         return newLight
 
     def destroy_light(self, light):
-        pass
+        if type(light) is PointLight:
+            self.point_lights.remove(light)
+            return
+        #TODO:Other light types

@@ -11,4 +11,4 @@ class Light():
         self.enabled = True
 
     def destroy(self):
-        pass
+        self.renderer.destroy_light(self)
