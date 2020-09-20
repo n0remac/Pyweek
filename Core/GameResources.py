@@ -47,8 +47,5 @@ class GameResources:
         self.bullet_list.draw()
         self.player_list.draw()
 
-    def on_draw_game(self):
-        self.sprite_list.draw()
-
     def on_update(self, delta_time):
         pass
