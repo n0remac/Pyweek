@@ -5,13 +5,16 @@ from Graphics.PostProcessingChain import PostProcessingChain
 #Class that controlls all rendering to ensure lighting and post processing works correctly
 #it will invoke a number of callbacks to allow the application to draw during various parts of the
 #rendering process
-class SceheRenderer():
+class SceneRenderer():
 
     #window is the arcade window object, size is tuple(x,y) screen size in pixels
-    def __init__(self, window, size):
+    def __init__(self, window):
         self.window = window
         self.context = window.ctx
         self.background_color = (0.0, 0.0, 0.0, 1.0)
+        
+        size = window.get_size()
+
         #TODO: init any subsystems and allocate render targets
 
         #lit scene things are drawn to this
