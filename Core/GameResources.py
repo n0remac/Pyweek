@@ -1,12 +1,23 @@
 import arcade
 
+from Constants.Game import SPRITE_SCALING_TILES, SPRITE_SCALING_PLAYER, SPRITE_SIZE
+
 class GameResources:
     """
-    In theory, this should be the place where you load in resources that the game uses via Arcade's various APIs.
-    Currently a grab bag of Arcade resources that get stored, updated, and rendered.
-    Unfortunately Arcade doesn't support an immutable API for stuff (probably for simplicity), so have to live with
-    mutating the locations of sprite instances to move them around. Oh well!
+    Load arcade resources
     """
 
     def __init__(self):
+
+        # Read in the tiled map
+        map_name = "Graphics/test_map.tmx"
+        my_map = arcade.tilemap.read_tmx(map_name)
+        self.wall_list = arcade.tilemap.process_layer(
+            my_map, "Walls", SPRITE_SCALING_TILES
+        )
+
+    def on_mouse_motion(self, x, y, dx, dy):
         pass
+
+    def on_draw(self):
+        self.wall_list.draw()
