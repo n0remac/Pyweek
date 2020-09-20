@@ -1,1 +1,1 @@
-# Pyweek
+# Pyweek Pirates Project
