@@ -2,10 +2,12 @@ import arcade
 
 from Constants.Game import SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE
 from Core.GameInstance import GameInstance
+from Core.RendererFactory import RendererFactory
 
 from Graphics.SceneRenderer import SceneRenderer
 
 from Graphics.PostProcessing.Tonemap import Tonemap
+
 
 class GameWindow(arcade.Window):
     """ Main Window """
@@ -28,17 +30,12 @@ class GameWindow(arcade.Window):
         self.test_list = arcade.SpriteList()
         self.test_list.append(self.test_sprite)
 
-        self.scene_renderer = SceneRenderer(self)
+        self.scene_renderer = RendererFactory.create_renderer(self)
+
         #bind rendering callbacks
         self.scene_renderer.draw_primary_callback = self.on_draw_scene
         self.scene_renderer.draw_emissive_callback = self.on_draw_emissive
         self.scene_renderer.draw_after_post_callback = self.on_draw_after_post
-
-        #Background color of the scene (replaces the arcade.background thing), is affected by lighting
-        self.scene_renderer.background_color = (0.5,0.5,0.5,1.0)
-
-        #Ambient light value applied to every pixel
-        self.scene_renderer.light_renderer.ambient_light = (1.0, 0.6, 0.3)
 
         self.light = self.scene_renderer.light_renderer.create_point_light(
             (400,400), #Position
@@ -50,13 +47,7 @@ class GameWindow(arcade.Window):
             (0.0,1.0,1.0), #Color, 0 = black, 1 = white, 0.5 = grey, order is RGB
             96.0) #Radius
 
-        self.light.destroy()
-
-        self.tonemap = Tonemap()
-        self.scene_renderer.post_processing.add_effect(self.tonemap)
-
-        #Set what HDR value gets mapped to 100% white on your monitor
-        self.tonemap.white_point = 2.0
+        #self.light.destroy()
 
     def on_draw(self):
         #draw the game
