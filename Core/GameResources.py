@@ -40,9 +40,9 @@ class GameResources:
         # Add to player sprite list
         self.player_list.append(self.player_sprite)
 
-        #   Enemy
-        self.enemy = Enemy(grid_x, grid_y, self.player_sprite.center_x)
-
+        # Enemy
+        self.enemy = Enemy(grid_x, grid_y, self.player_sprite.center_x, self.player_sprite.center_y)
+        
         # Add to enemy sprite list
         self.enemy_list.append(self.enemy.enemy_sprite)
 
@@ -55,6 +55,8 @@ class GameResources:
         self.bullet_list.draw()
         self.player_list.draw()
         self.enemy_list.draw()
+        self.enemy.draw(self.player_sprite.center_x, self.player_sprite.center_y)
 
     def on_update(self, delta_time):
         pass
+        
