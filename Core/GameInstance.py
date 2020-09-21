@@ -57,7 +57,11 @@ class GameInstance:
             160.0,
         )  # Radius
 
+        # dict used to determine radius of light based on light_type
+        radius_by_type = {"torch": 70.0, "candle": 40.0}
+
         for light in self.game_resources.light_list:
+            radius = radius_by_type.get(light.properties["type"])
             self.light_list.append(
                 self.scene_renderer.light_renderer.create_point_light(
                     (light.center_x, light.center_y),  # Position
@@ -66,7 +70,7 @@ class GameInstance:
                         2.75,
                         1.75,
                     ),  # Color, 0 = black, 1 = white, 0.5 = grey, order is RGB This can go over 1.0 because of HDR
-                    50.0,
+                    radius,
                 )  # Radius
             )
 
