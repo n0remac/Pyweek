@@ -51,8 +51,12 @@ class GameWindow(arcade.Window):
         #self.light.destroy()
 
         self.start_time = time.time()
+        self.current_time = 0.0
+
 
     def on_draw(self):
+        self.current_time = time.time() - self.start_time
+
         #draw the game
         self.scene_renderer.draw_scene()
 
@@ -65,13 +69,16 @@ class GameWindow(arcade.Window):
 
     #Everything drawn in here will be drawn with blend mode:Additive. Use for glowing stuff that ignores lighting
     def on_draw_emissive(self):
-        now = time.time() - self.start_time
-        self.particles.render(now, self.ctx.projection_2d_matrix)
+        self.particles.render(self.current_time, self.ctx.projection_2d_matrix)
         pass
 
     #Drawn after all post processing, for things like UI
     def on_draw_after_post(self):
         pass
+
+    def on_mouse_press(self, x, y, button, modifiers):
+        self.particles.do_burst( (x,y), self.current_time)
+
 
 
 def main():
