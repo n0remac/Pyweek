@@ -1,8 +1,10 @@
 import arcade
+import math
 
 from Constants.Physics import PLAYER_MOVEMENT_SPEED
 from Core.GameResources import GameResources
 from Core.RendererFactory import RendererFactory
+from Core.Projectiles.Projectile_Manager import ProjectileManager
 from Physics.PhysicsEngine import setup_physics_engine
 
 
@@ -18,6 +20,7 @@ class GameInstance:
 
         # Core game resources
         self.game_resources = GameResources()
+        self.projectile_manager = ProjectileManager(self.game_resources)
 
         # Physics engine
         self.physics_engine = setup_physics_engine(self.game_resources)
@@ -99,7 +102,10 @@ class GameInstance:
             self.game_resources.player_sprite.change_x = 0
 
     def on_mouse_motion(self, x, y, dx, dy):
-        self.game_resources.on_mouse_motion(x, y, dx, dy)
+        pass
+
+    def on_mouse_press(self, x, y, button, modifiers):
+        self.projectile_manager.on_mouse_press(x, y, button, modifiers)
 
     # This method should idealy do nothing but invoke the scene renderer. use the following drawing methods instead
     def on_draw(self):
@@ -123,11 +129,11 @@ class GameInstance:
         # Move the player with the physics engine
         self.physics_engine.update()
 
+        # move projectiles
+        self.projectile_manager.on_update(delta_time)
+
         # move the player light to the player
         self.player_light.position = (
             self.game_resources.player_sprite.center_x,
             self.game_resources.player_sprite.center_y,
         )
-
-        # self.physics_engine.step()
-        # self.game_resources.on_update(delta_time)
