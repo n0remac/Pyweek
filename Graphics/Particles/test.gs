@@ -12,7 +12,7 @@ out vec2 vf_uv;
 
 void EmitVert(vec2 offset)
 {
-    vec2 localPos = offset * 32.0;
+    vec2 localPos = offset * 4.0;
     vec2 posWorldSpace = gl_in[0].gl_Position.xy +localPos;
 
     vec4 finalPositionWorldSpace = vec4(posWorldSpace, 0.0, 1.0);//Expand to vec4 for matrix multiplication

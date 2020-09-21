@@ -16,7 +16,10 @@ void main() {
     float trashy_falloff = 1.0 - falloff_factor;
     trashy_falloff = clamp(trashy_falloff, 0.0, 1.0);
 
+
+
     vec3 finalLight = vec3(1.0, 0.3, 0.05) * trashy_falloff * trashy_falloff;//Ensure falloff is quadradic
+    finalLight = vec3(1.0, 0.3, 0.05);
 
     finalLight *= smoothstep(0.0, 2.0, 2.0 - vf_time);
 

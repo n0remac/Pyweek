@@ -19,7 +19,7 @@ class TestParticleSystem():
         #create some buffers
         data = []
 
-        for x in range(100):
+        for x in range(10000):
             self.append_particle(data)
         
         asArray = array('f', data)
