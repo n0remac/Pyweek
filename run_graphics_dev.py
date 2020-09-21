@@ -69,7 +69,7 @@ class GameWindow(arcade.Window):
 
     #Everything drawn in here will be drawn with blend mode:Additive. Use for glowing stuff that ignores lighting
     def on_draw_emissive(self):
-        self.particles.render(self.current_time, self.ctx.projection_2d_matrix)
+        self.particles.render(self.ctx.projection_2d_matrix)
         pass
 
     #Drawn after all post processing, for things like UI
@@ -77,7 +77,7 @@ class GameWindow(arcade.Window):
         pass
 
     def on_mouse_press(self, x, y, button, modifiers):
-        self.particles.do_burst( (x,y), self.current_time)
+        self.particles.do_burst( (x,y))
 
 
 

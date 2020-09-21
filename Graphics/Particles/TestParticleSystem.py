@@ -23,7 +23,7 @@ class TestParticleSystem(ParticleSystem):
         )
 
         self.init_system(
-            10000,
+            5000,
             '2f 2f 1f', 
             ['in_position', 'in_velocity', 'in_life_offset'],
             [0.0, 0.0, 0.0, 0.0, 1000.0],
@@ -43,7 +43,7 @@ class TestParticleSystem(ParticleSystem):
         # Start_offset
         list.append(random.uniform(0.0, 1.0))
 
-    def do_burst(self, position, current_time):
+    def do_burst(self, position):
         self.burst_program['u_position'] = position
-        self.emit_with_program(self.burst_program, 100, current_time)
+        self.emit_with_program(self.burst_program, 150)
         pass

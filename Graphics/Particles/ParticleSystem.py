@@ -3,6 +3,7 @@ import math
 import random
 from array import array
 from pyglet import gl
+import time
 
 #Base class for particles, let's see how this all works out
 class ParticleSystem():
@@ -10,6 +11,7 @@ class ParticleSystem():
     scaling_factor = 1.0
     emission_buffer = None
     max_emission_count = 10000
+    start_time = 0.0
 
     #scaling factor lets you tune for perf
     def configure_particles(scaling_factor):
@@ -58,14 +60,15 @@ class ParticleSystem():
                                                         ['in_placeholder'])
 
         ParticleSystem.emission_buffer = context.geometry([buffer_description])
+        ParticleSystem.start_time = time.time()
 
-    def emit_with_program(self, program, count, current_time):
+    def emit_with_program(self, program, count):
 
         program['u_seed'] = random.uniform(0, 1.0)
-        program['u_time'] = current_time
+        program['u_time'] = self.current_time
 
         count = int(math.ceil(count * ParticleSystem.scaling_factor))
-        self.last_emission_time = current_time
+        self.last_emission_time = self.current_time
 
         #a few cases for emission
         if count >= self.max_particles:
@@ -89,9 +92,9 @@ class ParticleSystem():
             first_burst = self.max_particles - self.current_emission_index
             second_burst = count - first_burst
         
-            self.emit_internal(progran, 0, first_burst, self.particle_byte_length * self.current_emission_index)
+            self.emit_internal(program, 0, first_burst, self.particle_byte_length * self.current_emission_index)
 
-            self.emit_internal(progran, first_burst, second_burst, 0)
+            self.emit_internal(program, first_burst, second_burst, 0)
 
             self.current_emission_index = second_burst
 
@@ -116,13 +119,18 @@ class ParticleSystem():
             buffer_offset=buffer_offset
         )
    
-    def render(self, current_time, projection_matrix):
-        if current_time > self.last_emission_time + self.max_possible_lifetime:
+    def render(self, projection_matrix):
+        current_time_cause_python_is_broken = self.current_time
+        if current_time_cause_python_is_broken > (self.last_emission_time + self.max_possible_lifetime):
             return #No need to render in this case, nothing can be visable
 
                 #set time on shader
-        self.program['u_time'] = current_time
+        self.program['u_time'] = self.current_time
         self.program['u_projection'] = projection_matrix
 
         #draw shader w/ particle buffer
         self.vertex_array.render(self.program, mode=self.context.POINTS)     
+
+    @property
+    def current_time(self):
+        return time.time() - ParticleSystem.start_time
