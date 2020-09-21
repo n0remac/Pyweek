@@ -62,7 +62,10 @@ class ParticleSystem():
         ParticleSystem.emission_buffer = context.geometry([buffer_description])
         ParticleSystem.start_time = time.time()
 
-    def emit_with_program(self, program, count):
+    def emit_with_program(self, program, count, buffer=None):
+
+        if buffer is None:
+            buffer = self.buffer
 
         program['u_seed'] = random.uniform(0, 1.0)
         program['u_time'] = self.current_time
@@ -76,14 +79,14 @@ class ParticleSystem():
             count = self.max_particles
             self.current_emission_index = 0
 
-            self.emit_internal(program, 0, count, 0)
+            self.emit_internal(program, buffer, 0, count, 0)
 
             return
 
         if count + self.current_emission_index < self.max_particles:
             #single emission
 
-            self.emit_internal(program, 0, count, self.particle_byte_length * self.current_emission_index)
+            self.emit_internal(program, buffer, 0, count, self.particle_byte_length * self.current_emission_index)
 
             self.current_emission_index += count
 
@@ -92,14 +95,17 @@ class ParticleSystem():
             first_burst = self.max_particles - self.current_emission_index
             second_burst = count - first_burst
         
-            self.emit_internal(program, 0, first_burst, self.particle_byte_length * self.current_emission_index)
+            self.emit_internal(program, buffer, 0, first_burst, self.particle_byte_length * self.current_emission_index)
 
-            self.emit_internal(program, first_burst, second_burst, 0)
+            self.emit_internal(program, buffer, first_burst, second_burst, 0)
 
             self.current_emission_index = second_burst
 
 
-    def emit_internal(self, program, first, vertex_count, buffer_offset):
+    def emit_internal(self, program, buffer, first, vertex_count, buffer_offset):
+
+
+
 
         #HELLA GOOD HACK
         if buffer_offset > 0:
@@ -111,7 +117,7 @@ class ParticleSystem():
                 vertex_count * self.particle_byte_length)
                 
 
-        ParticleSystem.emission_buffer.transform(
+        buffer.transform(
             program,
             self.buffer,
             first=first,
