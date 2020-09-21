@@ -22,9 +22,7 @@ class RendererFactory:
 
         return scene_renderer
 
-<<<<<<< HEAD
-    def setup_post_processing(scene_renderer):
-=======
+
     def setup_post_processing(scene_renderer):      
         
         bloom = Bloom()
@@ -34,17 +32,9 @@ class RendererFactory:
         bloom.power = 1.5
         bloom.threshold = 0.75
 
->>>>>>> LightFalloff
-
         tonemap = Tonemap()
         scene_renderer.post_processing.add_effect(tonemap)
 
-<<<<<<< HEAD
-        # Set what HDR value gets mapped to 100% white on your monitor
-        tonemap.white_point = 2.0
-=======
         #Set what HDR value gets mapped to 100% white on your monitor
         tonemap.white_point = 3.0
 
-    
->>>>>>> LightFalloff
