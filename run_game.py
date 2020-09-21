@@ -11,14 +11,7 @@ class GameWindow(arcade.Window):
         """ Create the variables """
 
         super().__init__(width, height, title)
-
         self.game_instance: Optional[GameInstance] = None
-
-        # Tracking key presses
-        self.left_pressed: bool = False
-        self.right_pressed: bool = False
-        self.up_pressed: bool = False
-        self.down_pressed: bool = False
 
     def setup(self):
         """ Set up everything with the game """
