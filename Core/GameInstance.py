@@ -1,9 +1,10 @@
 import arcade
 import math
 
-from Constants.Physics import PLAYER_MOVEMENT_SPEED, BULLET_MOVE_FORCE
+from Constants.Physics import PLAYER_MOVEMENT_SPEED
 from Core.GameResources import GameResources
 from Core.RendererFactory import RendererFactory
+from Core.Projectiles.Projectile_Manager import ProjectileManager
 from Physics.PhysicsEngine import setup_physics_engine
 
 
@@ -19,10 +20,10 @@ class GameInstance:
 
         # Core game resources
         self.game_resources = GameResources()
+        self.projectile_manager = ProjectileManager(self.game_resources)
 
-        # Physics engines
+        # Physics engine
         self.physics_engine = setup_physics_engine(self.game_resources)
-        self.projectile_physics = arcade.PymunkPhysicsEngine()
 
         # create default scene renderer via factory.
         # This configures the post processing stack and default lighting
@@ -101,55 +102,10 @@ class GameInstance:
             self.game_resources.player_sprite.change_x = 0
 
     def on_mouse_motion(self, x, y, dx, dy):
-        self.game_resources.on_mouse_motion(x, y, dx, dy)
+        pass
 
     def on_mouse_press(self, x, y, button, modifiers):
-        """ Called whenever the mouse button is clicked. """
-
-        bullet = arcade.SpriteSolidColor(20, 5, arcade.color.DARK_YELLOW)
-        self.game_resources.bullet_list.append(bullet)
-
-        # Position the bullet at the player's current location
-        start_x = self.game_resources.player_sprite.center_x
-        start_y = self.game_resources.player_sprite.center_y
-        bullet.position = self.game_resources.player_sprite.position
-
-        # Get from the mouse the destination location for the bullet
-        # IMPORTANT! If you have a scrolling screen, you will also need
-        # to add in self.view_bottom and self.view_left.
-        dest_x = x
-        dest_y = y
-
-        # Do math to calculate how to get the bullet to the destination.
-        # Calculation the angle in radians between the start points
-        # and end points. This is the angle the bullet will travel.
-        x_diff = dest_x - start_x
-        y_diff = dest_y - start_y
-        angle = math.atan2(y_diff, x_diff)
-
-        # What is the 1/2 size of this sprite, so we can figure out how far
-        # away to spawn the bullet
-        size = (
-            max(
-                self.game_resources.player_sprite.width,
-                self.game_resources.player_sprite.height,
-            )
-            / 2
-        )
-
-        # Use angle to to spawn bullet away from player in proper direction
-        bullet.center_x += size * math.cos(angle)
-        bullet.center_y += size * math.sin(angle)
-
-        # Set angle of bullet
-        bullet.angle = math.degrees(angle)
-
-        # Add the sprite. This needs to be done AFTER setting the fields above.
-        self.projectile_physics.add_sprite(bullet, collision_type="bullet")
-
-        # Add force to bullet
-        force = (BULLET_MOVE_FORCE, 0)
-        self.projectile_physics.apply_force(bullet, force)
+        self.projectile_manager.on_mouse_press(x, y, button, modifiers)
 
     # This method should idealy do nothing but invoke the scene renderer. use the following drawing methods instead
     def on_draw(self):
@@ -172,13 +128,12 @@ class GameInstance:
 
         # Move the player with the physics engine
         self.physics_engine.update()
-        self.projectile_physics.step()
+
+        # move projectiles
+        self.projectile_manager.on_update(delta_time)
 
         # move the player light to the player
         self.player_light.position = (
             self.game_resources.player_sprite.center_x,
             self.game_resources.player_sprite.center_y,
         )
-
-        # self.physics_engine.step()
-        # self.game_resources.on_update(delta_time)
