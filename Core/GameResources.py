@@ -1,6 +1,7 @@
 import arcade
 
 from Constants.Game import SPRITE_SCALING_TILES, SPRITE_SCALING_PLAYER, SPRITE_SIZE
+from Core.Enemy import Enemy
 
 
 class GameResources:
@@ -14,6 +15,7 @@ class GameResources:
         self.sprite_list = arcade.SpriteList()
         self.player_list = arcade.SpriteList()
         self.bullet_list = arcade.SpriteList()
+        self.enemy_list = arcade.SpriteList()
 
         # Read in the tiled map
         map_name = "Graphics/test_map.tmx"
@@ -41,9 +43,24 @@ class GameResources:
         # Add to player sprite list
         self.player_list.append(self.player_sprite)
 
+        # Enemy
+        self.enemy = Enemy(grid_x, grid_y, self.player_sprite.center_x, self.player_sprite.center_y)
+        
+        # Add to enemy sprite list
+        self.enemy_list.append(self.enemy.enemy_sprite)
+
+    def on_mouse_motion(self, x, y, dx, dy):
+        pass
+
     def on_draw(self):
         self.wall_list.draw()
         self.floor_list.draw()
         self.light_list.draw()
         self.bullet_list.draw()
         self.player_list.draw()
+        self.enemy_list.draw()
+        self.enemy.draw(self.player_sprite.center_x, self.player_sprite.center_y)
+
+    def on_update(self, delta_time):
+        pass
+        
