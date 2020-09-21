@@ -70,9 +70,9 @@ class ParticleSystem():
         count = int(math.ceil(count * ParticleSystem.scaling_factor))
         self.last_emission_time = self.current_time
 
-        #a few cases for emission
+        #a few cases for emission, as we have a circular particle buffer
         if count >= self.max_particles:
-            #total emission
+            #total emission of every possible slot
             count = self.max_particles
             self.current_emission_index = 0
 
@@ -88,7 +88,7 @@ class ParticleSystem():
             self.current_emission_index += count
 
         else:
-            #wrapped emission...
+            #wrapped emission useing the start and end of the rolling buffer
             first_burst = self.max_particles - self.current_emission_index
             second_burst = count - first_burst
         
