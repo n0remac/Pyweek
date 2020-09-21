@@ -11,14 +11,7 @@ class GameWindow(arcade.Window):
         """ Create the variables """
 
         super().__init__(width, height, title)
-
         self.game_instance: Optional[GameInstance] = None
-
-        # Tracking key presses
-        self.left_pressed: bool = False
-        self.right_pressed: bool = False
-        self.up_pressed: bool = False
-        self.down_pressed: bool = False
 
     def setup(self):
         """ Set up everything with the game """
@@ -36,6 +29,9 @@ class GameWindow(arcade.Window):
 
     def on_mouse_motion(self, x, y, dx, dy):
         self.game_instance.on_mouse_motion(x, y, dx, dy)
+
+    def on_mouse_press(self, x, y, button, modifiers):
+        self.game_instance.on_mouse_press(x, y, button, modifiers)
 
     def on_update(self, delta_time):
         """ Movement and game logic """
