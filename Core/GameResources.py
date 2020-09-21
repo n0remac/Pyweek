@@ -24,6 +24,9 @@ class GameResources:
         self.floor_list = arcade.tilemap.process_layer(
             my_map, "Floor", SPRITE_SCALING_TILES
         )
+        self.light_list = arcade.tilemap.process_layer(
+            my_map, "Lighting", SPRITE_SCALING_TILES
+        )
 
         # Create player sprite
         self.player_sprite = arcade.Sprite(
@@ -44,6 +47,7 @@ class GameResources:
     def on_draw(self):
         self.wall_list.draw()
         self.floor_list.draw()
+        self.light_list.draw()
         self.bullet_list.draw()
         self.player_list.draw()
 
