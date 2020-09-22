@@ -63,10 +63,7 @@ class GameResources:
                                                     playing_field_right_boundary,
                                                     playing_field_bottom_boundary,
                                                     playing_field_top_boundary)
-        self.path = arcade.astar_calculate_path(self.enemy.enemy_sprite.position,
-                                                self.player_sprite.position,
-                                                self.barrier_list,
-                                                diagonal_movement=False)
+        self.path = self.enemy.path
 
     def on_mouse_motion(self, x, y, dx, dy):
         pass
