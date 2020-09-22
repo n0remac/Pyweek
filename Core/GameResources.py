@@ -14,6 +14,7 @@ class GameResources:
         self.sprite_list = arcade.SpriteList()
         self.player_list = arcade.SpriteList()
         self.bullet_list = arcade.SpriteList()
+        self.object_list = arcade.SpriteList()
 
         # Read in the tiled map
         map_name = "Graphics/test_map.tmx"
@@ -45,5 +46,6 @@ class GameResources:
         self.wall_list.draw()
         self.floor_list.draw()
         self.light_list.draw()
+        self.object_list.draw()
         self.bullet_list.draw()
         self.player_list.draw()

@@ -4,7 +4,8 @@ import math
 from Constants.Physics import PLAYER_MOVEMENT_SPEED
 from Core.GameResources import GameResources
 from Core.RendererFactory import RendererFactory
-from Core.Projectiles.Projectile_Manager import ProjectileManager
+from Core.ObjectManager import ObjectManager
+from Core.Projectile_Manager import ProjectileManager
 from Physics.PhysicsEngine import setup_physics_engine
 
 
@@ -20,6 +21,7 @@ class GameInstance:
 
         # Core game resources
         self.game_resources = GameResources()
+        self.object_manager = ObjectManager(self.game_resources)
         self.projectile_manager = ProjectileManager(self.game_resources)
 
         # Physics engine
