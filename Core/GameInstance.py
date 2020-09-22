@@ -25,6 +25,9 @@ class GameInstance:
         # Physics engine
         self.physics_engine = setup_physics_engine(self.game_resources)
 
+        self.horizontal_key_list = []
+        self.verticle_key_list = []
+
         # create default scene renderer via factory.
         # This configures the post processing stack and default lighting
         self.scene_renderer = RendererFactory.create_renderer(window)
@@ -81,25 +84,33 @@ class GameInstance:
         """Called whenever a key is pressed. """
 
         if key == arcade.key.UP or key == arcade.key.W:
-            self.game_resources.player_sprite.change_y = PLAYER_MOVEMENT_SPEED
+            self.verticle_key_list.insert(0, PLAYER_MOVEMENT_SPEED)
         elif key == arcade.key.DOWN or key == arcade.key.S:
-            self.game_resources.player_sprite.change_y = -PLAYER_MOVEMENT_SPEED
+            self.verticle_key_list.insert(0, -PLAYER_MOVEMENT_SPEED)
         elif key == arcade.key.LEFT or key == arcade.key.A:
-            self.game_resources.player_sprite.change_x = -PLAYER_MOVEMENT_SPEED
+            self.horizontal_key_list.insert(0, -PLAYER_MOVEMENT_SPEED)
         elif key == arcade.key.RIGHT or key == arcade.key.D:
-            self.game_resources.player_sprite.change_x = PLAYER_MOVEMENT_SPEED
+            self.horizontal_key_list.insert(0, PLAYER_MOVEMENT_SPEED)
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """
 
         if key == arcade.key.UP or key == arcade.key.W:
             self.game_resources.player_sprite.change_y = 0
+            if len(self.verticle_key_list) > 0:
+                self.verticle_key_list.remove(PLAYER_MOVEMENT_SPEED)
         elif key == arcade.key.DOWN or key == arcade.key.S:
             self.game_resources.player_sprite.change_y = 0
+            if len(self.verticle_key_list) > 0:
+                self.verticle_key_list.remove(-PLAYER_MOVEMENT_SPEED)
         elif key == arcade.key.LEFT or key == arcade.key.A:
             self.game_resources.player_sprite.change_x = 0
+            if len(self.horizontal_key_list) > 0:
+                self.horizontal_key_list.remove(-PLAYER_MOVEMENT_SPEED)
         elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.game_resources.player_sprite.change_x = 0
+            if len(self.horizontal_key_list) > 0:
+                self.horizontal_key_list.remove(PLAYER_MOVEMENT_SPEED)
 
     def on_mouse_motion(self, x, y, dx, dy):
         pass
@@ -125,6 +136,11 @@ class GameInstance:
 
     def on_update(self, delta_time):
         """ Movement and game logic """
+        if len(self.horizontal_key_list) > 0:
+            self.game_resources.player_sprite.change_x = self.horizontal_key_list[0]
+
+        if len(self.verticle_key_list) > 0:
+            self.game_resources.player_sprite.change_y = self.verticle_key_list[0]
 
         # Move the player with the physics engine
         self.physics_engine.update()
