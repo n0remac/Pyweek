@@ -136,7 +136,6 @@ class GameInstance:
 
     def on_update(self, delta_time):
         """ Movement and game logic """
-        print(self.horizontal_key_list)
         if len(self.horizontal_key_list) > 0:
             self.game_resources.player_sprite.change_x = self.horizontal_key_list[0]
 
