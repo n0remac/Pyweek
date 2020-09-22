@@ -2,6 +2,7 @@ import arcade
 
 from Constants.Game import SPRITE_SCALING_TILES, SPRITE_SCALING_PLAYER, SPRITE_SIZE
 from Core.Enemy import Enemy
+from Core.Path import route
 
 
 class GameResources:
@@ -44,7 +45,7 @@ class GameResources:
         self.player_list.append(self.player_sprite)
 
         # Enemy
-        self.enemy = Enemy(grid_x, grid_y, self.player_sprite.center_x, self.player_sprite.center_y)
+        self.enemy = Enemy(grid_x, grid_y, self.player_sprite.center_x, self.player_sprite.center_y, my_map)
         
         # Add to enemy sprite list
         self.enemy_list.append(self.enemy.enemy_sprite)

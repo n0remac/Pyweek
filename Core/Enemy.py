@@ -3,15 +3,18 @@ import math
 
 from Constants.Game import SPRITE_SIZE, SPRITE_SCALING_PLAYER
 from Constants.Physics import PLAYER_MOVEMENT_SPEED
+from Core.Path import route
+
 
 class Enemy(arcade.Sprite):
 
-    def __init__(self, x, y, end_x, end_y):
+    def __init__(self, x, y, end_x, end_y, walls):
         self.x = x
         self.y = y
         self.speed = PLAYER_MOVEMENT_SPEED
         self.end_x = end_x
         self.end_y = end_y
+        self.obstacles = walls.layers[0].layer_data
 
         # Create enemy sprite
         self.enemy_sprite = arcade.Sprite(
@@ -27,6 +30,8 @@ class Enemy(arcade.Sprite):
         self.on_update(x, y)
 
     def on_update(self, x, y):
+        # uncomment code below and it breaks 
+        # print("route",route([int(self.enemy_sprite.center_x), int(self.enemy_sprite.center_y)], [x, y], self.obstacles))
         if self.enemy_sprite.center_x < x:
             self.enemy_sprite.center_x = self.enemy_sprite.center_x + .5
         elif self.enemy_sprite.center_x > x:
