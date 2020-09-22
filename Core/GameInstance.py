@@ -3,9 +3,9 @@ import math
 
 from Constants.Physics import PLAYER_MOVEMENT_SPEED
 from Core.GameResources import GameResources
-from Core.RendererFactory import RendererFactory
+from Core.LightManager import LightManager
 from Core.ObjectManager import ObjectManager
-from Core.Projectile_Manager import ProjectileManager
+from Core.ProjectileManager import ProjectileManager
 from Physics.PhysicsEngine import setup_physics_engine
 
 
@@ -21,8 +21,11 @@ class GameInstance:
 
         # Core game resources
         self.game_resources = GameResources()
+
+        # Managers
         self.object_manager = ObjectManager(self.game_resources)
         self.projectile_manager = ProjectileManager(self.game_resources)
+        self.light_manager = LightManager(self.game_resources, window)
 
         # Physics engine
         self.physics_engine = setup_physics_engine(self.game_resources)
@@ -30,57 +33,7 @@ class GameInstance:
         self.horizontal_key_list = []
         self.verticle_key_list = []
 
-        # create default scene renderer via factory.
-        # This configures the post processing stack and default lighting
-        self.scene_renderer = RendererFactory.create_renderer(window)
-
-        # bind rendering callbacks
-        self.scene_renderer.draw_primary_callback = self.on_draw_scene
-        self.scene_renderer.draw_emissive_callback = self.on_draw_emissive
-        self.scene_renderer.draw_after_post_callback = self.on_draw_after_post
-
-        # Set background color
-        # Based on old arcade.AMAZON color
-        # (59, 122, 87)
-        self.scene_renderer.background_color = (
-            59.0 / 255.0,
-            122.0 / 255.0,
-            87.0 / 255.0,
-            1.0,
-        )
-
-        # dim the ambient lighting to make the player's light more vibrant
-        self.scene_renderer.light_renderer.ambient_light = (0.25, 0.25, 0.25)
-
-        # create light sources
-        self.light_list = []
-
-        self.player_light = self.scene_renderer.light_renderer.create_point_light(
-            (400, 400),  # Position
-            (
-                1.75,
-                1.75,
-                1.75,
-            ),  # Color, 0 = black, 1 = white, 0.5 = grey, order is RGB This can go over 1.0 because of HDR
-            160.0,
-        )  # Radius
-
-        # dict used to determine radius of light based on light_type
-        radius_by_type = {"torch": 70.0, "candle": 40.0}
-
-        for light in self.game_resources.light_list:
-            radius = radius_by_type.get(light.properties["type"])
-            self.light_list.append(
-                self.scene_renderer.light_renderer.create_point_light(
-                    (light.center_x, light.center_y),  # Position
-                    (
-                        1.75,
-                        2.75,
-                        1.75,
-                    ),  # Color, 0 = black, 1 = white, 0.5 = grey, order is RGB This can go over 1.0 because of HDR
-                    radius,
-                )  # Radius
-            )
+        
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed. """
@@ -120,9 +73,9 @@ class GameInstance:
     def on_mouse_press(self, x, y, button, modifiers):
         self.projectile_manager.on_mouse_press(x, y, button, modifiers)
 
-    # This method should idealy do nothing but invoke the scene renderer. use the following drawing methods instead
+    # This method should idealy do nothing but invoke the scene renderer from light_manager. use the following drawing methods instead
     def on_draw(self):
-        self.scene_renderer.draw_scene()
+        self.light_manager.on_draw()
 
     # This method should be used to draw everything efected by lighting and post-processing
     def on_draw_scene(self):
@@ -140,7 +93,6 @@ class GameInstance:
         """ Movement and game logic """
         if len(self.horizontal_key_list) > 0:
             self.game_resources.player_sprite.change_x = self.horizontal_key_list[0]
-
         if len(self.verticle_key_list) > 0:
             self.game_resources.player_sprite.change_y = self.verticle_key_list[0]
 
@@ -150,8 +102,5 @@ class GameInstance:
         # move projectiles
         self.projectile_manager.on_update(delta_time)
 
-        # move the player light to the player
-        self.player_light.position = (
-            self.game_resources.player_sprite.center_x,
-            self.game_resources.player_sprite.center_y,
-        )
+        # move light sources
+        self.light_manager.on_update(delta_time)
