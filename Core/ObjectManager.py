@@ -11,7 +11,7 @@ class ObjectManager:
 
         self.game_resources = game_resources
         for i in range(0, 10):
-            self.create_object(random.randint(0, 10), random.randint(0, 10))
+            self.create_object(random.randint(1, 10), random.randint(1, 10))
 
     def create_object(self, x, y):
         x = SPRITE_SIZE * x + SPRITE_SIZE / 2
