@@ -6,7 +6,7 @@ from Core.GameResources import GameResources
 from Core.RendererFactory import RendererFactory
 from Core.Projectiles.Projectile_Manager import ProjectileManager
 from Physics.PhysicsEngine import setup_physics_engine
-
+from Graphics.Particles.Torch.TorchSystem import TorchSystem
 
 class GameInstance:
     """
@@ -63,6 +63,9 @@ class GameInstance:
             160.0,
         )  # Radius
 
+        #torch particle system
+        self.torch_particle_system = TorchSystem(window.ctx)
+
         # dict used to determine radius of light based on light_type
         radius_by_type = {"torch": 70.0, "candle": 40.0}
 
@@ -79,6 +82,13 @@ class GameInstance:
                     radius,
                 )  # Radius
             )
+
+            if light.properties["type"] == 'torch':
+                self.torch_particle_system.add_torch((light.center_x, light.center_y))
+            else:
+                self.torch_particle_system.add_candle((light.center_x, light.center_y))
+              
+        self.torch_particle_system.build_buffer()
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed. """
@@ -128,6 +138,7 @@ class GameInstance:
 
     # Everything drawn in here will be drawn with blend mode:Additive. Use for glowing stuff that ignores lighting
     def on_draw_emissive(self):
+        self.torch_particle_system.render(self.window.ctx.projection_2d_matrix)
         pass
 
     # Drawn after all post processing, for things like UI
