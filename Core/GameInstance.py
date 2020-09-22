@@ -5,6 +5,7 @@ from Constants.Physics import PLAYER_MOVEMENT_SPEED
 from Core.GameResources import GameResources
 from Core.RendererFactory import RendererFactory
 from Core.Projectiles.Projectile_Manager import ProjectileManager
+from Physics.EnemyPhysicsEngine import setup_enemy_physics_engine
 from Physics.PhysicsEngine import setup_physics_engine
 
 
@@ -24,6 +25,8 @@ class GameInstance:
 
         # Physics engine
         self.physics_engine = setup_physics_engine(self.game_resources)
+        # Enemy Physics engine
+        self.enemy_physics_engine = setup_enemy_physics_engine(self.game_resources)
 
         # create default scene renderer via factory.
         # This configures the post processing stack and default lighting
@@ -128,6 +131,9 @@ class GameInstance:
 
         # Move the player with the physics engine
         self.physics_engine.update()
+
+        # Move the player with the physics engine
+        self.enemy_physics_engine.update()
 
         # move projectiles
         self.projectile_manager.on_update(delta_time)

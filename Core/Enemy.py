@@ -18,8 +18,8 @@ class Enemy(arcade.Sprite):
             "Graphics/Character_animation/monsters_idle/skeleton1/v1/skeleton_v1_1.png", SPRITE_SCALING_PLAYER,
         )
         # Set enemy location
-        enemy_grid_x = self.x
-        enemy_grid_y = self.y
+        enemy_grid_x = self.x + 8
+        enemy_grid_y = self.y + 3
         self.enemy_sprite.center_x = SPRITE_SIZE * enemy_grid_x + SPRITE_SIZE / 2
         self.enemy_sprite.center_y = SPRITE_SIZE * enemy_grid_y + SPRITE_SIZE / 2
 
