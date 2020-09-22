@@ -3,8 +3,6 @@ import math
 
 from Constants.Game import SPRITE_SIZE, SPRITE_SCALING_PLAYER
 from Constants.Physics import PLAYER_MOVEMENT_SPEED
-from Core.Path import route
-
 
 class Enemy(arcade.Sprite):
 

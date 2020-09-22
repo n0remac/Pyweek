@@ -2,7 +2,6 @@ import arcade
 
 from Constants.Game import SPRITE_SCALING_TILES, SPRITE_SCALING_PLAYER, SPRITE_SIZE
 from Core.Enemy import Enemy
-from Core.Path import route
 
 
 class GameResources:
