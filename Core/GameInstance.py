@@ -132,8 +132,15 @@ class GameInstance:
         # Move the player with the physics engine
         self.physics_engine.update()
 
-        # Move the player with the physics engine
+        # Makes enemy collide with walls
         self.enemy_physics_engine.update()
+
+        self.path = arcade.astar_calculate_path(self.game_resources.enemy.enemy_sprite.position,
+                                self.game_resources.player_sprite.position,
+                                self.game_resources.barrier_list,
+                                diagonal_movement=False)
+
+        self.game_resources.enemy.on_update(self.path)
 
         # move projectiles
         self.projectile_manager.on_update(delta_time)

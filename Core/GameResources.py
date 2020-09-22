@@ -45,10 +45,29 @@ class GameResources:
         self.player_list.append(self.player_sprite)
 
         # Enemy
-        self.enemy = Enemy(grid_x, grid_y, self.player_sprite.center_x, self.player_sprite.center_y, my_map)
+        self.enemy = Enemy(grid_x, grid_y, [self.player_sprite.center_x, self.player_sprite.center_y], my_map)
         
         # Add to enemy sprite list
         self.enemy_list.append(self.enemy.enemy_sprite)
+
+        grid_size = SPRITE_SIZE
+
+        playing_field_left_boundary = -SPRITE_SIZE * 2
+        playing_field_right_boundary = SPRITE_SIZE * 35
+        playing_field_top_boundary = SPRITE_SIZE * 17
+        playing_field_bottom_boundary = -SPRITE_SIZE * 2
+
+        self.barrier_list = arcade.AStarBarrierList(self.enemy.enemy_sprite,
+                                                    self.wall_list,
+                                                    grid_size,
+                                                    playing_field_left_boundary,
+                                                    playing_field_right_boundary,
+                                                    playing_field_bottom_boundary,
+                                                    playing_field_top_boundary)
+        self.path = arcade.astar_calculate_path(self.enemy.enemy_sprite.position,
+                                                self.player_sprite.position,
+                                                self.barrier_list,
+                                                diagonal_movement=False)
 
     def on_mouse_motion(self, x, y, dx, dy):
         pass
@@ -60,8 +79,9 @@ class GameResources:
         self.bullet_list.draw()
         self.player_list.draw()
         self.enemy_list.draw()
-        self.enemy.draw(self.player_sprite.center_x, self.player_sprite.center_y)
+        self.enemy.draw()
 
     def on_update(self, delta_time):
         pass
+
         

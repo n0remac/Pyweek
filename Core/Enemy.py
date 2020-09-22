@@ -8,12 +8,11 @@ from Core.Path import route
 
 class Enemy(arcade.Sprite):
 
-    def __init__(self, x, y, end_x, end_y, walls):
+    def __init__(self, x, y, path, walls):
         self.x = x
         self.y = y
         self.speed = PLAYER_MOVEMENT_SPEED
-        self.end_x = end_x
-        self.end_y = end_y
+        self.path = path
         self.obstacles = walls.layers[0].layer_data
 
         # Create enemy sprite
@@ -26,18 +25,10 @@ class Enemy(arcade.Sprite):
         self.enemy_sprite.center_x = SPRITE_SIZE * enemy_grid_x + SPRITE_SIZE / 2
         self.enemy_sprite.center_y = SPRITE_SIZE * enemy_grid_y + SPRITE_SIZE / 2
 
-    def draw(self, x, y):
-        self.on_update(x, y)
+    def draw(self):
+        if self.path:
+            arcade.draw_line_strip(self.path, arcade.color.BLUE, 2)
 
-    def on_update(self, x, y):
-        # uncomment code below and it breaks 
-        # print("route",route([int(self.enemy_sprite.center_x), int(self.enemy_sprite.center_y)], [x, y], self.obstacles))
-        if self.enemy_sprite.center_x < x:
-            self.enemy_sprite.center_x = self.enemy_sprite.center_x + .5
-        elif self.enemy_sprite.center_x > x:
-            self.enemy_sprite.center_x = self.enemy_sprite.center_x - .5
-
-        if self.enemy_sprite.center_y < y:
-            self.enemy_sprite.center_y = self.enemy_sprite.center_y + .5
-        elif self.enemy_sprite.center_y > y:
-            self.enemy_sprite.center_y = self.enemy_sprite.center_y - .5
+    def on_update(self, path):
+        self.path = path
+        # print(self.path)
