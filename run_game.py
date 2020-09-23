@@ -29,6 +29,7 @@ class GameWindow(arcade.Window):
 
     def on_mouse_motion(self, x, y, dx, dy):
         self.game_instance.on_mouse_motion(x, y, dx, dy)
+        self.game_instance.game_resources.player_sprite.on_mouse_motion(x, y, dx, dy)
 
     def on_mouse_press(self, x, y, button, modifiers):
         self.game_instance.on_mouse_press(x, y, button, modifiers)
@@ -36,6 +37,7 @@ class GameWindow(arcade.Window):
     def on_update(self, delta_time):
         """ Movement and game logic """
         self.game_instance.on_update(delta_time)
+        self.game_instance.game_resources.player_sprite.update_animation(delta_time)
 
     def on_draw(self):
         """ Draw everything """
@@ -51,3 +53,12 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+def load_texture_pair(filename):
+    """
+    Load a texture pair, with the second being a mirror image.
+    """
+    return [
+        arcade.load_texture(filename),
+        arcade.load_texture(filename, flipped_horizontally=True)
+    ]

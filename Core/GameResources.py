@@ -1,7 +1,7 @@
 import arcade
 
 from Constants.Game import SPRITE_SCALING_TILES, SPRITE_SCALING_PLAYER, SPRITE_SIZE
-
+from Core.PlayerCharacter import PlayerCharacter
 
 class GameResources:
     """
@@ -29,9 +29,7 @@ class GameResources:
         )
 
         # Create player sprite
-        self.player_sprite = arcade.Sprite(
-            "Graphics/player.png", SPRITE_SCALING_PLAYER,
-        )
+        self.player_sprite = PlayerCharacter()
 
         # Set player location
         grid_x = 10
@@ -42,8 +40,8 @@ class GameResources:
         self.player_list.append(self.player_sprite)
 
     def on_draw(self):
-        self.wall_list.draw()
-        self.floor_list.draw()
-        self.light_list.draw()
-        self.bullet_list.draw()
-        self.player_list.draw()
+        self.wall_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.floor_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.light_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.bullet_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.player_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))

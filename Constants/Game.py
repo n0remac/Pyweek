@@ -17,3 +17,9 @@ SCREEN_GRID_HEIGHT = 15
 # Size of screen to show, in pixels
 SCREEN_WIDTH = SPRITE_SIZE * SCREEN_GRID_WIDTH
 SCREEN_HEIGHT = SPRITE_SIZE * SCREEN_GRID_HEIGHT
+
+# Constants used to track if the player is facing left or right
+DOWN_FACING = 0
+UP_FACING = 1
+RIGHT_FACING = 0
+LEFT_FACING = 1

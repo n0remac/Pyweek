@@ -44,19 +44,6 @@ class ProjectileManager:
         start_y = self.game_resources.player_sprite.center_y
         bullet.position = self.game_resources.player_sprite.position
 
-        # Get from the mouse the destination location for the bullet
-        # IMPORTANT! If you have a scrolling screen, you will also need
-        # to add in self.view_bottom and self.view_left.
-        dest_x = x
-        dest_y = y
-
-        # Do math to calculate how to get the bullet to the destination.
-        # Calculation the angle in radians between the start points
-        # and end points. This is the angle the bullet will travel.
-        x_diff = dest_x - start_x
-        y_diff = dest_y - start_y
-        angle = math.atan2(y_diff, x_diff)
-
         # What is the 1/2 size of this sprite, so we can figure out how far
         # away to spawn the bullet
         size = (
@@ -66,6 +53,19 @@ class ProjectileManager:
             )
             / 2
         )
+
+        # Get from the mouse the destination location for the bullet
+        # IMPORTANT! If you have a scrolling screen, you will also need
+        # to add in self.view_bottom and self.view_left.
+        dest_x = x #+ self.view_left
+        dest_y = y #+ self.view_bottom
+
+        # Do math to calculate how to get the bullet to the destination.
+        # Calculation the angle in radians between the start points
+        # and end points. This is the angle the bullet will travel.
+        x_diff = dest_x - start_x
+        y_diff = dest_y - start_y
+        angle = math.atan2(y_diff, x_diff)
 
         # Use angle to to spawn bullet away from player in proper direction
         bullet.center_x += size * math.cos(angle)
