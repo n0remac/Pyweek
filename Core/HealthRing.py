@@ -44,6 +44,7 @@ class Health:
     def health(self):
         return self._health
 
+    #Setting the health value now automatically updates all assoicated visuals and could tirgger the on death
     @health.setter
     def health(self, value):
         self._health = Health.clamp(value, 0.0, self.max_health)

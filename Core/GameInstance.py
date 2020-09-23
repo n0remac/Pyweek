@@ -9,7 +9,7 @@ from Core.Projectile_Manager import ProjectileManager
 from Core.HealthRing import Health
 from Physics.PhysicsEngine import setup_physics_engine
 from Graphics.Particles.Torch.TorchSystem import TorchSystem
-
+from Graphics.Particles.Fireball.FireballBurn import FireballBurn
 
 class GameInstance:
     """
@@ -72,6 +72,9 @@ class GameInstance:
 
         # torch particle system
         self.torch_particle_system = TorchSystem(window.ctx)
+
+        #TODO:MOVE THIS STUFF
+        self.fireball_system = FireballBurn(window.ctx, self.projectile_manager.projectile_physics)
 
         # dict used to determine radius of light based on light_type
         radius_by_type = {"torch": 70.0, "candle": 40.0}
@@ -150,6 +153,7 @@ class GameInstance:
     # Everything drawn in here will be drawn with blend mode:Additive. Use for glowing stuff that ignores lighting
     def on_draw_emissive(self):
         self.torch_particle_system.render(self.window.ctx.projection_2d_matrix)
+        self.fireball_system.render(self.window.ctx.projection_2d_matrix, self.game_resources.bullet_list)
         pass
 
     # Drawn after all post processing, for things like UI
