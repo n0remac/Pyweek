@@ -97,11 +97,11 @@ class PlayerCharacter(arcade.Sprite):
 
     def on_mouse_motion(self,x,y,dx,dy):
         # Figure out if we need to flip face up or down or left or right
-        if self.center_y > y and self.character_face_direction == DOWN_FACING:
+        if self.center_y < y and self.character_face_direction == DOWN_FACING:
             self.character_face_direction = UP_FACING
-        elif self.center_y < y and self.character_face_direction == UP_FACING:
+        elif self.center_y > y and self.character_face_direction == UP_FACING:
             self.character_face_direction = DOWN_FACING
-        if self.center_x > x and self.character_face_direction_horizontal == LEFT_FACING:
+        if self.center_x < x and self.character_face_direction_horizontal == LEFT_FACING:
             self.character_face_direction_horizontal = RIGHT_FACING
-        elif self.center_x < x and self.character_face_direction_horizontal == RIGHT_FACING:
+        elif self.center_x > x and self.character_face_direction_horizontal == RIGHT_FACING:
             self.character_face_direction_horizontal = LEFT_FACING
