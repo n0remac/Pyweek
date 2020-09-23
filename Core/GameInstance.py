@@ -40,6 +40,7 @@ class GameInstance:
         self.scene_renderer.draw_primary_callback = self.on_draw_scene
         self.scene_renderer.draw_emissive_callback = self.on_draw_emissive
         self.scene_renderer.draw_after_post_callback = self.on_draw_after_post
+        self.scene_renderer.draw_to_light_bufer_callback = self.on_draw_light_buffer
 
         # Set background color
         # Based on old arcade.AMAZON color
@@ -53,6 +54,7 @@ class GameInstance:
 
         # dim the ambient lighting to make the player's light more vibrant
         self.scene_renderer.light_renderer.ambient_light = (0.25, 0.25, 0.25)
+        self.scene_renderer.light_renderer.ambient_light = (0.01, 0.01, 0.01)
 
         # create light sources
         self.light_list = []
@@ -162,6 +164,9 @@ class GameInstance:
         self.torch_particle_system.render(self.window.ctx.projection_2d_matrix)
         self.fireball_system.render(self.window.ctx.projection_2d_matrix, self.game_resources.bullet_list)
         pass
+
+    def on_draw_light_buffer(self):
+        self.fireball_system.render_lights(self.window.ctx.projection_2d_matrix, self.game_resources.bullet_list)
 
     # Drawn after all post processing, for things like UI
     def on_draw_after_post(self):

@@ -60,9 +60,6 @@ class LightRenderer:
         # draw each light type
         self.draw_point_lights(projection_matrix)
 
-        # reset context
-        self.context.enable_only()
-
         # reset dynamic light buffer
         self.dynamic_point_light_buffer = []
 

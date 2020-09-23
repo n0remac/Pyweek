@@ -27,3 +27,6 @@ class FireBall():
         self.fireball_burn.render(projection_matrix, projectile_list)
         self.fireball_trail.render(projection_matrix, projectile_list)
         self.fireball_burst.render(projection_matrix)
+
+    def render_lights(self, projection_matrix, projectile_list):
+        self.fireball_burst.render_light(projection_matrix)
