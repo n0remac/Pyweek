@@ -2,7 +2,7 @@ import arcade
 import math
 
 from Constants.Physics import BULLET_MOVE_FORCE
-
+from Graphics.Lights.PointLight import DynamicPointLight
 
 class ProjectileManager:
     """ Handles mouse press presses to fire bullets and creates bullet objects. """
@@ -51,6 +51,9 @@ class ProjectileManager:
         start_x = self.game_resources.player_sprite.center_x
         start_y = self.game_resources.player_sprite.center_y
         bullet.position = self.game_resources.player_sprite.position
+
+        #add light to sprite
+        bullet.point_light = DynamicPointLight( (1.5,1.0,0.2) , 128.0)
 
         # Get from the mouse the destination location for the bullet
         # IMPORTANT! If you have a scrolling screen, you will also need

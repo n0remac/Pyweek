@@ -21,3 +21,9 @@ class PointLight(Light):
         buffer.extend(self.position)
         buffer.extend(self.color)
         buffer.append(self.radius)
+
+#jank but probably performant for bullets
+class DynamicPointLight():
+    def __init__(self, color, radius):
+        self.color = color
+        self.radius = radius

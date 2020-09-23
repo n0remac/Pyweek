@@ -144,6 +144,10 @@ class GameInstance:
 
     # This method should idealy do nothing but invoke the scene renderer. use the following drawing methods instead
     def on_draw(self):
+
+        #Update particle lights, needs to happen once per frame
+        self.scene_renderer.light_renderer.draw_dynamic_point_lights(self.game_resources.bullet_list)
+
         self.scene_renderer.draw_scene()
 
     # This method should be used to draw everything efected by lighting and post-processing
