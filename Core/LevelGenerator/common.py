@@ -34,6 +34,19 @@ def create_rooms(level: Level, leaf: Leaf):
         level.create_room(leaf.room)
 
 
+def are_vertically_aligned(room1: Rect, room2: Rect):
+
+    # horizontally aligned
+    if room2.y1 <= room1.y1 < room2.y2 or room1.y1 <= room2.y1 < room1.y2:
+        return False
+
+    # vertically aligned
+    if room2.x1 <= room2.x1 < room2.x2 or room1.x1 <= room2.x1 < room1.x2:
+        return True
+
+    raise Exception("not aligned on any axis")
+
+
 def create_hall(level: Level, room1: Rect, room2: Rect):
     """
     Connect two rooms by hallways
@@ -41,8 +54,45 @@ def create_hall(level: Level, room1: Rect, room2: Rect):
     :param room1: First room to connect
     :param room2: Second room to connect
     """
+
     x1, y1 = room1.center()
     x2, y2 = room2.center()
+
+    # vertically_aligned = are_vertically_aligned(room1, room2)
+    #
+    # if vertically_aligned:
+    #     if room1.y2 < room2.y1:
+    #         top = room1.y2 + 1
+    #         bottom = room2.y1 - 1
+    #     else:
+    #         top = room2.y2 + 1
+    #         bottom = room1.y1 - 1
+    #
+    #     if x1 < x2:
+    #         left = x1 + round((x2 - x1) / 2)
+    #     else:
+    #         left = x2 + round((x1 - x2) / 2)
+    #
+    #     level.create_vir_tunnel(top, bottom, left)
+    #     return
+
+    # if room1.x2 < room2.x1:
+    #     left = room1.x2
+    #     right = room2.x1
+    # else:
+    #     left = room2.x2
+    #     right = room1.x1
+    #
+    # if y1 < y2:
+    #     top = y1 + round((y2 - y1) / 2)
+    # else:
+    #     top = y2 + round((y1 - y2) / 2)
+    #
+    # level.create_hor_tunnel(left, right, top)
+
+    #
+    # print("tun: ", x1, y1, x2, y2, )
+    #
     # 50% chance that a tunnel will start horizontally
     if random.randint(0, 1) == 1:
         level.create_hor_tunnel(x1, x2, y1)
@@ -51,6 +101,11 @@ def create_hall(level: Level, room1: Rect, room2: Rect):
     else:  # else it starts vertically
         level.create_vir_tunnel(y1, y2, x1)
         level.create_hor_tunnel(x1, x2, y2)
+
+    # average_x = round(x1 + x2)
+    # average_y = round(y1 + y2)
+
+    # if x2 - x1
 
 
 def split_leaf(leaf: Leaf):

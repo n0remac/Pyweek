@@ -47,6 +47,8 @@ if __name__ == "__main__":
         for x in range(0, level.width):
             if level.tiles[x][y] == 0:
                 row += " "
+            elif level.tiles[x][y] == 2:
+                row += "."
             else:
                 row += "#"
 
