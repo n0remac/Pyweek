@@ -29,11 +29,12 @@ def place_tile_into_level_layer(level, tile_id, x, y):
 
 
 def merge_level_layer_with_offset(
-        parent: Dict[AnyStr, List[List[int]]],
-        child: Dict[AnyStr, List[List[int]]],
-        offset_x: int,
-        offset_y: int,
-        layer: AnyStr):
+    parent: Dict[AnyStr, List[List[int]]],
+    child: Dict[AnyStr, List[List[int]]],
+    offset_x: int,
+    offset_y: int,
+    layer: AnyStr,
+):
 
     child_width = len(child[layer])
     child_height = len(child[layer][0])
@@ -46,10 +47,11 @@ def merge_level_layer_with_offset(
 
 
 def merge_levels_with_offset(
-        parent: Dict[AnyStr, List[List[int]]],
-        child: Dict[AnyStr, List[List[int]]],
-        offset_x: int,
-        offset_y: int):
+    parent: Dict[AnyStr, List[List[int]]],
+    child: Dict[AnyStr, List[List[int]]],
+    offset_x: int,
+    offset_y: int,
+):
     """
     Combines together two levels, adjusting for an offset.
     The child is placed at the given offset inside of the parent.

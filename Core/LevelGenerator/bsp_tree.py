@@ -23,7 +23,11 @@ def generate_bsp_level(map_width, map_height):
         split_successfully = False
         for leaf in leafs:
             if (leaf.child_1 is None) and (leaf.child_2 is None):
-                if (leaf.width > leaf.MAX_LEAF_SIZE) or (leaf.height > leaf.MAX_LEAF_SIZE) or (random.random() > 0.8):
+                if (
+                    (leaf.width > leaf.MAX_LEAF_SIZE)
+                    or (leaf.height > leaf.MAX_LEAF_SIZE)
+                    or (random.random() > 0.8)
+                ):
                     if split_leaf(leaf):  # try to split the leaf
                         leafs.append(leaf.child_1)
                         leafs.append(leaf.child_2)
@@ -48,4 +52,3 @@ if __name__ == "__main__":
 
         # Super basic way to print the level in ASCII
         print(row)
-

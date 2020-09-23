@@ -63,14 +63,14 @@ def split_leaf(leaf: Leaf):
     if (leaf.child_1 is not None) or (leaf.child_2 is not None):
         return False  # This leaf has already been split
 
-    '''
+    """
     ==== Determine the direction of the split ====
     If the width of the leaf is >25% larger than the height,
     split the leaf vertically.
     If the height of the leaf is >25 larger than the width,
     split the leaf horizontally.
     Otherwise, choose the direction at random.
-    '''
+    """
     split_horizontally = random.choice([True, False])
     if leaf.width / leaf.height >= 1.25:
         split_horizontally = False
@@ -85,7 +85,9 @@ def split_leaf(leaf: Leaf):
     if max_leaf <= leaf.MIN_LEAF_SIZE:
         return False  # the leaf is too small to split further
 
-    split = random.randint(leaf.MIN_LEAF_SIZE, max_leaf)  # determine where to split the leaf
+    split = random.randint(
+        leaf.MIN_LEAF_SIZE, max_leaf
+    )  # determine where to split the leaf
 
     if split_horizontally:
         leaf.child_1 = Leaf(leaf.x, leaf.y, leaf.width, split)

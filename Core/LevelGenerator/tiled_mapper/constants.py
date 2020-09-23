@@ -1,4 +1,24 @@
-open_floor_tile_ids = [6, 7, 8, 9, 16, 17, 18, 19, 22, 23, 26, 27, 28, 29, 70, 71, 72, 73, 79]
+open_floor_tile_ids = [
+    6,
+    7,
+    8,
+    9,
+    16,
+    17,
+    18,
+    19,
+    22,
+    23,
+    26,
+    27,
+    28,
+    29,
+    70,
+    71,
+    72,
+    73,
+    79,
+]
 
 # Used for the "infinite" void of wall space
 closed_wall_tile_ids = [78]
@@ -40,9 +60,13 @@ bottom_right_outer_horizontal_tunnel_wall_ids = [53]
 bottom_left_outer_horizontal_tunnel_wall_ids = [50]
 
 # all floor tiles
-all_open_floor_tiles = open_floor_tile_ids + top_left_inner_floor_tile_ids + top_right_inner_floor_tile_ids \
-                        + bottom_left_inner_floor_tile_ids + bottom_right_inner_floor_tile_ids
+all_open_floor_tiles = (
+    open_floor_tile_ids
+    + top_left_inner_floor_tile_ids
+    + top_right_inner_floor_tile_ids
+    + bottom_left_inner_floor_tile_ids
+    + bottom_right_inner_floor_tile_ids
+)
 
 # lights
 light_fixtures = [90, 93, 95]
-
