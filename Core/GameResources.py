@@ -72,6 +72,8 @@ class GameResources:
             fake_floor_layer,
             scaling=SPRITE_SCALING_TILES
         )
+
+        # Uncomment if you want to actually load the level from the Tiled map.
         # self.wall_list = arcade.tilemap.process_layer(
         #     my_map, "Walls", SPRITE_SCALING_TILES
         # )
