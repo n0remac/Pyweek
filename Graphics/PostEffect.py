@@ -1,11 +1,13 @@
 import arcade
 
-class PostEffect():
+
+class PostEffect:
     quad = None
+
     def __init__(self):
         if PostEffect.quad == None:
             PostEffect.quad = arcade.gl.geometry.quad_2d_fs()
-        #can be used to disable the effect
+        # can be used to disable the effect
         self.enabled = True
 
     def on_add(self, post_processing_chain, context, window_size):
