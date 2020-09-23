@@ -20,6 +20,11 @@ class Health:
         self.healthy_color = Color(healthy_color)
         self.dead_color = Color(dead_color)
 
+        #TODO: Pass in values ?
+        #used to get some HDR and light bloom going at full HP
+        self.light_power_dead = 0.9
+        self.light_Power_full = 2.0
+
         self.vignette_effect = post_processing_manager.get_effect(Vignette)
 
         #TODO: Expose to constructor ?
@@ -64,14 +69,21 @@ class Health:
 
         factor = self.health_percentage
 
-        # This is so stupid. Need real game vector math library
+        # This is not great Need real game vector math library
         # Also a color library with no mix or lerp ? (Or i just can't read and find it)
-        # This is lerp
+        # lerp between colors in hsl and then convert to rgb.
         result = (Health.lerp(a[x], b[x], factor) for x in range(3))
         
         ret_val = Color()
         ret_val.set_hsl(result)
-        return ret_val.rgb
+        ret_val = ret_val.rgb
+
+        #Apply HRD type stuff
+        light_power = Health.lerp(self.light_power_dead, self.light_Power_full, self.health_percentage)
+        #Oh well.
+        ret_val = (ret_val[0] * light_power, ret_val[1] * light_power, ret_val[2] * light_power)
+
+        return ret_val
 
     def lerp(a, b, factor):
         return (a*(1.0-factor)) + (b*factor)
