@@ -1,10 +1,12 @@
 import arcade
 import math
 
-from Constants.Physics import PLAYER_MOVEMENT_SPEED, BULLET_MOVE_FORCE
+from Constants.Physics import BULLET_MOVE_FORCE
 
 
 class ProjectileManager:
+    """ Handles mouse press presses to fire bullets and creates bullet objects. """
+
     def __init__(self, game_resources):
 
         self.game_resources = game_resources
@@ -16,6 +18,12 @@ class ProjectileManager:
             body_type=arcade.PymunkPhysicsEngine.STATIC,
         )
 
+        self.projectile_physics.add_sprite_list(
+            self.game_resources.object_list,
+            collision_type="object",
+            body_type=arcade.PymunkPhysicsEngine.STATIC,
+        )
+
         def wall_hit_handler(bullet_sprite, _wall_sprite, _arbiter, _space, _data):
             """ Called for bullet/wall collision """
             bullet_sprite.remove_from_sprite_lists()
@@ -24,14 +32,14 @@ class ProjectileManager:
             "bullet", "wall", post_handler=wall_hit_handler
         )
 
-        '''
-        def item_hit_handler(bullet_sprite, item_sprite, _arbiter, _space, _data):
+        def object_hit_handler(bullet_sprite, _object_sprite, _arbiter, _space, _data):
             """ Called for bullet/wall collision """
             bullet_sprite.remove_from_sprite_lists()
-            item_sprite.remove_from_sprite_lists()
+            _object_sprite.remove_from_sprite_lists()
 
-        self.projectile_physics.add_collision_handler("bullet", "item", post_handler=item_hit_handler)
-        '''
+        self.projectile_physics.add_collision_handler(
+            "bullet", "object", post_handler=object_hit_handler
+        )
 
     def on_mouse_press(self, x, y, button, modifiers):
         """ Called whenever the mouse button is clicked. """

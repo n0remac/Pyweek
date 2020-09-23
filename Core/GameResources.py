@@ -14,6 +14,7 @@ class GameResources:
         self.sprite_list = arcade.SpriteList()
         self.player_list = arcade.SpriteList()
         self.bullet_list = arcade.SpriteList()
+        self.object_list = arcade.SpriteList()
 
         # Read in the tiled map
         map_name = "Graphics/test_map.tmx"
@@ -45,3 +46,4 @@ class GameResources:
         self.light_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         self.bullet_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         self.player_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+

@@ -1,5 +1,5 @@
 import arcade
-
+import time
 from Constants.Game import SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE
 from Core.GameInstance import GameInstance
 from Core.RendererFactory import RendererFactory
@@ -7,7 +7,7 @@ from Core.RendererFactory import RendererFactory
 from Graphics.SceneRenderer import SceneRenderer
 
 from Graphics.PostProcessing.Tonemap import Tonemap
-
+from Graphics.Particles.TestParticleSystem import TestParticleSystem
 
 class GameWindow(arcade.Window):
     """ Main Window """
@@ -22,7 +22,6 @@ class GameWindow(arcade.Window):
         """ Set up everything with the game """
 
         window_size = self.get_size()
-        self.game_instance = GameInstance()
 
         self.test_sprite = arcade.Sprite("Graphics/test_image.png")
         self.test_sprite.center_x = 100
@@ -49,24 +48,39 @@ class GameWindow(arcade.Window):
             96.0,
         )  # Radius
 
-        # self.light.destroy()
+        self.particles = TestParticleSystem(self.ctx)
+
+        #self.light.destroy()
+
+        self.start_time = time.time()
+        self.current_time = 0.0
+
 
     def on_draw(self):
-        # draw the game
+        self.current_time = time.time() - self.start_time
+
+        #draw the game
         self.scene_renderer.draw_scene()
 
     # This method should be used to draw everything efected by lighting and post-processing
     def on_draw_scene(self):
         self.test_list.draw()
+
+
         pass
 
     # Everything drawn in here will be drawn with blend mode:Additive. Use for glowing stuff that ignores lighting
     def on_draw_emissive(self):
+        self.particles.render(self.ctx.projection_2d_matrix)
         pass
 
     # Drawn after all post processing, for things like UI
     def on_draw_after_post(self):
         pass
+
+    def on_mouse_press(self, x, y, button, modifiers):
+        self.particles.do_burst( (x,y))
+
 
 
 def main():

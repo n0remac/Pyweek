@@ -7,9 +7,14 @@ from Core.GameResources import GameResources
 def setup_physics_engine(game_resources: GameResources):
     # --- Pymunk Physics Engine Setup ---
 
+    # Make a list for all impassable objects
+    solids = game_resources.wall_list
+    for obj in game_resources.object_list:
+        solids.append(obj)
+
     # Create the physics engine
     physics_engine = arcade.PhysicsEngineSimple(
-        game_resources.player_sprite, game_resources.wall_list
+        game_resources.player_sprite, solids
     )
 
     return physics_engine

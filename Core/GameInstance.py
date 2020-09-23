@@ -4,9 +4,10 @@ import math
 from Constants.Physics import PLAYER_MOVEMENT_SPEED
 from Core.GameResources import GameResources
 from Core.RendererFactory import RendererFactory
-from Core.Projectiles.Projectile_Manager import ProjectileManager
+from Core.ObjectManager import ObjectManager
+from Core.Projectile_Manager import ProjectileManager
 from Physics.PhysicsEngine import setup_physics_engine
-
+from Graphics.Particles.Torch.TorchSystem import TorchSystem
 
 class GameInstance:
     """
@@ -20,10 +21,14 @@ class GameInstance:
 
         # Core game resources
         self.game_resources = GameResources()
+        self.object_manager = ObjectManager(self.game_resources)
         self.projectile_manager = ProjectileManager(self.game_resources)
 
         # Physics engine
         self.physics_engine = setup_physics_engine(self.game_resources)
+
+        self.horizontal_key_list = []
+        self.verticle_key_list = []
 
         # create default scene renderer via factory.
         # This configures the post processing stack and default lighting
@@ -60,6 +65,9 @@ class GameInstance:
             160.0,
         )  # Radius
 
+        #torch particle system
+        self.torch_particle_system = TorchSystem(window.ctx)
+
         # dict used to determine radius of light based on light_type
         radius_by_type = {"torch": 70.0, "candle": 40.0}
 
@@ -77,29 +85,44 @@ class GameInstance:
                 )  # Radius
             )
 
+            if light.properties["type"] == 'torch':
+                self.torch_particle_system.add_torch((light.center_x, light.center_y))
+            else:
+                self.torch_particle_system.add_candle((light.center_x, light.center_y))
+              
+        self.torch_particle_system.build_buffer()
+
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed. """
 
         if key == arcade.key.UP or key == arcade.key.W:
-            self.game_resources.player_sprite.change_y = PLAYER_MOVEMENT_SPEED
+            self.verticle_key_list.insert(0, PLAYER_MOVEMENT_SPEED)
         elif key == arcade.key.DOWN or key == arcade.key.S:
-            self.game_resources.player_sprite.change_y = -PLAYER_MOVEMENT_SPEED
+            self.verticle_key_list.insert(0, -PLAYER_MOVEMENT_SPEED)
         elif key == arcade.key.LEFT or key == arcade.key.A:
-            self.game_resources.player_sprite.change_x = -PLAYER_MOVEMENT_SPEED
+            self.horizontal_key_list.insert(0, -PLAYER_MOVEMENT_SPEED)
         elif key == arcade.key.RIGHT or key == arcade.key.D:
-            self.game_resources.player_sprite.change_x = PLAYER_MOVEMENT_SPEED
+            self.horizontal_key_list.insert(0, PLAYER_MOVEMENT_SPEED)
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """
 
         if key == arcade.key.UP or key == arcade.key.W:
             self.game_resources.player_sprite.change_y = 0
+            if len(self.verticle_key_list) > 0:
+                self.verticle_key_list.remove(PLAYER_MOVEMENT_SPEED)
         elif key == arcade.key.DOWN or key == arcade.key.S:
             self.game_resources.player_sprite.change_y = 0
+            if len(self.verticle_key_list) > 0:
+                self.verticle_key_list.remove(-PLAYER_MOVEMENT_SPEED)
         elif key == arcade.key.LEFT or key == arcade.key.A:
             self.game_resources.player_sprite.change_x = 0
+            if len(self.horizontal_key_list) > 0:
+                self.horizontal_key_list.remove(-PLAYER_MOVEMENT_SPEED)
         elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.game_resources.player_sprite.change_x = 0
+            if len(self.horizontal_key_list) > 0:
+                self.horizontal_key_list.remove(PLAYER_MOVEMENT_SPEED)
 
     def on_mouse_motion(self, x, y, dx, dy):
         pass
@@ -117,6 +140,7 @@ class GameInstance:
 
     # Everything drawn in here will be drawn with blend mode:Additive. Use for glowing stuff that ignores lighting
     def on_draw_emissive(self):
+        self.torch_particle_system.render(self.window.ctx.projection_2d_matrix)
         pass
 
     # Drawn after all post processing, for things like UI
@@ -125,6 +149,11 @@ class GameInstance:
 
     def on_update(self, delta_time):
         """ Movement and game logic """
+        if len(self.horizontal_key_list) > 0:
+            self.game_resources.player_sprite.change_x = self.horizontal_key_list[0]
+
+        if len(self.verticle_key_list) > 0:
+            self.game_resources.player_sprite.change_y = self.verticle_key_list[0]
 
         # Move the player with the physics engine
         self.physics_engine.update()
