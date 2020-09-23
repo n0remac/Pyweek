@@ -2,6 +2,7 @@ import arcade
 import math
 
 from Constants.Physics import PLAYER_MOVEMENT_SPEED
+from Core.EnemyManager import EnemyManager, Enemy
 from Core.GameResources import GameResources
 from Core.RendererFactory import RendererFactory
 from Core.ObjectManager import ObjectManager
@@ -24,6 +25,7 @@ class GameInstance:
         self.game_resources = GameResources()
         self.object_manager = ObjectManager(self.game_resources)
         self.projectile_manager = ProjectileManager(self.game_resources)
+        self.enemy_manager = EnemyManager(self.game_resources)
 
         # Physics engine
         self.physics_engine = setup_physics_engine(self.game_resources)
@@ -95,6 +97,9 @@ class GameInstance:
               
         self.torch_particle_system.build_buffer()
 
+        # Create enemy
+        self.enemy = self.enemy_manager.create_enemy(100, 100, self.game_resources.player_sprite.position, self.game_resources.map)
+
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed. """
 
@@ -164,11 +169,12 @@ class GameInstance:
         # Makes enemy collide with walls
         self.enemy_physics_engine.update()
 
-        self.path = arcade.astar_calculate_path(self.game_resources.enemy.enemy_sprite.position,
+        self.path = arcade.astar_calculate_path(self.game_resources.enemy_list[0].position,
                                 self.game_resources.player_sprite.position,
                                 self.game_resources.barrier_list,
                                 diagonal_movement=False)
-        self.game_resources.enemy.on_update(self.path, self.game_resources.player_sprite.position)
+
+        # print("player pos", self.game_resources.player_sprite.position)
 
         # move projectiles
         self.projectile_manager.on_update(delta_time)

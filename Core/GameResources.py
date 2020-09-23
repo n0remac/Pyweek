@@ -1,7 +1,7 @@
 import arcade
 
 from Constants.Game import SPRITE_SCALING_TILES, SPRITE_SCALING_PLAYER, SPRITE_SIZE
-from Core.Enemy import Enemy
+from Core.EnemyManager import EnemyManager
 
 
 class GameResources:
@@ -21,6 +21,7 @@ class GameResources:
         # Read in the tiled map
         map_name = "Graphics/test_map.tmx"
         my_map = arcade.tilemap.read_tmx(map_name)
+        self.map = my_map
         self.wall_list = arcade.tilemap.process_layer(
             my_map, "Walls", SPRITE_SCALING_TILES
         )
@@ -44,11 +45,11 @@ class GameResources:
         # Add to player sprite list
         self.player_list.append(self.player_sprite)
 
+        # Enemy Manager
+        self.enemy_manager = EnemyManager(self)
         # Enemy
-        self.enemy = Enemy(grid_x, grid_y, [self.player_sprite.center_x, self.player_sprite.center_y], my_map)
-        
-        # Add to enemy sprite list
-        self.enemy_list.append(self.enemy.enemy_sprite)
+        self.enemy_manager.create_enemy(1, 1, [self.player_sprite.center_x, self.player_sprite.center_y], my_map)
+        self.enemy_manager.create_enemy(2, 2, [self.player_sprite.center_x, self.player_sprite.center_y], my_map)
 
         grid_size = SPRITE_SIZE
 
@@ -57,14 +58,13 @@ class GameResources:
         playing_field_top_boundary = SPRITE_SIZE * 17
         playing_field_bottom_boundary = -SPRITE_SIZE * 2
 
-        self.barrier_list = arcade.AStarBarrierList(self.enemy.enemy_sprite,
+        self.barrier_list = arcade.AStarBarrierList(self.enemy_list[0],
                                                     self.wall_list,
                                                     grid_size,
                                                     playing_field_left_boundary,
                                                     playing_field_right_boundary,
                                                     playing_field_bottom_boundary,
                                                     playing_field_top_boundary)
-        self.path = self.enemy.path
 
     def on_mouse_motion(self, x, y, dx, dy):
         pass
@@ -77,7 +77,6 @@ class GameResources:
         self.bullet_list.draw()
         self.player_list.draw()
         self.enemy_list.draw()
-        self.enemy.draw()
 
     def on_update(self, delta_time):
         pass
