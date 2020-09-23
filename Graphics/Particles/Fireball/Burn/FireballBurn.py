@@ -47,7 +47,7 @@ class FireballBurn(ParticleSystem):
         if len(projectile_list) == 0:
             return
         vao = self.build_buffer(projectile_list)
-        self.emit_with_program(self.burst_program, len(projectile_list), buffer=vao)
+        self.emit_with_program(self.burst_program, len(projectile_list), vao=vao)
         print(len(projectile_list))
         pass
 

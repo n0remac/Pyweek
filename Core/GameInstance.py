@@ -76,6 +76,9 @@ class GameInstance:
         #TODO:MOVE THIS STUFF
         self.fireball_system = FireBall(window.ctx, self.projectile_manager.projectile_physics)
 
+        self.projectile_manager.on_bullet_death = self.fireball_system.on_particle_death
+
+
         # dict used to determine radius of light based on light_type
         radius_by_type = {"torch": 70.0, "candle": 40.0}
 

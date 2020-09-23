@@ -57,7 +57,7 @@ class TorchSystem(ParticleSystem):
 
 
     def do_burst(self):
-        self.emit_with_program(self.burst_program, self.burst_count, buffer=self.custom_emission)
+        self.emit_with_program(self.burst_program, self.burst_count, vao=self.custom_emission)
         pass
 
     def render(self, projection_matrix):

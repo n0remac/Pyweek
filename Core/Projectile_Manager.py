@@ -28,12 +28,19 @@ class ProjectileManager:
             """ Called for bullet/wall collision """
             bullet_sprite.remove_from_sprite_lists()
 
+            if self.on_bullet_death is not None:
+                self.on_bullet_death(bullet_sprite)
+
         self.projectile_physics.add_collision_handler(
             "bullet", "wall", post_handler=wall_hit_handler
         )
 
         def object_hit_handler(bullet_sprite, _object_sprite, _arbiter, _space, _data):
             """ Called for bullet/wall collision """
+
+            if self.on_bullet_death is not None:
+                self.on_bullet_death(bullet_sprite)
+
             bullet_sprite.remove_from_sprite_lists()
             _object_sprite.remove_from_sprite_lists()
 
