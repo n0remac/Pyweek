@@ -9,7 +9,7 @@ from Core.Projectile_Manager import ProjectileManager
 from Core.HealthRing import Health
 from Physics.PhysicsEngine import setup_physics_engine
 from Graphics.Particles.Torch.TorchSystem import TorchSystem
-from Graphics.Particles.Fireball.FireballBurn import FireballBurn
+from Graphics.Particles.Fireball.Fireball import FireBall
 
 class GameInstance:
     """
@@ -74,7 +74,7 @@ class GameInstance:
         self.torch_particle_system = TorchSystem(window.ctx)
 
         #TODO:MOVE THIS STUFF
-        self.fireball_system = FireballBurn(window.ctx, self.projectile_manager.projectile_physics)
+        self.fireball_system = FireBall(window.ctx, self.projectile_manager.projectile_physics)
 
         # dict used to determine radius of light based on light_type
         radius_by_type = {"torch": 70.0, "candle": 40.0}

@@ -6,7 +6,7 @@ from array import array
 from Graphics.Particles.ParticleSystem import ParticleSystem
 
 
-class FireballBurn(ParticleSystem):
+class FireballTrail(ParticleSystem):
 
 
     def __init__(self, context, physics):
@@ -17,13 +17,13 @@ class FireballBurn(ParticleSystem):
         self.physics = physics
 
         self.program = context.load_program(
-            vertex_shader='Graphics/Particles/Fireball/fireball_burn.vs',
-            geometry_shader='Graphics/Particles/Fireball/fireball_burn.gs',
-            fragment_shader='Graphics/Particles/Fireball/fireball_burn.fs'
+            vertex_shader='Graphics/Particles/Fireball/Trail/fireball_trail.vs',
+            geometry_shader='Graphics/Particles/Fireball/Trail/fireball_trail.gs',
+            fragment_shader='Graphics/Particles/Fireball/Trail/fireball_trail.fs'
         )
 
         self.burst_program = context.load_program(
-            vertex_shader='Graphics/Particles/Fireball/fireball_burn_emit.vs', 
+            vertex_shader='Graphics/Particles/Fireball/Trail/fireball_trail_emit.vs', 
         )
 
         self.init_system(
@@ -37,7 +37,7 @@ class FireballBurn(ParticleSystem):
 
     def render(self, projection_matrix, projectile_list):
         self.frame_count += 1
-        if (self.frame_count % 1 == 0):
+        if (self.frame_count % 2 == 0):
             self.do_emission(projectile_list)
 
         super().render(projection_matrix)
