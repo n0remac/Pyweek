@@ -4,7 +4,17 @@ from random import random
 import arcade
 from pytiled_parser.objects import TileLayer, Size
 
-from Constants.Game import SPRITE_SCALING_TILES, SPRITE_SCALING_PLAYER, SPRITE_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT
+from Constants.Game import (
+    SPRITE_SCALING_TILES,
+    SPRITE_SCALING_PLAYER,
+    SPRITE_SIZE,
+    SCREEN_WIDTH,
+    SCREEN_HEIGHT,
+    LEFT_VIEWPORT_MARGIN,
+    RIGHT_VIEWPORT_MARGIN,
+    BOTTOM_VIEWPORT_MARGIN,
+    TOP_VIEWPORT_MARGIN,
+)
 from Core.LevelGenerator.generate_game_level import generate_game_level
 
 
@@ -21,6 +31,10 @@ class GameResources:
         self.bullet_list = arcade.SpriteList()
         self.object_list = arcade.SpriteList()
 
+        # Used to keep track of our scrolling
+        self.view_bottom = 0
+        self.view_left = 0
+
         # Read in the tiled map
         map_name = "Graphics/test_map.tmx"
         my_map = arcade.tilemap.read_tmx(map_name)
@@ -34,7 +48,7 @@ class GameResources:
             layer_data=generated_map["Walls"],
             offset=None,
             opacity=None,
-            properties=None
+            properties=None,
         )
 
         fake_floor_layer = TileLayer(
@@ -44,7 +58,7 @@ class GameResources:
             layer_data=generated_map["Floor"],
             offset=None,
             opacity=None,
-            properties=None
+            properties=None,
         )
 
         fake_lighting_layer = TileLayer(
@@ -54,23 +68,17 @@ class GameResources:
             layer_data=generated_map["Lighting"],
             offset=None,
             opacity=None,
-            properties=None
+            properties=None,
         )
 
         self.wall_list = arcade.tilemap._process_tile_layer(
-            my_map,
-            fake_walls_layer,
-            scaling=SPRITE_SCALING_TILES
+            my_map, fake_walls_layer, scaling=SPRITE_SCALING_TILES
         )
         self.light_list = arcade.tilemap._process_tile_layer(
-            my_map,
-            fake_lighting_layer,
-            scaling=SPRITE_SCALING_TILES
+            my_map, fake_lighting_layer, scaling=SPRITE_SCALING_TILES
         )
         self.floor_list = arcade.tilemap._process_tile_layer(
-            my_map,
-            fake_floor_layer,
-            scaling=SPRITE_SCALING_TILES
+            my_map, fake_floor_layer, scaling=SPRITE_SCALING_TILES
         )
 
         # Uncomment if you want to actually load the level from the Tiled map.
@@ -98,12 +106,50 @@ class GameResources:
         self.player_list.append(self.player_sprite)
 
     def on_draw(self):
-        arcade.set_viewport(
-            self.player_sprite.center_x - round(SCREEN_WIDTH / 2),
-            self.player_sprite.center_x + round(SCREEN_WIDTH / 2),
-            self.player_sprite.center_y - round(SCREEN_HEIGHT / 2),
-            self.player_sprite.center_y + round(SCREEN_HEIGHT / 2),
-        )
+        # --- Manage Scrolling ---
+
+        # Track if we need to change the viewport
+
+        changed = False
+
+        # Scroll left
+        left_boundary = self.view_left + LEFT_VIEWPORT_MARGIN
+        if self.player_sprite.left < left_boundary:
+            self.view_left -= left_boundary - self.player_sprite.left
+            changed = True
+
+        # Scroll right
+        right_boundary = self.view_left + SCREEN_WIDTH - RIGHT_VIEWPORT_MARGIN
+        if self.player_sprite.right > right_boundary:
+            self.view_left += self.player_sprite.right - right_boundary
+            changed = True
+
+        # Scroll up
+        top_boundary = self.view_bottom + SCREEN_HEIGHT - TOP_VIEWPORT_MARGIN
+        if self.player_sprite.top > top_boundary:
+            self.view_bottom += self.player_sprite.top - top_boundary
+            changed = True
+
+        # Scroll down
+        bottom_boundary = self.view_bottom + BOTTOM_VIEWPORT_MARGIN
+        if self.player_sprite.bottom < bottom_boundary:
+            self.view_bottom -= bottom_boundary - self.player_sprite.bottom
+            changed = True
+
+        if changed:
+            # Only scroll to integers. Otherwise we end up with pixels that
+            # don't line up on the screen
+            self.view_bottom = int(self.view_bottom)
+            self.view_left = int(self.view_left)
+
+            # Do the scrolling
+            arcade.set_viewport(
+                self.view_left,
+                SCREEN_WIDTH + self.view_left,
+                self.view_bottom,
+                SCREEN_HEIGHT + self.view_bottom,
+            )
+
         self.wall_list.draw()
         self.floor_list.draw()
         self.light_list.draw()

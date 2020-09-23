@@ -52,4 +52,3 @@ class Level:
 
         for y in range(start, end):
             self.tiles[x][y] = 0
-

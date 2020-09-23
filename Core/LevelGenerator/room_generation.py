@@ -1,8 +1,9 @@
-
 # Used for the areas that the player is able to navigate
 import random
 from Core.LevelGenerator.tiled_mapper.constants import *
-from Core.LevelGenerator.tiled_mapper.tiled_compatible_level import generate_tiled_compatible_level
+from Core.LevelGenerator.tiled_mapper.tiled_compatible_level import (
+    generate_tiled_compatible_level,
+)
 
 
 def get_tile_from_list(tile_list):
@@ -47,7 +48,9 @@ def generate_room(width, height):
     floors[1][1] = get_tile_from_list(top_left_inner_floor_tile_ids)
     floors[width - 2][1] = get_tile_from_list(top_right_inner_floor_tile_ids)
     floors[1][height - 2] = get_tile_from_list(bottom_left_inner_floor_tile_ids)
-    floors[width - 2][height - 2] = get_tile_from_list(bottom_right_inner_floor_tile_ids)
+    floors[width - 2][height - 2] = get_tile_from_list(
+        bottom_right_inner_floor_tile_ids
+    )
 
     # Fill open floor tiles
     for y in range(2, height - 1):
@@ -74,9 +77,15 @@ def generate_tunnel(width, height):
     if height > width:
         # set corner pieces of tunnel
         walls[0][0] = get_tile_from_list(top_left_outer_vertical_tunnel_wall_ids)
-        walls[width - 1][0] = get_tile_from_list(top_right_outer_vertical_tunnel_wall_ids)
-        walls[0][height - 1] = get_tile_from_list(bottom_right_outer_vertical_tunnel_wall_ids)
-        walls[width - 1][height - 1] = get_tile_from_list(bottom_left_outer_vertical_tunnel_wall_ids)
+        walls[width - 1][0] = get_tile_from_list(
+            top_right_outer_vertical_tunnel_wall_ids
+        )
+        walls[0][height - 1] = get_tile_from_list(
+            bottom_right_outer_vertical_tunnel_wall_ids
+        )
+        walls[width - 1][height - 1] = get_tile_from_list(
+            bottom_left_outer_vertical_tunnel_wall_ids
+        )
 
         # set left right side walls
         for y in range(1, height - 1):
@@ -93,8 +102,12 @@ def generate_tunnel(width, height):
     # set corner pieces of tunnel
     walls[0][0] = get_tile_from_list(top_left_outer_horizontal_tunnel_wall_ids)
     walls[width - 1][0] = get_tile_from_list(top_right_outer_horizontal_tunnel_wall_ids)
-    walls[0][height - 1] = get_tile_from_list(bottom_right_outer_horizontal_tunnel_wall_ids)
-    walls[width - 1][height - 1] = get_tile_from_list(bottom_left_outer_horizontal_tunnel_wall_ids)
+    walls[0][height - 1] = get_tile_from_list(
+        bottom_right_outer_horizontal_tunnel_wall_ids
+    )
+    walls[width - 1][height - 1] = get_tile_from_list(
+        bottom_left_outer_horizontal_tunnel_wall_ids
+    )
 
     # set top bottom side walls
     for x in range(1, width - 1):
@@ -107,7 +120,3 @@ def generate_tunnel(width, height):
             floors[x][y] = get_tile_from_list(open_floor_tile_ids)
 
     return level
-
-
-
-

@@ -9,6 +9,7 @@ from Graphics.SceneRenderer import SceneRenderer
 from Graphics.PostProcessing.Tonemap import Tonemap
 from Graphics.Particles.TestParticleSystem import TestParticleSystem
 
+
 class GameWindow(arcade.Window):
     """ Main Window """
 
@@ -50,22 +51,20 @@ class GameWindow(arcade.Window):
 
         self.particles = TestParticleSystem(self.ctx)
 
-        #self.light.destroy()
+        # self.light.destroy()
 
         self.start_time = time.time()
         self.current_time = 0.0
 
-
     def on_draw(self):
         self.current_time = time.time() - self.start_time
 
-        #draw the game
+        # draw the game
         self.scene_renderer.draw_scene()
 
     # This method should be used to draw everything efected by lighting and post-processing
     def on_draw_scene(self):
         self.test_list.draw()
-
 
         pass
 
@@ -79,8 +78,7 @@ class GameWindow(arcade.Window):
         pass
 
     def on_mouse_press(self, x, y, button, modifiers):
-        self.particles.do_burst( (x,y))
-
+        self.particles.do_burst((x, y))
 
 
 def main():

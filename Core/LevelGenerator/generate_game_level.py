@@ -5,8 +5,10 @@ from Core.LevelGenerator.bsp_tree import generate_bsp_level
 from Core.LevelGenerator.room_generation import generate_room, generate_tunnel
 
 from Core.LevelGenerator.shapes import Rect
-from Core.LevelGenerator.tiled_mapper.tiled_compatible_level import generate_tiled_compatible_level, \
-    merge_levels_with_offset
+from Core.LevelGenerator.tiled_mapper.tiled_compatible_level import (
+    generate_tiled_compatible_level,
+    merge_levels_with_offset,
+)
 
 
 def place_room(room: Rect, output_level: Dict[AnyStr, List[List[int]]]):
@@ -71,12 +73,9 @@ def generate_tunnels_between_rooms_from_base_tunnel(rooms: List[Rect], tunnel: R
             tunnel_y = room_1.y2
             tunnel_width = 3
             tunnel_height = room_2.y1 - room_1.y2
-            output_tunnel_chunks.append(Rect(
-                tunnel_x,
-                tunnel_y,
-                tunnel_width,
-                tunnel_height
-            ))
+            output_tunnel_chunks.append(
+                Rect(tunnel_x, tunnel_y, tunnel_width, tunnel_height)
+            )
             break
 
         # Get the center of the room, offset by 1 to align it
@@ -84,12 +83,9 @@ def generate_tunnels_between_rooms_from_base_tunnel(rooms: List[Rect], tunnel: R
         tunnel_y = room_1.x2
         tunnel_width = room_2.x1 - room_1.x2
         tunnel_height = 3
-        output_tunnel_chunks.append(Rect(
-            tunnel_x,
-            tunnel_y,
-            tunnel_width,
-            tunnel_height
-        ))
+        output_tunnel_chunks.append(
+            Rect(tunnel_x, tunnel_y, tunnel_width, tunnel_height)
+        )
 
     return output_tunnel_chunks
 
