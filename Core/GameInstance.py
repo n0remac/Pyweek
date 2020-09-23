@@ -139,8 +139,7 @@ class GameInstance:
                                 self.game_resources.player_sprite.position,
                                 self.game_resources.barrier_list,
                                 diagonal_movement=False)
-
-        self.game_resources.enemy.on_update(self.path)
+        self.game_resources.enemy.on_update(self.path, self.game_resources.player_sprite.position)
 
         # move projectiles
         self.projectile_manager.on_update(delta_time)
