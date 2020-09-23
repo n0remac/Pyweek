@@ -56,8 +56,8 @@ bottom_left_outer_vertical_tunnel_wall_ids = top_outer_wall_tile_ids
 # horizontal tunnel corner pieces
 top_left_outer_horizontal_tunnel_wall_ids = top_outer_wall_tile_ids
 top_right_outer_horizontal_tunnel_wall_ids = top_outer_wall_tile_ids
-bottom_right_outer_horizontal_tunnel_wall_ids = [53]
-bottom_left_outer_horizontal_tunnel_wall_ids = [50]
+bottom_right_outer_horizontal_tunnel_wall_ids = [50]
+bottom_left_outer_horizontal_tunnel_wall_ids = [53]
 
 # all floor tiles
 all_open_floor_tiles = (

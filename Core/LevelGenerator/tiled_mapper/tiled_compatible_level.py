@@ -66,3 +66,7 @@ def merge_levels_with_offset(
             raise Exception("Unable to merge maps because of missing layer")
 
         merge_level_layer_with_offset(parent, child, offset_x, offset_y, layer)
+
+if __name__ == "__main__":
+    level = generate_tiled_compatible_level(2, 3)
+    print(level)

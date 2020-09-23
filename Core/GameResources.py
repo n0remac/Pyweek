@@ -15,7 +15,9 @@ from Constants.Game import (
     BOTTOM_VIEWPORT_MARGIN,
     TOP_VIEWPORT_MARGIN,
 )
-from Core.LevelGenerator.generate_game_level import generate_game_level
+from Core.LevelGenerator.generate_game_level import generate_game_level, place_room, place_tunnel
+from Core.LevelGenerator.shapes import Rect
+from Core.LevelGenerator.tiled_mapper.tiled_compatible_level import generate_tiled_compatible_level
 
 
 class GameResources:
@@ -39,7 +41,16 @@ class GameResources:
         map_name = "Graphics/test_map.tmx"
         my_map = arcade.tilemap.read_tmx(map_name)
 
+        # Procedurally generated map
         generated_map = generate_game_level(100, 100)
+
+        # Static map for testing
+        # generated_map = generate_tiled_compatible_level(70, 70)
+        # place_room(Rect(1, 1, 5, 5), generated_map)
+        # place_room(Rect(10, 1, 10, 10), generated_map)
+        # place_room(Rect(1, 10, 8, 8), generated_map)
+        # place_tunnel(Rect(6, 3, 5, 1), generated_map)
+        # place_tunnel(Rect(3, 6, 1, 5), generated_map)
 
         fake_walls_layer = TileLayer(
             id_=1,

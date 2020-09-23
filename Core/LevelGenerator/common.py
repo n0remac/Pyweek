@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import math
 import random
+from typing import Optional
 
 from Core.LevelGenerator.level import Level
 from Core.LevelGenerator.shapes import Rect
@@ -24,14 +26,14 @@ def create_rooms(level: Level, leaf: Leaf):
 
     else:
         # Create rooms in the end branches of the bsp tree
-        w = random.randint(leaf.ROOM_MIN_SIZE, min(leaf.ROOM_MAX_SIZE, leaf.width - 1))
-        h = random.randint(leaf.ROOM_MIN_SIZE, min(leaf.ROOM_MAX_SIZE, leaf.height - 1))
+        w = random.randint(math.floor(leaf.width / 2 + 1), min(leaf.MAX_LEAF_SIZE - 2, leaf.width - 1))
+        h = random.randint(math.floor(leaf.height / 2 + 1), min(leaf.MAX_LEAF_SIZE - 2, leaf.height - 1))
         x = random.randint(leaf.x, leaf.x + (leaf.width - 1) - w)
         y = random.randint(leaf.y, leaf.y + (leaf.height - 1) - h)
 
         # TODO: Make this side-effect free
         leaf.room = Rect(x, y, w, h)
-        level.create_room(leaf.room)
+        level.create_room(leaf.room, leaf.id)
 
 
 def are_vertically_aligned(room1: Rect, room2: Rect):
@@ -49,7 +51,9 @@ def are_vertically_aligned(room1: Rect, room2: Rect):
 
 def create_hall(level: Level, room1: Rect, room2: Rect):
     """
-    Connect two rooms by hallways
+    Connect two rooms by hallways.
+    This algorithm works by detecting alignment between two rooms, then creating a hallway between the "overlap" of
+    the rooms. It's pretty basic, but it works.
     :param level: Instance of the level to add the hallway for
     :param room1: First room to connect
     :param room2: Second room to connect
@@ -58,54 +62,37 @@ def create_hall(level: Level, room1: Rect, room2: Rect):
     x1, y1 = room1.center()
     x2, y2 = room2.center()
 
-    # vertically_aligned = are_vertically_aligned(room1, room2)
-    #
-    # if vertically_aligned:
-    #     if room1.y2 < room2.y1:
-    #         top = room1.y2 + 1
-    #         bottom = room2.y1 - 1
-    #     else:
-    #         top = room2.y2 + 1
-    #         bottom = room1.y1 - 1
-    #
-    #     if x1 < x2:
-    #         left = x1 + round((x2 - x1) / 2)
-    #     else:
-    #         left = x2 + round((x1 - x2) / 2)
-    #
-    #     level.create_vir_tunnel(top, bottom, left)
-    #     return
+    vertically_aligned = are_vertically_aligned(room1, room2)
 
-    # if room1.x2 < room2.x1:
-    #     left = room1.x2
-    #     right = room2.x1
-    # else:
-    #     left = room2.x2
-    #     right = room1.x1
-    #
-    # if y1 < y2:
-    #     top = y1 + round((y2 - y1) / 2)
-    # else:
-    #     top = y2 + round((y1 - y2) / 2)
-    #
-    # level.create_hor_tunnel(left, right, top)
+    if vertically_aligned:
+        if room1.y2 < room2.y1:
+            top = room1.y2
+            bottom = room2.y1 + 1
+        else:
+            top = room2.y2
+            bottom = room1.y1
 
-    #
-    # print("tun: ", x1, y1, x2, y2, )
-    #
-    # 50% chance that a tunnel will start horizontally
-    if random.randint(0, 1) == 1:
-        level.create_hor_tunnel(x1, x2, y1)
-        level.create_vir_tunnel(y1, y2, x2)
+        if x1 < x2:
+            left = x1 + round((x2 - x1) / 2)
+        else:
+            left = x2 + round((x1 - x2) / 2)
 
-    else:  # else it starts vertically
-        level.create_vir_tunnel(y1, y2, x1)
-        level.create_hor_tunnel(x1, x2, y2)
+        level.create_vir_tunnel(top, bottom, left)
+        return
 
-    # average_x = round(x1 + x2)
-    # average_y = round(y1 + y2)
+    if room1.x2 < room2.x1:
+        left = room1.x2
+        right = room2.x1
+    else:
+        left = room2.x2
+        right = room1.x1
 
-    # if x2 - x1
+    if y1 < y2:
+        top = y1 + round((y2 - y1) / 2)
+    else:
+        top = y2 + round((y1 - y2) / 2)
+
+    level.create_hor_tunnel(left, right, top)
 
 
 def split_leaf(leaf: Leaf):
@@ -145,11 +132,11 @@ def split_leaf(leaf: Leaf):
     )  # determine where to split the leaf
 
     if split_horizontally:
-        leaf.child_1 = Leaf(leaf.x, leaf.y, leaf.width, split)
-        leaf.child_2 = Leaf(leaf.x, leaf.y + split, leaf.width, leaf.height - split)
+        leaf.child_1 = Leaf(leaf.x, leaf.y, leaf.width, split, leaf)
+        leaf.child_2 = Leaf(leaf.x, leaf.y + split, leaf.width, leaf.height - split, leaf)
     else:
-        leaf.child_1 = Leaf(leaf.x, leaf.y, split, leaf.height)
-        leaf.child_2 = Leaf(leaf.x + split, leaf.y, leaf.width - split, leaf.height)
+        leaf.child_1 = Leaf(leaf.x, leaf.y, split, leaf.height, leaf)
+        leaf.child_2 = Leaf(leaf.x + split, leaf.y, leaf.width - split, leaf.height, leaf)
 
     return True
 
@@ -200,17 +187,20 @@ class Leaf:
     this one directly.
     TODO: Move the constants to somewhere else, or at least make them configurable.
     """
+    child_1: Optional[Leaf]
+    child_2: Optional[Leaf]
 
-    def __init__(self, x, y, width, height):
+    def __init__(self, x, y, width, height, parent: Optional[Leaf]):
         self.x = x
         self.y = y
         self.width = width
         self.height = height
         self.MIN_LEAF_SIZE = 10
-        self.MAX_LEAF_SIZE = 24
-        self.ROOM_MAX_SIZE = 15
-        self.ROOM_MIN_SIZE = 6
+        self.MAX_LEAF_SIZE = 25
         self.child_1 = None
         self.child_2 = None
+        self.parent = parent
         self.room = None
         self.hall = None
+        self.id = -1
+
