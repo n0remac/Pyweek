@@ -39,8 +39,8 @@ def merge_level_layer_with_offset(
     child_height = len(child[layer][0])
 
     # Copy in the generated room into the correct offset of the map
-    for x in range(0, child_width - 1):
-        for y in range(0, child_height - 1):
+    for x in range(0, child_width):
+        for y in range(0, child_height):
             # TODO: Why do we have to reverse the X and Y coordinates here? Did we fuck up somewhere else?
             parent[layer][offset_y + y][offset_x + x] = child[layer][x][y]
 

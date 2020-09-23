@@ -1,9 +1,10 @@
+import math
 from random import random
 
 import arcade
 from pytiled_parser.objects import TileLayer, Size
 
-from Constants.Game import SPRITE_SCALING_TILES, SPRITE_SCALING_PLAYER, SPRITE_SIZE, SCREEN_WIDTH
+from Constants.Game import SPRITE_SCALING_TILES, SPRITE_SCALING_PLAYER, SPRITE_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT
 from Core.LevelGenerator.generate_game_level import generate_game_level
 
 
@@ -95,7 +96,12 @@ class GameResources:
         self.player_list.append(self.player_sprite)
 
     def on_draw(self):
-        # arcade.set_viewport(self.player_sprite.center_x - (SPRITE_SIZE * (SCREEN_WIDTH / 16)))
+        arcade.set_viewport(
+            self.player_sprite.center_x - round(SCREEN_WIDTH / 2),
+            self.player_sprite.center_x + round(SCREEN_WIDTH / 2),
+            self.player_sprite.center_y - round(SCREEN_HEIGHT / 2),
+            self.player_sprite.center_y + round(SCREEN_HEIGHT / 2),
+        )
         self.wall_list.draw()
         self.floor_list.draw()
         self.light_list.draw()

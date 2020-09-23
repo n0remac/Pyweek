@@ -42,3 +42,7 @@ bottom_left_outer_horizontal_tunnel_wall_ids = [50]
 # all floor tiles
 all_open_floor_tiles = open_floor_tile_ids + top_left_inner_floor_tile_ids + top_right_inner_floor_tile_ids \
                         + bottom_left_inner_floor_tile_ids + bottom_right_inner_floor_tile_ids
+
+# lights
+light_fixtures = [90, 93, 95]
+

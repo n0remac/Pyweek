@@ -56,7 +56,7 @@ def generate_tunnels_between_rooms_from_base_tunnel(rooms: List[Rect], tunnel: R
 
     intersecting_rooms.sort(key=get_room_sort_dimension)
 
-    for i in range(0, len(intersecting_rooms) - 1):
+    for i in range(0, len(intersecting_rooms)):
         # If we're on the final room, skip it.
         if i + 1 == len(intersecting_rooms):
             break
@@ -96,17 +96,6 @@ def generate_tunnels_between_rooms_from_base_tunnel(rooms: List[Rect], tunnel: R
 
 def generate_game_level(width, height):
     bsp_level = generate_bsp_level(width, height)
-    #
-    # for y in range(0, bsp_level.height):
-    #     row = ""
-    #     for x in range(0, bsp_level.width):
-    #         if bsp_level.tiles[x][y] == 0:
-    #             row += " "
-    #         else:
-    #             row += "#"
-    #
-    #     # Super basic way to print the level in ASCII
-    #     print(row)
 
     output_level = generate_tiled_compatible_level(width * 3, height * 3)
 
@@ -114,14 +103,15 @@ def generate_game_level(width, height):
     for room in bsp_level.rooms:
         place_room(room, output_level)
 
+    # TODO: Fix this logic because it's totally broken
     # for tunnel in bsp_level.tunnels:
-        # splits up a tunnel into "chunks" that exist between rooms.
-        # the BSP algorithm can generate tunnels that intersect with rooms, so this prevents that problem
-        # TODO: tunnels can overlap as well and form 90 degree tunnels between rooms
-        # tunnel_chunks = generate_tunnels_between_rooms_from_base_tunnel(bsp_level.rooms, tunnel)
-
-        # for tchunk in tunnel_chunks:
-            # place_tunnel(tchunk, output_level)
+    #     # splits up a tunnel into "chunks" that exist between rooms.
+    #     # the BSP algorithm can generate tunnels that intersect with rooms, so this prevents that problem
+    #     # TODO: tunnels can overlap as well and form 90 degree tunnels between rooms
+    #     tunnel_chunks = generate_tunnels_between_rooms_from_base_tunnel(bsp_level.rooms, tunnel)
+    #
+    #     for tchunk in tunnel_chunks:
+    #         place_tunnel(tchunk, output_level)
 
     return output_level
 
