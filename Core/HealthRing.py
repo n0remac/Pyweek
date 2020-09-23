@@ -1,10 +1,12 @@
 from colour import Color
 
+from Graphics.PostProcessing.Vignette import Vignette
 
 class Health:
     def __init__(
         self,
         light_source,
+        post_processing_manager,
         amount=10,
         max_health=200,
         healthy_color="white",
@@ -13,26 +15,67 @@ class Health:
         self.light_source = light_source
         self.light_source.radius = max_health
         self.amount = amount
-        self.max_health = 200
+        self.max_health = max_health
+        self.max_light_radius = max_health
         self.healthy_color = Color(healthy_color)
         self.dead_color = Color(dead_color)
-        self.color_range = list(
-            self.healthy_color.range_to(self.dead_color, max_health // amount + 1)
-        )
-        self.color_selector = 0
-        print(light_source.color)
 
-    def heal(self):
-        print(self.light_source.color)
-        if self.light_source.radius < self.max_health:
-            self.light_source.radius += self.amount
-            self.light_source.color = self.color_range[
-                (self.max_health - self.light_source.radius) // 10
-            ].rgb
+        self.vignette_effect = post_processing_manager.get_effect(Vignette)
 
-    def hurt(self):
-        if self.light_source.radius > 0:
-            self.light_source.radius -= self.amount
-            self.light_source.color = self.color_range[
-                (self.max_health - self.light_source.radius) // 10
-            ].rgb
+        #TODO: Expose to constructor ?
+        self.vignette_inner_dead = 0.2
+        self.vignette_inner_full = 1.0
+
+        self.vignette_outer_dead = 1.25
+        self.vignette_outer_full = 2.0
+
+        #assign property at the end as it requires vignette_effect and other values to be set first
+        self.health = self.max_health
+        
+    def clamp(value, min_val, max_val):
+        return min(max(value, min_val), max_val)
+
+    @property
+    def health(self):
+        return self._health
+
+    @health.setter
+    def health(self, value):
+        self._health = Health.clamp(value, 0.0, self.max_health)
+
+        if(self._health <= 0.0):
+            #U R HEALL DEAD
+            #TODO
+            pass
+
+        #Set light radius and color
+        self.light_source.radius = self.max_light_radius * self.health_percentage
+        self.light_source.color = self.health_color
+        
+        #Set vignette effect
+        self.vignette_effect.inner_distance = Health.lerp(self.vignette_inner_dead, self.vignette_inner_full, self.health_percentage)
+        self.vignette_effect.outer_distance = Health.lerp(self.vignette_outer_dead, self.vignette_outer_full, self.health_percentage)
+
+    #Compute a color based on current health
+    @property
+    def health_color(self):
+        a = self.dead_color.hsl
+        b = self.healthy_color.hsl
+
+        factor = self.health_percentage
+
+        # This is so stupid. Need real game vector math library
+        # Also a color library with no mix or lerp ? (Or i just can't read and find it)
+        # This is lerp
+        result = (Health.lerp(a[x], b[x], factor) for x in range(3))
+        
+        ret_val = Color()
+        ret_val.set_hsl(result)
+        return ret_val.rgb
+
+    def lerp(a, b, factor):
+        return (a*(1.0-factor)) + (b*factor)
+
+    @property
+    def health_percentage(self):
+        return float(self._health) / float(self.max_health)

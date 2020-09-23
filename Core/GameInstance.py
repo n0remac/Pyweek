@@ -68,7 +68,7 @@ class GameInstance:
         )  # Radius
 
         # player heath system
-        self.player_health = Health(self.player_light)
+        self.player_health = Health(self.player_light, self.scene_renderer.post_processing)
 
         # torch particle system
         self.torch_particle_system = TorchSystem(window.ctx)
@@ -109,9 +109,9 @@ class GameInstance:
         elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.horizontal_key_list.insert(0, PLAYER_MOVEMENT_SPEED)
         elif key == arcade.key.P:
-            self.player_health.heal()
+            self.player_health.health += 10.0
         elif key == arcade.key.O:
-            self.player_health.hurt()
+            self.player_health.health -= 10.0
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """
