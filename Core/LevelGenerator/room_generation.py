@@ -53,8 +53,8 @@ def generate_room(width, height):
     )
 
     # Fill open floor tiles
-    for y in range(2, height - 1):
-        for x in range(2, width - 1):
+    for y in range(2, height - 2):
+        for x in range(2, width - 2):
             floors[x][y] = get_tile_from_list(open_floor_tile_ids)
 
     # throw a few lights around each room for fun
