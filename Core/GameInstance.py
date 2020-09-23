@@ -6,6 +6,8 @@ from Core.GameResources import GameResources
 from Core.RendererFactory import RendererFactory
 from Core.ObjectManager import ObjectManager
 from Core.Projectile_Manager import ProjectileManager
+from Core.Projectiles.Projectile_Manager import ProjectileManager
+from Physics.EnemyPhysicsEngine import setup_enemy_physics_engine
 from Physics.PhysicsEngine import setup_physics_engine
 from Graphics.Particles.Torch.TorchSystem import TorchSystem
 
@@ -26,6 +28,8 @@ class GameInstance:
 
         # Physics engine
         self.physics_engine = setup_physics_engine(self.game_resources)
+        # Enemy Physics engine
+        self.enemy_physics_engine = setup_enemy_physics_engine(self.game_resources)
 
         self.horizontal_key_list = []
         self.verticle_key_list = []
@@ -157,6 +161,15 @@ class GameInstance:
 
         # Move the player with the physics engine
         self.physics_engine.update()
+
+        # Makes enemy collide with walls
+        self.enemy_physics_engine.update()
+
+        self.path = arcade.astar_calculate_path(self.game_resources.enemy.enemy_sprite.position,
+                                self.game_resources.player_sprite.position,
+                                self.game_resources.barrier_list,
+                                diagonal_movement=False)
+        self.game_resources.enemy.on_update(self.path, self.game_resources.player_sprite.position)
 
         # move projectiles
         self.projectile_manager.on_update(delta_time)
