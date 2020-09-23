@@ -54,11 +54,12 @@ def main():
 if __name__ == "__main__":
     main()
 
+
 def load_texture_pair(filename):
     """
     Load a texture pair, with the second being a mirror image.
     """
     return [
         arcade.load_texture(filename),
-        arcade.load_texture(filename, flipped_horizontally=True)
+        arcade.load_texture(filename, flipped_horizontally=True),
     ]

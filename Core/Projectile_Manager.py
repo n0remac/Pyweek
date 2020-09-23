@@ -65,8 +65,8 @@ class ProjectileManager:
         # Get from the mouse the destination location for the bullet
         # IMPORTANT! If you have a scrolling screen, you will also need
         # to add in self.view_bottom and self.view_left.
-        dest_x = x #+ self.view_left
-        dest_y = y #+ self.view_bottom
+        dest_x = x  # + self.view_left
+        dest_y = y  # + self.view_bottom
 
         # Do math to calculate how to get the bullet to the destination.
         # Calculation the angle in radians between the start points

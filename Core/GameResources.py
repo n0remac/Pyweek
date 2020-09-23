@@ -3,6 +3,7 @@ import arcade
 from Constants.Game import SPRITE_SCALING_TILES, SPRITE_SCALING_PLAYER, SPRITE_SIZE
 from Core.PlayerCharacter import PlayerCharacter
 
+
 class GameResources:
     """
     Load arcade resources
@@ -46,4 +47,4 @@ class GameResources:
         self.light_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         self.bullet_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         self.player_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
-
+        self.object_list.draw()
