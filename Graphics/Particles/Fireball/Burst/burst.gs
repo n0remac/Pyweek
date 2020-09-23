@@ -4,6 +4,7 @@ layout (triangle_strip, max_vertices = 4) out;
 
 in float v_time[];
 in float v_velocity[];
+in int v_type[];
 
 uniform float u_time;
 uniform mat4x4 u_projection;
@@ -12,6 +13,7 @@ out float vf_time;
 out float vf_scale;
 out float vf_velocity;
 out vec2 vf_uv;
+flat out int vf_type;
 
 const float LIFE = 0.8;
 
@@ -34,6 +36,7 @@ void EmitVert(vec2 offset, float scale)
     vf_uv = offset;
     vf_time = v_time[0] + (1.0 - (v_velocity[0] / 300.0)) * v_time[0] * 0.5;
     vf_velocity = v_velocity[0] / 300.0;
+    vf_type = v_type[0];
     EmitVertex();
 }
 

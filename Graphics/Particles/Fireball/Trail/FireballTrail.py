@@ -61,7 +61,7 @@ class FireballTrail(ParticleSystem):
 
             data.append(velocity[0])
             data.append(velocity[1])
-            data.append(0.0)
+            data.append(projectile.art_type)
         return data
 
 

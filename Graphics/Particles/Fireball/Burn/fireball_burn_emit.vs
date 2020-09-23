@@ -30,8 +30,16 @@ void main()
 
     out_position = in_position;
 
-
+    if(in_type < 0.9){
     out_velocity = in_base_vel + rand_dir(2.0) * mix(50,75, rand(1.0));
+    }
+    else if(in_type < 1.9)
+    {
+    out_velocity = in_base_vel + rand_dir(2.0) * mix(10,15, rand(1.0));
+    }
+    else{
+    out_velocity = in_base_vel + rand_dir(2.0) * mix(50,75, rand(1.0));
+    }
     out_life_offset = u_time + rand(1.0) * 0.0;    
 
     out_type = in_type;

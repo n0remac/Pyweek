@@ -3,29 +3,31 @@ layout (points) in;
 layout (triangle_strip, max_vertices = 4) out;
 
 in float v_time[];
+in int v_type[];
 
 uniform float u_time;
 uniform mat4x4 u_projection;
 
 out float vf_time;
 out vec2 vf_uv;
+flat out int vf_type;
 
-const float SIZE = 6.0;
+const float SIZE[] = float[](6.0, 3.0, 6.0);
 
 const float size_start_c = -0.;
 const float size_end_c = 1.3;
 
-const float LIFE = 0.35;
+const float LIFE[] = float[](0.35, 1.0, 0.35);
 
 
 float GetLifePercent(){
-    return v_time[0] / LIFE;
+    return v_time[0] / LIFE[v_type[0]];
 }
 
 float GetSize(){
 
     float f = cos(mix(size_start_c, size_end_c, GetLifePercent()));
-    return SIZE * f;
+    return SIZE[v_type[0]] * f;
 }
 
 void EmitVert(vec2 offset)
@@ -39,6 +41,7 @@ void EmitVert(vec2 offset)
     gl_Position = finalPositionClip;
     vf_uv = offset;
     vf_time = v_time[0];
+    vf_type = v_type[0];
     EmitVertex();
 }
 
@@ -46,7 +49,7 @@ void main()
 {
     float time = v_time[0];
 
-    if(time < 0.0 || time >= LIFE){
+    if(time < 0.0 || time >= LIFE[v_type[0]]){
         return;
     }
 
