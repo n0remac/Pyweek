@@ -1,10 +1,11 @@
 import arcade
 
 from Constants.Physics import PLAYER_MOVEMENT_SPEED
-from Core.GameResources import GameResources
+
+# from Core.GameResources import GameResources
 
 
-def setup_enemy_physics_engine(game_resources: GameResources):
+def setup_enemy_physics_engine(game_resources):
     # --- Pymunk Physics Engine Setup ---
 
     # Create the physics engine

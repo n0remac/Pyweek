@@ -3,6 +3,7 @@ import math
 
 from Constants.Game import SPRITE_SIZE, SPRITE_SCALING_PLAYER
 from Constants.Physics import PLAYER_MOVEMENT_SPEED
+from Physics.EnemyPhysicsEngine import setup_enemy_physics_engine
 
 
 class Enemy(arcade.Sprite):
@@ -67,3 +68,19 @@ class EnemyManager:
             playing_field_top_boundary,
         )
         self.path = self.enemy.path
+
+    def setup(self):
+        # Enemy Physics engine
+        self.enemy_physics_engine = setup_enemy_physics_engine(self.game_resources)
+
+    def on_update(self, delta_time):
+        # Makes enemy collide with walls
+        self.enemy_physics_engine.update()
+
+        self.path = arcade.astar_calculate_path(
+            self.enemy.position,
+            self.game_resources.player_sprite.position,
+            self.barrier_list,
+            diagonal_movement=False,
+        )
+        self.enemy.on_update(self.path, self.game_resources.player_sprite.position)

@@ -129,6 +129,7 @@ class GameResources:
         # Game managers
         self.projectile_manager = ProjectileManager(self)
         self.enemy_manager = EnemyManager(self)
+        self.enemy_manager.setup()
 
     def on_mouse_motion(self, x, y, dx, dy):
         pass
