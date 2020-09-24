@@ -4,6 +4,7 @@ from Graphics.SceneRenderer import SceneRenderer
 
 from Graphics.PostProcessing.Tonemap import Tonemap
 from Graphics.PostProcessing.Bloom import Bloom
+from Graphics.PostProcessing.Vignette import Vignette
 
 
 class RendererFactory:
@@ -24,6 +25,11 @@ class RendererFactory:
 
     def setup_post_processing(scene_renderer):
 
+        RendererFactory.setup_bloom(scene_renderer)
+        RendererFactory.setup_tonemap(scene_renderer)
+        RendererFactory.setup_vignette(scene_renderer)
+
+    def setup_bloom(scene_renderer):
         bloom = Bloom()
         scene_renderer.post_processing.add_effect(bloom)
 
@@ -31,8 +37,13 @@ class RendererFactory:
         bloom.power = 1.5
         bloom.threshold = 0.75
 
+    def setup_tonemap(scene_renderer):
         tonemap = Tonemap()
         scene_renderer.post_processing.add_effect(tonemap)
 
         # Set what HDR value gets mapped to 100% white on your monitor
         tonemap.white_point = 3.0
+
+    def setup_vignette(scene_renderer):
+        vignette = Vignette()
+        scene_renderer.post_processing.add_effect(vignette)

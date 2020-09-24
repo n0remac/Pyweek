@@ -5,9 +5,11 @@ from Constants.Physics import PLAYER_MOVEMENT_SPEED
 from Core.GameResources import GameResources
 from Core.RendererFactory import RendererFactory
 from Core.ObjectManager import ObjectManager
-from Core.Projectile_Manager import ProjectileManager
+from Core.HealthRing import Health
 from Physics.PhysicsEngine import setup_physics_engine
 from Graphics.Particles.Torch.TorchSystem import TorchSystem
+from Graphics.Particles.Fireball.Fireball import FireBall
+
 
 
 class GameInstance:
@@ -22,8 +24,6 @@ class GameInstance:
 
         # Core game resources
         self.game_resources = GameResources()
-        self.object_manager = ObjectManager(self.game_resources)
-        self.projectile_manager = ProjectileManager(self.game_resources)
 
         # Physics engine
         self.physics_engine = setup_physics_engine(self.game_resources)
@@ -39,19 +39,21 @@ class GameInstance:
         self.scene_renderer.draw_primary_callback = self.on_draw_scene
         self.scene_renderer.draw_emissive_callback = self.on_draw_emissive
         self.scene_renderer.draw_after_post_callback = self.on_draw_after_post
+        self.scene_renderer.draw_to_light_bufer_callback = self.on_draw_light_buffer
 
         # Set background color
         # Based on old arcade.AMAZON color
         # (59, 122, 87)
         self.scene_renderer.background_color = (
-            59.0 / 255.0,
-            122.0 / 255.0,
-            87.0 / 255.0,
+            37.0 / 255.0,
+            19.0 / 255.0,
+            26.0 / 255.0,
             1.0,
         )
 
         # dim the ambient lighting to make the player's light more vibrant
         self.scene_renderer.light_renderer.ambient_light = (0.25, 0.25, 0.25)
+        self.scene_renderer.light_renderer.ambient_light = (0.01, 0.01, 0.01)
 
         # create light sources
         self.light_list = []
@@ -66,8 +68,22 @@ class GameInstance:
             160.0,
         )  # Radius
 
+        # player heath system
+        self.player_health = Health(
+            self.player_light, self.scene_renderer.post_processing
+        )
+
         # torch particle system
         self.torch_particle_system = TorchSystem(window.ctx)
+
+        # TODO:MOVE THIS STUFF
+        self.fireball_system = FireBall(
+            window.ctx, self.game_resources.projectile_manager.projectile_physics
+        )
+
+        self.game_resources.projectile_manager.on_bullet_death = (
+            self.fireball_system.on_particle_death
+        )
 
         # dict used to determine radius of light based on light_type
         radius_by_type = {"torch": 70.0, "candle": 40.0}
@@ -91,6 +107,7 @@ class GameInstance:
             else:
                 self.torch_particle_system.add_candle((light.center_x, light.center_y))
 
+        # TODO: This code will crash if there are zero lights loaded. Please fix!
         self.torch_particle_system.build_buffer()
 
     def on_key_press(self, key, modifiers):
@@ -104,6 +121,10 @@ class GameInstance:
             self.horizontal_key_list.insert(0, -PLAYER_MOVEMENT_SPEED)
         elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.horizontal_key_list.insert(0, PLAYER_MOVEMENT_SPEED)
+        elif key == arcade.key.P:
+            self.player_health.health += 10.0
+        elif key == arcade.key.O:
+            self.player_health.health -= 10.0
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """
@@ -129,10 +150,16 @@ class GameInstance:
         pass
 
     def on_mouse_press(self, x, y, button, modifiers):
-        self.projectile_manager.on_mouse_press(x, y, button, modifiers)
+        self.game_resources.projectile_manager.on_mouse_press(x, y, button, modifiers)
 
     # This method should idealy do nothing but invoke the scene renderer. use the following drawing methods instead
     def on_draw(self):
+
+        # Update particle lights, needs to happen once per frame
+        self.scene_renderer.light_renderer.draw_dynamic_point_lights(
+            self.game_resources.bullet_list
+        )
+
         self.scene_renderer.draw_scene()
 
     # This method should be used to draw everything efected by lighting and post-processing
@@ -142,7 +169,15 @@ class GameInstance:
     # Everything drawn in here will be drawn with blend mode:Additive. Use for glowing stuff that ignores lighting
     def on_draw_emissive(self):
         self.torch_particle_system.render(self.window.ctx.projection_2d_matrix)
+        self.fireball_system.render(
+            self.window.ctx.projection_2d_matrix, self.game_resources.bullet_list
+        )
         pass
+
+    def on_draw_light_buffer(self):
+        self.fireball_system.render_lights(
+            self.window.ctx.projection_2d_matrix, self.game_resources.bullet_list
+        )
 
     # Drawn after all post processing, for things like UI
     def on_draw_after_post(self):
@@ -159,8 +194,10 @@ class GameInstance:
         # Move the player with the physics engine
         self.physics_engine.update()
 
+        self.game_resources.enemy_manager.on_update(delta_time)
+
         # move projectiles
-        self.projectile_manager.on_update(delta_time)
+        self.game_resources.projectile_manager.on_update(delta_time)
 
         # move the player light to the player
         self.player_light.position = (

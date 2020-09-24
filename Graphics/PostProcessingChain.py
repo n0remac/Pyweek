@@ -64,3 +64,9 @@ class PostProcessingChain:
         temp = self.ping_rt
         self.ping_rt = self.pong_rt
         self.pong_rt = temp
+
+    def get_effect(self, type):
+        for effect in self.effects:
+            if isinstance(effect, type):
+                return effect
+        return None

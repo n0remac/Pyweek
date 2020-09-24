@@ -19,6 +19,7 @@ class LightRenderer:
 
         # light lists
         self.point_lights = []
+        self.dynamic_point_light_buffer = []
 
         # HDR target
         self.light_buffer = RenderTarget(context, size, "f2")
@@ -35,6 +36,7 @@ class LightRenderer:
         self.fullscreen_quad = arcade.gl.geometry.quad_2d_fs()
 
         self.load_light_shaders()
+
         pass
 
     def load_light_shaders(self):
@@ -58,21 +60,32 @@ class LightRenderer:
         # draw each light type
         self.draw_point_lights(projection_matrix)
 
-        # reset context
-        self.context.enable_only()
+        # reset dynamic light buffer
+        self.dynamic_point_light_buffer = []
+
         pass
+
+    def draw_dynamic_point_lights(self, sprite_list):
+        for sprite in sprite_list:
+            if not hasattr(sprite, "point_light"):
+                continue
+            # else append this
+            self.dynamic_point_light_buffer.append(sprite.center_x)
+            self.dynamic_point_light_buffer.append(sprite.center_y)
+            self.dynamic_point_light_buffer.extend(sprite.point_light.color)
+            self.dynamic_point_light_buffer.append(sprite.point_light.radius)
 
     def draw_point_lights(self, projection_matrix):
         # fill buffer from lights
         light_count = 0
-        light_vertex_buffer = []
+        light_vertex_buffer = self.dynamic_point_light_buffer
 
         for light in self.point_lights:
             if light.enabled:
                 light_count += 1
                 light.append_to_buffer(None, light_vertex_buffer)
 
-        if light_count == 0:
+        if len(light_vertex_buffer) == 0:
             return
 
         # create vertex buffer and VBO
