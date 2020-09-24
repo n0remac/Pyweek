@@ -26,8 +26,13 @@ def create_rooms(level: Level, leaf: Leaf):
 
     else:
         # Create rooms in the end branches of the bsp tree
-        w = random.randint(math.floor(leaf.width / 2 + 1), min(leaf.MAX_LEAF_SIZE - 2, leaf.width - 1))
-        h = random.randint(math.floor(leaf.height / 2 + 1), min(leaf.MAX_LEAF_SIZE - 2, leaf.height - 1))
+        w = random.randint(
+            math.floor(leaf.width / 2 + 1), min(leaf.MAX_LEAF_SIZE - 2, leaf.width - 1)
+        )
+        h = random.randint(
+            math.floor(leaf.height / 2 + 1),
+            min(leaf.MAX_LEAF_SIZE - 2, leaf.height - 1),
+        )
         x = random.randint(leaf.x, leaf.x + (leaf.width - 1) - w)
         y = random.randint(leaf.y, leaf.y + (leaf.height - 1) - h)
 
@@ -133,10 +138,14 @@ def split_leaf(leaf: Leaf):
 
     if split_horizontally:
         leaf.child_1 = Leaf(leaf.x, leaf.y, leaf.width, split, leaf)
-        leaf.child_2 = Leaf(leaf.x, leaf.y + split, leaf.width, leaf.height - split, leaf)
+        leaf.child_2 = Leaf(
+            leaf.x, leaf.y + split, leaf.width, leaf.height - split, leaf
+        )
     else:
         leaf.child_1 = Leaf(leaf.x, leaf.y, split, leaf.height, leaf)
-        leaf.child_2 = Leaf(leaf.x + split, leaf.y, leaf.width - split, leaf.height, leaf)
+        leaf.child_2 = Leaf(
+            leaf.x + split, leaf.y, leaf.width - split, leaf.height, leaf
+        )
 
     return True
 
@@ -187,6 +196,7 @@ class Leaf:
     this one directly.
     TODO: Move the constants to somewhere else, or at least make them configurable.
     """
+
     child_1: Optional[Leaf]
     child_2: Optional[Leaf]
 
@@ -203,4 +213,3 @@ class Leaf:
         self.room = None
         self.hall = None
         self.id = -1
-

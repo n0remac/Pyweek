@@ -1,6 +1,12 @@
 import random
 
-from Core.LevelGenerator.common import Leaf, split_leaf, create_rooms, create_hall, get_room
+from Core.LevelGenerator.common import (
+    Leaf,
+    split_leaf,
+    create_rooms,
+    create_hall,
+    get_room,
+)
 from Core.LevelGenerator.level import Level
 
 # TODO: Take this level generator and feed the output into a Tiled converter.
@@ -79,7 +85,9 @@ def generate_bsp_level(map_width, map_height):
             recurse_leaf(leaf.child_2)
 
         if leaf.child_1 and leaf.child_2:
-            if child_has_no_children(leaf.child_1) and child_has_no_children(leaf.child_2):
+            if child_has_no_children(leaf.child_1) and child_has_no_children(
+                leaf.child_2
+            ):
                 leaf_pairs.append((leaf.child_1, leaf.child_2))
 
     recurse_leaf(root_leaf)
@@ -98,5 +106,3 @@ def generate_bsp_level(map_width, map_height):
 # Test script for if you want to generate a level for fun
 if __name__ == "__main__":
     level = generate_bsp_level(80, 80)
-
-

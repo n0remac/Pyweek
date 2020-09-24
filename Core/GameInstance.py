@@ -71,7 +71,9 @@ class GameInstance:
         )  # Radius
 
         # player heath system
-        self.player_health = Health(self.player_light, self.scene_renderer.post_processing)
+        self.player_health = Health(
+            self.player_light, self.scene_renderer.post_processing
+        )
 
         # torch particle system
         self.torch_particle_system = TorchSystem(window.ctx)
@@ -174,11 +176,15 @@ class GameInstance:
         # Makes enemy collide with walls
         self.enemy_physics_engine.update()
 
-        self.path = arcade.astar_calculate_path(self.game_resources.enemy.enemy_sprite.position,
-                                self.game_resources.player_sprite.position,
-                                self.game_resources.barrier_list,
-                                diagonal_movement=False)
-        self.game_resources.enemy.on_update(self.path, self.game_resources.player_sprite.position)
+        self.path = arcade.astar_calculate_path(
+            self.game_resources.enemy.enemy_sprite.position,
+            self.game_resources.player_sprite.position,
+            self.game_resources.barrier_list,
+            diagonal_movement=False,
+        )
+        self.game_resources.enemy.on_update(
+            self.path, self.game_resources.player_sprite.position
+        )
 
         # move projectiles
         self.projectile_manager.on_update(delta_time)
