@@ -31,7 +31,6 @@ void main() {
     vec3 finalLight = ColorA[vf_type] * mix(1.5, 100.0, pow(vf_velocity, 3));
 
 
-
     finalLight *= smoothstep(0.0, LIFE, LIFE - vf_time);
 
     out_color =vec4(finalLight, 1.0);

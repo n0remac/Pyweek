@@ -38,7 +38,7 @@ void main()
     out_velocity = in_base_vel + rand_dir(2.0) * mix(10,15, rand(1.0));
     }
     else{
-    out_velocity = in_base_vel + rand_dir(2.0) * mix(50,75, rand(1.0));
+    out_velocity = in_base_vel + rand_dir(2.0) * mix(70,200, rand(1.0));
     }
     out_life_offset = u_time + rand(1.0) * 0.0;    
 

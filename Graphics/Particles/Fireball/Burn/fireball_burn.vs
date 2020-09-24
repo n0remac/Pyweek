@@ -11,7 +11,7 @@ out int v_type;
 
 uniform float u_time;
 
-const float rot_speed = 7.0;
+const float rot_speed = 9.0;
 
 float rand_no_seed(float val){
     return fract(sin((val + gl_VertexID * 6.74)) * 156489.085);
@@ -30,7 +30,7 @@ vec2 get_final_pos(float adjustedTime){
         angle += rot_speed * adjustedTime * direction;
 
         vec2 offset = vec2(cos(angle), sin(angle));
-        offset *= adjustedTime * 50.0;
+        offset *= adjustedTime * 40.0;
 
         return in_position + in_velocity * adjustedTime + offset;
     }

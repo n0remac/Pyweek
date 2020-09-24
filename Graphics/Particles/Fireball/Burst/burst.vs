@@ -2,7 +2,7 @@
 
 in vec2 in_position;
 in vec2 in_velocity;
-in float in_life_offset;
+in highp float in_life_offset;
 in float in_type;
 
 out vec2 v_position;
@@ -24,9 +24,9 @@ void main() {
 
     float adjustedTime = u_time - in_life_offset;
 
-    float animTime = min(jank_a, adjustedTime) + inverse_lerp(jank_a,jank_b, adjustedTime);
+    float animTime = min(jank_a, max(0.0, adjustedTime)) + inverse_lerp(jank_a,jank_b, adjustedTime);
 
-    vec2 final_position = in_position + in_velocity * animTime;
+    vec2 final_position = in_position + in_velocity * adjustedTime;
 
     gl_Position = vec4(final_position, 0.0, 1.0);
     v_time = adjustedTime;

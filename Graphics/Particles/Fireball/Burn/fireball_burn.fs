@@ -14,7 +14,7 @@ out vec4 out_color;
     vec3(0.8, 0.93, 0.85)
  );
 
-const float LIFE[] = float[](0.35, 1.0, 0.35);
+const float LIFE[] = float[](0.35, 0.45, 0.45);
 
 void main() {
 

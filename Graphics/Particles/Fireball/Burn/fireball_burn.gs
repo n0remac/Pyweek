@@ -17,7 +17,7 @@ const float SIZE[] = float[](6.0, 3.0, 6.0);
 const float size_start_c = -0.;
 const float size_end_c = 1.3;
 
-const float LIFE[] = float[](0.35, 1.0, 0.35);
+const float LIFE[] = float[](0.35, 0.35, 0.45);
 
 
 float GetLifePercent(){
@@ -25,6 +25,11 @@ float GetLifePercent(){
 }
 
 float GetSize(){
+
+    if(v_type[0] == 2){
+        float scale = max(1.0, 4.0 - 30.0 * v_time[0]);
+        return scale;
+    }
 
     float f = cos(mix(size_start_c, size_end_c, GetLifePercent()));
     return SIZE[v_type[0]] * f;
@@ -52,6 +57,8 @@ void main()
     if(time < 0.0 || time >= LIFE[v_type[0]]){
         return;
     }
+
+
 
     //Emit all 4 corners for a quad
     EmitVert(vec2(-1.0, -1.0));

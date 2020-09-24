@@ -66,6 +66,7 @@ class ProjectileManager:
         if(self.last_type >= 3):
             self.last_type = 0
 
+        bullet.art_type = 2
 
         #add light to sprite
         bullet.point_light = DynamicPointLight( (1.5,1.0,0.2) , 128.0)

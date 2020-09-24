@@ -168,7 +168,7 @@ class GameInstance:
     def on_draw_light_buffer(self):
         self.fireball_system.render_lights(self.window.ctx.projection_2d_matrix, self.game_resources.bullet_list)
 
-    # Drawn after all post processing, for things like UI
+    # Drawn after all post processing, for things like UI        
     def on_draw_after_post(self):
         pass
 

@@ -37,7 +37,7 @@ class FireballBurn(ParticleSystem):
 
     def render(self, projection_matrix, projectile_list):
         self.frame_count += 1
-        if (self.frame_count % 1 == 0):
+        if (self.frame_count % 2 == 0):
             self.do_emission(projectile_list)
 
         super().render(projection_matrix)
