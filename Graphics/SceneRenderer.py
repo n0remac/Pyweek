@@ -30,6 +30,7 @@ class SceneRenderer:
         self.draw_primary_callback = None
         self.draw_emissive_callback = None
         self.draw_after_post_callback = None
+        self.draw_to_light_bufer_callback = None
 
     # Size is tuple (x,y) size in pixels
     def on_window_resized(self, size):
@@ -54,6 +55,12 @@ class SceneRenderer:
 
         # render lights texture
         self.light_renderer.draw_lights(self.context.projection_2d_matrix)
+
+        if self.draw_to_light_bufer_callback is not None:
+            self.draw_to_light_bufer_callback()
+
+        # reset context
+        self.context.enable_only()
 
         # light to final texture
         self.light_renderer.apply_lights(self.primary_target, self.final_target)

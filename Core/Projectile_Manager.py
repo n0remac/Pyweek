@@ -3,6 +3,7 @@ import math
 
 from Constants.Game import SCREEN_HEIGHT, SCREEN_WIDTH
 from Constants.Physics import BULLET_MOVE_FORCE
+from Graphics.Lights.PointLight import DynamicPointLight
 
 
 class ProjectileManager:
@@ -29,12 +30,19 @@ class ProjectileManager:
             """ Called for bullet/wall collision """
             bullet_sprite.remove_from_sprite_lists()
 
+            if self.on_bullet_death is not None:
+                self.on_bullet_death(bullet_sprite)
+
         self.projectile_physics.add_collision_handler(
             "bullet", "wall", post_handler=wall_hit_handler
         )
 
         def object_hit_handler(bullet_sprite, _object_sprite, _arbiter, _space, _data):
             """ Called for bullet/wall collision """
+
+            if self.on_bullet_death is not None:
+                self.on_bullet_death(bullet_sprite)
+
             bullet_sprite.remove_from_sprite_lists()
             _object_sprite.remove_from_sprite_lists()
 
@@ -52,6 +60,9 @@ class ProjectileManager:
         start_x = self.game_resources.player_sprite.center_x
         start_y = self.game_resources.player_sprite.center_y
         bullet.position = self.game_resources.player_sprite.position
+
+        # add light to sprite
+        bullet.point_light = DynamicPointLight((1.5, 1.0, 0.2), 128.0)
 
         # Get from the mouse the destination location for the bullet
         # IMPORTANT! If you have a scrolling screen, you will also need
