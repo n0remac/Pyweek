@@ -18,6 +18,7 @@ from Constants.Game import (
 from Core.LevelGenerator.generate_game_level import generate_game_level, place_room, place_tunnel
 from Core.LevelGenerator.shapes import Rect
 from Core.LevelGenerator.tiled_mapper.tiled_compatible_level import generate_tiled_compatible_level
+from Core.Enemy import Enemy
 
 
 class GameResources:
@@ -32,6 +33,7 @@ class GameResources:
         self.player_list = arcade.SpriteList()
         self.bullet_list = arcade.SpriteList()
         self.object_list = arcade.SpriteList()
+        self.enemy_list = arcade.SpriteList()
 
         # Used to keep track of our scrolling
         self.view_bottom = 0
@@ -116,6 +118,31 @@ class GameResources:
         # Add to player sprite list
         self.player_list.append(self.player_sprite)
 
+        # Enemy
+        self.enemy = Enemy(grid_x, grid_y, [self.player_sprite.center_x, self.player_sprite.center_y], my_map)
+
+        # Add to enemy sprite list
+        self.enemy_list.append(self.enemy.enemy_sprite)
+
+        grid_size = SPRITE_SIZE
+
+        playing_field_left_boundary = -SPRITE_SIZE * 2
+        playing_field_right_boundary = SPRITE_SIZE * 35
+        playing_field_top_boundary = SPRITE_SIZE * 17
+        playing_field_bottom_boundary = -SPRITE_SIZE * 2
+
+        self.barrier_list = arcade.AStarBarrierList(self.enemy.enemy_sprite,
+                                                    self.wall_list,
+                                                    grid_size,
+                                                    playing_field_left_boundary,
+                                                    playing_field_right_boundary,
+                                                    playing_field_bottom_boundary,
+                                                    playing_field_top_boundary)
+        self.path = self.enemy.path
+
+    def on_mouse_motion(self, x, y, dx, dy):
+        pass
+
     def on_draw(self):
         # --- Manage Scrolling ---
 
@@ -167,3 +194,10 @@ class GameResources:
         self.object_list.draw()
         self.bullet_list.draw()
         self.player_list.draw()
+        self.enemy_list.draw()
+        self.enemy.draw()
+
+    def on_update(self, delta_time):
+        pass
+
+

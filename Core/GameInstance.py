@@ -6,6 +6,8 @@ from Core.GameResources import GameResources
 from Core.RendererFactory import RendererFactory
 from Core.ObjectManager import ObjectManager
 from Core.Projectile_Manager import ProjectileManager
+from Physics.EnemyPhysicsEngine import setup_enemy_physics_engine
+from Core.HealthRing import Health
 from Physics.PhysicsEngine import setup_physics_engine
 from Graphics.Particles.Torch.TorchSystem import TorchSystem
 
@@ -27,6 +29,8 @@ class GameInstance:
 
         # Physics engine
         self.physics_engine = setup_physics_engine(self.game_resources)
+        # Enemy Physics engine
+        self.enemy_physics_engine = setup_enemy_physics_engine(self.game_resources)
 
         self.horizontal_key_list = []
         self.verticle_key_list = []
@@ -65,6 +69,9 @@ class GameInstance:
             ),  # Color, 0 = black, 1 = white, 0.5 = grey, order is RGB This can go over 1.0 because of HDR
             160.0,
         )  # Radius
+
+        # player heath system
+        self.player_health = Health(self.player_light, self.scene_renderer.post_processing)
 
         # torch particle system
         self.torch_particle_system = TorchSystem(window.ctx)
@@ -105,6 +112,10 @@ class GameInstance:
             self.horizontal_key_list.insert(0, -PLAYER_MOVEMENT_SPEED)
         elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.horizontal_key_list.insert(0, PLAYER_MOVEMENT_SPEED)
+        elif key == arcade.key.P:
+            self.player_health.health += 10.0
+        elif key == arcade.key.O:
+            self.player_health.health -= 10.0
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """
@@ -159,6 +170,15 @@ class GameInstance:
 
         # Move the player with the physics engine
         self.physics_engine.update()
+
+        # Makes enemy collide with walls
+        self.enemy_physics_engine.update()
+
+        self.path = arcade.astar_calculate_path(self.game_resources.enemy.enemy_sprite.position,
+                                self.game_resources.player_sprite.position,
+                                self.game_resources.barrier_list,
+                                diagonal_movement=False)
+        self.game_resources.enemy.on_update(self.path, self.game_resources.player_sprite.position)
 
         # move projectiles
         self.projectile_manager.on_update(delta_time)
