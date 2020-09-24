@@ -1,5 +1,5 @@
 import math
-from random import random
+import random
 
 import arcade
 from pytiled_parser.objects import TileLayer, Size
@@ -111,10 +111,11 @@ class GameResources:
         )
 
         # Set player location
+        i = random.randint(0, len(self.floor_list))
+        start_pos = self.floor_list[i].position
         grid_x = 20
         grid_y = 25
-        self.player_sprite.center_x = SPRITE_SIZE * grid_x + SPRITE_SIZE / 2
-        self.player_sprite.center_y = SPRITE_SIZE * grid_y + SPRITE_SIZE / 2
+        self.player_sprite.position = start_pos
         # Add to player sprite list
         self.player_list.append(self.player_sprite)
 
