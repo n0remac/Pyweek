@@ -48,9 +48,9 @@ class GameInstance:
         # Based on old arcade.AMAZON color
         # (59, 122, 87)
         self.scene_renderer.background_color = (
-            59.0 / 255.0,
-            122.0 / 255.0,
-            87.0 / 255.0,
+            37.0 / 255.0,
+            19.0 / 255.0,
+            26.0 / 255.0,
             1.0,
         )
 
@@ -98,6 +98,7 @@ class GameInstance:
             else:
                 self.torch_particle_system.add_candle((light.center_x, light.center_y))
 
+        # TODO: This code will crash if there are zero lights loaded. Please fix!
         self.torch_particle_system.build_buffer()
 
     def on_key_press(self, key, modifiers):

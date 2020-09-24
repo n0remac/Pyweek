@@ -29,7 +29,7 @@ class Enemy(arcade.Sprite):
 
     def on_update(self, path, end):
         self.path = path
-        if len(self.path) > 1:
+        if self.path and len(self.path) > 1:
             if self.path[0][0] < self.path[1][0]:
                 self.enemy_sprite.center_x = self.enemy_sprite.center_x + 1
             elif self.path[0][0] > self.path[1][0]:
