@@ -23,19 +23,15 @@ class Enemy(arcade.Sprite):
         self.enemy_sprite.center_x = SPRITE_SIZE * enemy_grid_x + SPRITE_SIZE / 2
         self.enemy_sprite.center_y = SPRITE_SIZE * enemy_grid_y + SPRITE_SIZE / 2
 
-    def draw(self):
-        if self.path:
-            arcade.draw_line_strip(self.path, arcade.color.BLUE, 2)
-
     def on_update(self, path, end):
         self.path = path
-        if self.path and len(self.path) > 1:
-            if self.path[0][0] < self.path[1][0]:
-                self.enemy_sprite.center_x = self.enemy_sprite.center_x + 1
-            elif self.path[0][0] > self.path[1][0]:
-                self.enemy_sprite.center_x = self.enemy_sprite.center_x - 1
-
+        if len(self.path) > 1:
             if self.path[0][1] < self.path[1][1]:
                 self.enemy_sprite.center_y = self.enemy_sprite.center_y + 1
             elif self.path[0][1] > self.path[1][1]:
                 self.enemy_sprite.center_y = self.enemy_sprite.center_y - 1
+
+            if self.path[0][0] < self.path[1][0]:
+                self.enemy_sprite.center_x = self.enemy_sprite.center_x + 1
+            elif self.path[0][0] > self.path[1][0]:
+                self.enemy_sprite.center_x = self.enemy_sprite.center_x - 1
