@@ -45,26 +45,14 @@ class GameResources:
         # Add to player sprite list
         self.player_list.append(self.player_sprite)
 
-        # Enemy Manager
-        self.enemy_manager = EnemyManager(self)
-        # Enemy
-        self.enemy_manager.create_enemy(1, 1, [self.player_sprite.center_x, self.player_sprite.center_y], my_map)
-        self.enemy_manager.create_enemy(2, 2, [self.player_sprite.center_x, self.player_sprite.center_y], my_map)
+        self.path = None
 
-        grid_size = SPRITE_SIZE
+        self.barrier_grid_size = SPRITE_SIZE
 
-        playing_field_left_boundary = -SPRITE_SIZE * 2
-        playing_field_right_boundary = SPRITE_SIZE * 35
-        playing_field_top_boundary = SPRITE_SIZE * 17
-        playing_field_bottom_boundary = -SPRITE_SIZE * 2
-
-        self.barrier_list = arcade.AStarBarrierList(self.enemy_list[0],
-                                                    self.wall_list,
-                                                    grid_size,
-                                                    playing_field_left_boundary,
-                                                    playing_field_right_boundary,
-                                                    playing_field_bottom_boundary,
-                                                    playing_field_top_boundary)
+        self.barrier_left_boundary = -SPRITE_SIZE * 2
+        self.barrier_right_boundary = SPRITE_SIZE * 35
+        self.barrier_top_boundary = SPRITE_SIZE * 17
+        self.barrier_bottom_boundary = -SPRITE_SIZE * 2
 
     def on_mouse_motion(self, x, y, dx, dy):
         pass
