@@ -1,7 +1,7 @@
 import arcade
 
 from Constants.Game import SPRITE_SCALING_TILES, SPRITE_SCALING_PLAYER, SPRITE_SIZE
-
+from Core.SelectionRings import SelectionRings
 
 class GameResources:
     """
@@ -15,6 +15,8 @@ class GameResources:
         self.player_list = arcade.SpriteList()
         self.bullet_list = arcade.SpriteList()
         self.object_list = arcade.SpriteList()
+
+        self.ui_list = arcade.SpriteList()
 
         # Read in the tiled map
         map_name = "Graphics/test_map.tmx"
@@ -42,6 +44,11 @@ class GameResources:
         # Add to player sprite list
         self.player_list.append(self.player_sprite)
 
+        # Create the rings and put them on the UI list
+        self.rings = SelectionRings(self)
+        self.ui_list.append(self.rings.inner_ring)
+        self.ui_list.append(self.rings.outer_ring)
+
     def on_draw(self):
         self.wall_list.draw()
         self.floor_list.draw()
@@ -49,3 +56,7 @@ class GameResources:
         self.object_list.draw()
         self.bullet_list.draw()
         self.player_list.draw()
+        self.ui_list.draw(filter=(arcade.gl.NEAREST))
+
+    def on_draw_after_post():
+        pass

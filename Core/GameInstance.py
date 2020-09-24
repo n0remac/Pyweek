@@ -89,7 +89,7 @@ class GameInstance:
                 self.torch_particle_system.add_torch((light.center_x, light.center_y))
             else:
                 self.torch_particle_system.add_candle((light.center_x, light.center_y))
-              
+
         self.torch_particle_system.build_buffer()
 
     def on_key_press(self, key, modifiers):
@@ -103,6 +103,15 @@ class GameInstance:
             self.horizontal_key_list.insert(0, -PLAYER_MOVEMENT_SPEED)
         elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.horizontal_key_list.insert(0, PLAYER_MOVEMENT_SPEED)
+        # rotate rings
+        elif key == arcade.key.R:
+            self.game_resources.rings.rotate_inner_ring(1)
+        elif key == arcade.key.E:
+            self.game_resources.rings.rotate_inner_ring(-1)
+        elif key == arcade.key.KEY_2:
+            self.game_resources.rings.rotate_outer_ring(1)
+        elif key == arcade.key.KEY_1:
+            self.game_resources.rings.rotate_outer_ring(-1)
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """

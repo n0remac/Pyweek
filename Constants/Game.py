@@ -17,3 +17,21 @@ SCREEN_GRID_HEIGHT = 15
 # Size of screen to show, in pixels
 SCREEN_WIDTH = SPRITE_SIZE * SCREEN_GRID_WIDTH
 SCREEN_HEIGHT = SPRITE_SIZE * SCREEN_GRID_HEIGHT
+
+# Angle values for the spell selection rings, in degrees
+AIR_ANGLE = 270
+FIRE_ANGLE = 37
+WATER_ANGLE = 143
+
+CONE_ANGLE = AIR_ANGLE
+BEAM_ANGLE = FIRE_ANGLE
+BALL_ANGLE = WATER_ANGLE
+
+# Selected spell Constants
+CONE = 0
+BEAM = 1
+BALL = 2
+
+AIR = 0
+FIRE = 1
+WATER = 2
