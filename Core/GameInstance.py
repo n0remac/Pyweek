@@ -7,8 +7,10 @@ from Core.RendererFactory import RendererFactory
 from Core.ObjectManager import ObjectManager
 from Core.Projectile_Manager import ProjectileManager
 from Physics.EnemyPhysicsEngine import setup_enemy_physics_engine
+from Core.HealthRing import Health
 from Physics.PhysicsEngine import setup_physics_engine
 from Graphics.Particles.Torch.TorchSystem import TorchSystem
+
 
 class GameInstance:
     """
@@ -68,7 +70,10 @@ class GameInstance:
             160.0,
         )  # Radius
 
-        #torch particle system
+        # player heath system
+        self.player_health = Health(self.player_light, self.scene_renderer.post_processing)
+
+        # torch particle system
         self.torch_particle_system = TorchSystem(window.ctx)
 
         # dict used to determine radius of light based on light_type
@@ -88,11 +93,11 @@ class GameInstance:
                 )  # Radius
             )
 
-            if light.properties["type"] == 'torch':
+            if light.properties["type"] == "torch":
                 self.torch_particle_system.add_torch((light.center_x, light.center_y))
             else:
                 self.torch_particle_system.add_candle((light.center_x, light.center_y))
-              
+
         self.torch_particle_system.build_buffer()
 
     def on_key_press(self, key, modifiers):
@@ -106,6 +111,10 @@ class GameInstance:
             self.horizontal_key_list.insert(0, -PLAYER_MOVEMENT_SPEED)
         elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.horizontal_key_list.insert(0, PLAYER_MOVEMENT_SPEED)
+        elif key == arcade.key.P:
+            self.player_health.health += 10.0
+        elif key == arcade.key.O:
+            self.player_health.health -= 10.0
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """
