@@ -174,12 +174,12 @@ class GameInstance:
         self.enemy_physics_engine.update()
 
         self.path = arcade.astar_calculate_path(
-            self.game_resources.enemy.position,
+            self.game_resources.enemy_manager.enemy.position,
             self.game_resources.player_sprite.position,
-            self.game_resources.barrier_list,
+            self.game_resources.enemy_manager.barrier_list,
             diagonal_movement=False,
         )
-        self.game_resources.enemy.on_update(
+        self.game_resources.enemy_manager.enemy.on_update(
             self.path, self.game_resources.player_sprite.position
         )
 

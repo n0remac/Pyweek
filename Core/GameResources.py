@@ -4,7 +4,7 @@ import random
 import arcade
 from pytiled_parser.objects import TileLayer, Size
 
-from Core.Enemy import Enemy
+from Core.Enemy import Enemy, EnemyManager
 from Constants.Game import (
     SPRITE_SCALING_TILES,
     SPRITE_SCALING_PLAYER,
@@ -126,36 +126,9 @@ class GameResources:
         # Add to player sprite list
         self.player_list.append(self.player_sprite)
 
-        # Enemy
-        self.enemy = Enemy(
-            self
-        )
-        self.enemy.center_y = self.player_sprite.center_y + 150
-        self.enemy.center_x = self.player_sprite.center_x + 150
-
-        # Add to enemy sprite list
-        self.enemy_list.append(self.enemy)
-
-        grid_size = SPRITE_SIZE
-
-        playing_field_left_boundary = -SPRITE_SIZE * 2
-        playing_field_right_boundary = SPRITE_SIZE * 35
-        playing_field_top_boundary = SPRITE_SIZE * 17
-        playing_field_bottom_boundary = -SPRITE_SIZE * 2
-
-        self.barrier_list = arcade.AStarBarrierList(
-            self.enemy,
-            self.wall_list,
-            grid_size,
-            playing_field_left_boundary,
-            playing_field_right_boundary,
-            playing_field_bottom_boundary,
-            playing_field_top_boundary,
-        )
-        self.path = self.enemy.path
-
         # Game managers
         self.projectile_manager = ProjectileManager(self)
+        self.enemy_manager = EnemyManager(self)
 
     def on_mouse_motion(self, x, y, dx, dy):
         pass
@@ -211,8 +184,9 @@ class GameResources:
         self.object_list.draw()
         self.bullet_list.draw()
         self.player_list.draw()
-        self.enemy_list.draw()
-        self.enemy.draw()
+
+        self.enemy_manager.enemy_list.draw()
+        self.enemy_manager.enemy.draw()
 
     def on_update(self, delta_time):
         pass

@@ -35,3 +35,31 @@ class EnemyManager:
     def __init__(self, game_resources):
         self.game_resources = game_resources
         self.enemy_list = arcade.SpriteList()
+
+        # Enemy
+        self.enemy = Enemy(
+            game_resources
+        )
+        self.enemy.center_y = self.game_resources.player_sprite.center_y + 150
+        self.enemy.center_x = self.game_resources.player_sprite.center_x + 150
+
+        # Add to enemy sprite list
+        self.enemy_list.append(self.enemy)
+
+        grid_size = SPRITE_SIZE
+
+        playing_field_left_boundary = -SPRITE_SIZE * 2
+        playing_field_right_boundary = SPRITE_SIZE * 35
+        playing_field_top_boundary = SPRITE_SIZE * 17
+        playing_field_bottom_boundary = -SPRITE_SIZE * 2
+
+        self.barrier_list = arcade.AStarBarrierList(
+            self.enemy,
+            self.game_resources.wall_list,
+            grid_size,
+            playing_field_left_boundary,
+            playing_field_right_boundary,
+            playing_field_bottom_boundary,
+            playing_field_top_boundary,
+        )
+        self.path = self.enemy.path
