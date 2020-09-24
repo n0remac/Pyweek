@@ -127,14 +127,14 @@ class GameResources:
 
         # Enemy
         self.enemy = Enemy(
-            grid_x,
-            grid_y,
             [self.player_sprite.center_x, self.player_sprite.center_y],
             my_map,
         )
+        self.enemy.center_y = self.player_sprite.center_y + 5
+        self.enemy.center_x = self.player_sprite.center_x + 5
 
         # Add to enemy sprite list
-        self.enemy_list.append(self.enemy.enemy_sprite)
+        self.enemy_list.append(self.enemy)
 
         grid_size = SPRITE_SIZE
 
@@ -144,7 +144,7 @@ class GameResources:
         playing_field_bottom_boundary = -SPRITE_SIZE * 2
 
         self.barrier_list = arcade.AStarBarrierList(
-            self.enemy.enemy_sprite,
+            self.enemy,
             self.wall_list,
             grid_size,
             playing_field_left_boundary,
