@@ -94,10 +94,6 @@ class GameResources:
         self.wall_list = arcade.tilemap._process_tile_layer(
             my_map, fake_walls_layer, scaling=SPRITE_SCALING_TILES
         )
-        self.map = my_map
-        self.wall_list = arcade.tilemap.process_layer(
-            my_map, "Walls", SPRITE_SCALING_TILES
-        )
         self.light_list = arcade.tilemap._process_tile_layer(
             my_map, fake_lighting_layer, scaling=SPRITE_SCALING_TILES
         )

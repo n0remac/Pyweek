@@ -2,7 +2,6 @@ import arcade
 import math
 
 from Constants.Physics import PLAYER_MOVEMENT_SPEED
-from Core.EnemyManager import EnemyManager
 from Core.GameResources import GameResources
 from Core.RendererFactory import RendererFactory
 from Core.ObjectManager import ObjectManager
@@ -97,8 +96,6 @@ class GameInstance:
 
         # TODO: This code will crash if there are zero lights loaded. Please fix!
         self.torch_particle_system.build_buffer()
-
-        self.enemy_manager.create_enemy(1,1,[self.game_resources.player_sprite.position])
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed. """
