@@ -127,8 +127,7 @@ class GameResources:
 
         # Enemy
         self.enemy = Enemy(
-            [self.player_sprite.center_x, self.player_sprite.center_y],
-            my_map,
+            self
         )
         self.enemy.center_y = self.player_sprite.center_y + 150
         self.enemy.center_x = self.player_sprite.center_x + 150
