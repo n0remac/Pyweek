@@ -130,8 +130,8 @@ class GameResources:
             [self.player_sprite.center_x, self.player_sprite.center_y],
             my_map,
         )
-        self.enemy.center_y = self.player_sprite.center_y + 5
-        self.enemy.center_x = self.player_sprite.center_x + 5
+        self.enemy.center_y = self.player_sprite.center_y + 150
+        self.enemy.center_x = self.player_sprite.center_x + 150
 
         # Add to enemy sprite list
         self.enemy_list.append(self.enemy)
