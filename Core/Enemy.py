@@ -1,5 +1,6 @@
 import arcade
 import math
+import random
 
 from Constants.Game import SPRITE_SIZE, SPRITE_SCALING_PLAYER, ENEMY_AWARENESS
 from Constants.Physics import PLAYER_MOVEMENT_SPEED
@@ -44,8 +45,28 @@ class EnemyManager:
 
         # Enemy
         self.enemy = Enemy(game_resources)
-        self.enemy.center_y = self.game_resources.player_sprite.center_y
-        self.enemy.center_x = self.game_resources.player_sprite.center_x
+        self.y_spawn_location = []
+        self.x_spawn_location = []
+        for i in self.game_resources.floor_list:
+            if i.position[0] == self.game_resources.player_sprite.position[0]:
+                print("i - ps y", i.position[1] - self.game_resources.player_sprite.position[1])
+                if i.position[1] - self.game_resources.player_sprite.position[1] < 200:
+                    if i.position[1] - self.game_resources.player_sprite.position[1] > -200:
+                        self.y_spawn_location.append(i.position[1]) 
+        for i in self.game_resources.floor_list:
+            if i.position[1] == self.game_resources.player_sprite.position[1]:
+                print("i - ps x", i.position[0] - self.game_resources.player_sprite.position[0])
+                if i.position[0] - self.game_resources.player_sprite.position[0] < 200:
+                    if i.position[0] - self.game_resources.player_sprite.position[0] > -200:
+                        self.x_spawn_location.append(i.position[0]) 
+        # print("y spawn locations",self.y_spawn_location)
+        # print("x spawn locations",self.x_spawn_location)
+        print("player pos", self.game_resources.player_sprite.position)
+        random_y = random.randint(0, len(self.y_spawn_location))
+        random_x = random.randint(0, len(self.x_spawn_location))
+        enemy_position = [self.x_spawn_location[random_x], self.y_spawn_location[random_y]]
+        print("enemy pos",enemy_position)
+        self.enemy.position = enemy_position
 
         # Add to enemy sprite list
         self.enemy_list.append(self.enemy)
@@ -88,8 +109,8 @@ class EnemyManager:
         # Makes enemy collide with walls
         self.enemy_physics_engine.update()
 
-        print("position math x", abs(self.enemy.position[0]) - abs(self.game_resources.player_sprite.position[0]))
-        print("position math y", abs(self.enemy.position[1]) - abs(self.game_resources.player_sprite.position[1]))
+        # print("position math x", abs(self.enemy.position[0]) - abs(self.game_resources.player_sprite.position[0]))
+        # print("position math y", abs(self.enemy.position[1]) - abs(self.game_resources.player_sprite.position[1]))
 
         self.path = arcade.astar_calculate_path(
                 self.enemy.position,
@@ -97,5 +118,5 @@ class EnemyManager:
                 self.barrier_list,
                 diagonal_movement=False,
         )
-        print("path", self.path)
+        # print("path", self.path)
         self.enemy.on_update(self.path, self.game_resources.player_sprite.position)
