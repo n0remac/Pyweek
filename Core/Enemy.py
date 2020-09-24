@@ -29,3 +29,9 @@ class Enemy(arcade.Sprite):
                 self.center_y = self.center_y + 1
             elif self.path[0][1] > self.path[1][1]:
                 self.center_y = self.center_y - 1
+
+class EnemyManager:
+
+    def __init__(self, game_resources):
+        self.game_resources = game_resources
+        self.enemy_list = arcade.SpriteList()

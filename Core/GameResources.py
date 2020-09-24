@@ -4,6 +4,7 @@ import random
 import arcade
 from pytiled_parser.objects import TileLayer, Size
 
+from Core.Enemy import Enemy
 from Constants.Game import (
     SPRITE_SCALING_TILES,
     SPRITE_SCALING_PLAYER,
@@ -24,7 +25,7 @@ from Core.LevelGenerator.shapes import Rect
 from Core.LevelGenerator.tiled_mapper.tiled_compatible_level import (
     generate_tiled_compatible_level,
 )
-from Core.Enemy import Enemy
+from Core.Projectile_Manager import ProjectileManager
 
 
 class GameResources:
@@ -152,6 +153,9 @@ class GameResources:
             playing_field_top_boundary,
         )
         self.path = self.enemy.path
+
+        # Game managers
+        self.projectile_manager = ProjectileManager(self)
 
     def on_mouse_motion(self, x, y, dx, dy):
         pass

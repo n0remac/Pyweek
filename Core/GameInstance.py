@@ -5,7 +5,6 @@ from Constants.Physics import PLAYER_MOVEMENT_SPEED
 from Core.GameResources import GameResources
 from Core.RendererFactory import RendererFactory
 from Core.ObjectManager import ObjectManager
-from Core.Projectile_Manager import ProjectileManager
 from Physics.EnemyPhysicsEngine import setup_enemy_physics_engine
 from Core.HealthRing import Health
 from Physics.PhysicsEngine import setup_physics_engine
@@ -24,8 +23,6 @@ class GameInstance:
 
         # Core game resources
         self.game_resources = GameResources()
-        self.object_manager = ObjectManager(self.game_resources)
-        self.projectile_manager = ProjectileManager(self.game_resources)
 
         # Physics engine
         self.physics_engine = setup_physics_engine(self.game_resources)
@@ -143,7 +140,7 @@ class GameInstance:
         pass
 
     def on_mouse_press(self, x, y, button, modifiers):
-        self.projectile_manager.on_mouse_press(x, y, button, modifiers)
+        self.game_resources.projectile_manager.on_mouse_press(x, y, button, modifiers)
 
     # This method should idealy do nothing but invoke the scene renderer. use the following drawing methods instead
     def on_draw(self):
@@ -187,7 +184,7 @@ class GameInstance:
         )
 
         # move projectiles
-        self.projectile_manager.on_update(delta_time)
+        self.game_resources.projectile_manager.on_update(delta_time)
 
         # move the player light to the player
         self.player_light.position = (
