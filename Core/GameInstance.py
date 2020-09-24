@@ -6,8 +6,6 @@ from Core.EnemyManager import EnemyManager
 from Core.GameResources import GameResources
 from Core.RendererFactory import RendererFactory
 from Core.ObjectManager import ObjectManager
-from Core.Projectile_Manager import ProjectileManager
-from Physics.EnemyPhysicsEngine import setup_enemy_physics_engine
 from Core.HealthRing import Health
 from Physics.PhysicsEngine import setup_physics_engine
 from Graphics.Particles.Torch.TorchSystem import TorchSystem
@@ -25,9 +23,6 @@ class GameInstance:
 
         # Core game resources
         self.game_resources = GameResources()
-        self.object_manager = ObjectManager(self.game_resources)
-        self.projectile_manager = ProjectileManager(self.game_resources)
-        self.enemy_manager = EnemyManager(self.game_resources)
 
         # Physics engine
         self.physics_engine = setup_physics_engine(self.game_resources)
@@ -71,7 +66,9 @@ class GameInstance:
         )  # Radius
 
         # player heath system
-        self.player_health = Health(self.player_light, self.scene_renderer.post_processing)
+        self.player_health = Health(
+            self.player_light, self.scene_renderer.post_processing
+        )
 
         # torch particle system
         self.torch_particle_system = TorchSystem(window.ctx)
@@ -143,7 +140,7 @@ class GameInstance:
         pass
 
     def on_mouse_press(self, x, y, button, modifiers):
-        self.projectile_manager.on_mouse_press(x, y, button, modifiers)
+        self.game_resources.projectile_manager.on_mouse_press(x, y, button, modifiers)
 
     # This method should idealy do nothing but invoke the scene renderer. use the following drawing methods instead
     def on_draw(self):
@@ -173,22 +170,10 @@ class GameInstance:
         # Move the player with the physics engine
         self.physics_engine.update()
 
-        self.barrier_list = arcade.AStarBarrierList(self.game_resources.enemy_list[0],
-                                                    self.game_resources.wall_list,
-                                                    self.game_resources.barrier_grid_size,
-                                                    self.game_resources.barrier_left_boundary,
-                                                    self.game_resources.barrier_right_boundary,
-                                                    self.game_resources.barrier_bottom_boundary,
-                                                    self.game_resources.barrier_top_boundary)
-
-        self.path = arcade.astar_calculate_path(self.game_resources.enemy_list[0].position,
-                            self.game_resources.player_sprite.position,
-                            self.barrier_list,
-                            diagonal_movement=False)
-        self.enemy_manager.on_update(self.path)
+        self.game_resources.enemy_manager.on_update(delta_time)
 
         # move projectiles
-        self.projectile_manager.on_update(delta_time)
+        self.game_resources.projectile_manager.on_update(delta_time)
 
         # move the player light to the player
         self.player_light.position = (
