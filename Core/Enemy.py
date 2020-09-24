@@ -49,21 +49,21 @@ class EnemyManager:
         self.x_spawn_location = []
         for i in self.game_resources.floor_list:
             if i.position[0] == self.game_resources.player_sprite.position[0]:
-                # print("i - ps y", i.position[1] - self.game_resources.player_sprite.position[1])
-                if i.position[1] - self.game_resources.player_sprite.position[1] < 200:
-                    if i.position[1] - self.game_resources.player_sprite.position[1] > -200:
+                print("i - ps y", i.position[1] - self.game_resources.player_sprite.position[1])
+                if i.position[1] - self.game_resources.player_sprite.position[1] < 500:
+                    if i.position[1] - self.game_resources.player_sprite.position[1] > -500:
                         self.y_spawn_location.append(i.position[1]) 
         for i in self.game_resources.floor_list:
             if i.position[1] == self.game_resources.player_sprite.position[1]:
-                # print("i - ps x", i.position[0] - self.game_resources.player_sprite.position[0])
-                if i.position[0] - self.game_resources.player_sprite.position[0] < 200:
-                    if i.position[0] - self.game_resources.player_sprite.position[0] > -200:
+                print("i - ps x", i.position[0] - self.game_resources.player_sprite.position[0])
+                if i.position[0] - self.game_resources.player_sprite.position[0] < 500:
+                    if i.position[0] - self.game_resources.player_sprite.position[0] > -500:
                         self.x_spawn_location.append(i.position[0]) 
-        # print("player pos", self.game_resources.player_sprite.position)
-        random_y = random.randint(0, len(self.y_spawn_location))
-        random_x = random.randint(0, len(self.x_spawn_location))
+        print("player pos", self.game_resources.player_sprite.position)
+        random_y = random.randint(0, len(self.y_spawn_location) - 1)
+        random_x = random.randint(0, len(self.x_spawn_location) - 1)
         enemy_position = [self.x_spawn_location[random_x], self.y_spawn_location[random_y]]
-        # print("enemy pos",enemy_position)
+        print("enemy pos",enemy_position)
         self.enemy.position = enemy_position
 
         # Add to enemy sprite list
