@@ -7,10 +7,16 @@ from Constants.Physics import PLAYER_MOVEMENT_SPEED
 
 class Enemy(arcade.Sprite):
     def __init__(self, game_resources):
-        super().__init__("Graphics/Character_animation/monsters_idle/skeleton1/v1/skeleton_v1_1.png", SPRITE_SCALING_PLAYER)
+        super().__init__(
+            "Graphics/Character_animation/monsters_idle/skeleton1/v1/skeleton_v1_1.png",
+            SPRITE_SCALING_PLAYER,
+        )
         self.game_resources = game_resources
         self.speed = PLAYER_MOVEMENT_SPEED
-        self.path = [self.game_resources.player_sprite.center_x, self.game_resources.player_sprite.center_y]
+        self.path = [
+            self.game_resources.player_sprite.center_x,
+            self.game_resources.player_sprite.center_y,
+        ]
         self.obstacles = self.game_resources.wall_list
 
     def draw(self):
@@ -30,16 +36,14 @@ class Enemy(arcade.Sprite):
             elif self.path[0][1] > self.path[1][1]:
                 self.center_y = self.center_y - 1
 
-class EnemyManager:
 
+class EnemyManager:
     def __init__(self, game_resources):
         self.game_resources = game_resources
         self.enemy_list = arcade.SpriteList()
 
         # Enemy
-        self.enemy = Enemy(
-            game_resources
-        )
+        self.enemy = Enemy(game_resources)
         self.enemy.center_y = self.game_resources.player_sprite.center_y + 150
         self.enemy.center_x = self.game_resources.player_sprite.center_x + 150
 
