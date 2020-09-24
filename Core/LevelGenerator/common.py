@@ -2,10 +2,14 @@ from __future__ import annotations
 
 import math
 import random
-from typing import Optional
+from typing import Optional, List, Dict
 
 from Core.LevelGenerator.level import Level
 from Core.LevelGenerator.shapes import Rect
+
+
+class InvalidTunnelException(Exception):
+    pass
 
 
 def create_rooms(level: Level, leaf: Leaf):
@@ -22,7 +26,7 @@ def create_rooms(level: Level, leaf: Leaf):
             create_rooms(level, leaf.child_2)
 
         if leaf.child_1 and leaf.child_2:
-            create_hall(level, get_room(leaf.child_1), get_room(leaf.child_2))
+            create_hall(level, leaf.child_1, leaf.child_2)
 
     else:
         # Create rooms in the end branches of the bsp tree
@@ -39,25 +43,43 @@ def create_rooms(level: Level, leaf: Leaf):
 def are_vertically_aligned(room1: Rect, room2: Rect):
 
     # horizontally aligned
-    if room2.y1 <= room1.y1 < room2.y2 or room1.y1 <= room2.y1 < room1.y2:
+    if room2.y1 <= room1.y1 < room2.y2 - 1 or room1.y1 <= room2.y1 < room1.y2 - 1:
         return False
 
     # vertically aligned
-    if room2.x1 <= room2.x1 < room2.x2 or room1.x1 <= room2.x1 < room1.x2:
+    if room2.x1 <= room2.x1 < room2.x2 - 1 or room1.x1 <= room2.x1 < room1.x2 - 1:
         return True
 
-    raise Exception("not aligned on any axis")
+    raise InvalidTunnelException("not aligned on any axis")
 
 
-def create_hall(level: Level, room1: Rect, room2: Rect):
+def add_connection_to_leaf(leaf1: Leaf, leaf2: Leaf, tunnel: Rect):
+    leaf1.connections[leaf2.id] = (leaf2, tunnel)
+    leaf2.connections[leaf1.id] = (leaf1, tunnel)
+
+
+def create_hall(level: Level, leaf1: Leaf, leaf2: Leaf):
     """
     Connect two rooms by hallways.
     This algorithm works by detecting alignment between two rooms, then creating a hallway between the "overlap" of
     the rooms. It's pretty basic, but it works.
     :param level: Instance of the level to add the hallway for
-    :param room1: First room to connect
-    :param room2: Second room to connect
+    :param leaf1: First room to connect
+    :param leaf2: Second room to connect
     """
+
+    room1 = leaf1.room
+    room2 = leaf2.room
+
+    if room1 is None or room2 is None:
+        return
+
+    if leaf1.id is None or leaf2.id is None:
+        raise Exception("Leafs are missing ids")
+
+    # Don't re-add rooms
+    if leaf2.id in leaf1.connections or leaf1.id in leaf2.connections:
+        return
 
     x1, y1 = room1.center()
     x2, y2 = room2.center()
@@ -70,14 +92,34 @@ def create_hall(level: Level, room1: Rect, room2: Rect):
             bottom = room2.y1 + 1
         else:
             top = room2.y2
-            bottom = room1.y1
+            bottom = room1.y1 + 1
 
         if x1 < x2:
             left = x1 + round((x2 - x1) / 2)
+            if left - 1 < room2.x1:
+                left = room2.x1 + 1
+            elif left >= room1.x2:
+                left = room1.x2 - 1
         else:
             left = x2 + round((x1 - x2) / 2)
+            if left - 1 > room2.x2:
+                left = room2.x2 + 1
+            elif left <= room1.x1:
+                left = room1.x1 - 1
 
-        level.create_vir_tunnel(top, bottom, left)
+        # don't create super long tunnels
+        if bottom - top > leaf1.MAX_LEAF_SIZE / 2:
+            return
+
+        # dont produce invalid tunnels
+        for room in level.rooms:
+            if room.x1 < left < room.x2:
+                if room.y1 > top and room.y2 < bottom:
+                    raise InvalidTunnelException()
+
+        tunnel = level.create_vir_tunnel(top, bottom, left)
+
+        add_connection_to_leaf(leaf1, leaf2, tunnel)
         return
 
     if room1.x2 < room2.x1:
@@ -89,10 +131,32 @@ def create_hall(level: Level, room1: Rect, room2: Rect):
 
     if y1 < y2:
         top = y1 + round((y2 - y1) / 2)
+        if top - 1 < room2.y1:
+            top = room2.y1
+        elif top >= room1.y2:
+            top = room1.y2 - 1
     else:
         top = y2 + round((y1 - y2) / 2)
+        if top > room2.y2:
+            top = room2.y2 - 1
+        elif top <= room1.y1:
+            top = room1.y1
 
-    level.create_hor_tunnel(left, right, top)
+
+
+    # don't create super long tunnels
+    if right - left > leaf1.MAX_LEAF_SIZE / 2:
+        return
+
+    # dont produce invalid tunnels
+    for room in level.rooms:
+        if room.y1 < top < room.y2:
+            if room.x1 > left and room.x2 < right:
+                raise InvalidTunnelException()
+
+    tunnel = level.create_hor_tunnel(left, right, top)
+
+    add_connection_to_leaf(leaf1, leaf2, tunnel)
 
 
 def split_leaf(leaf: Leaf):
@@ -141,7 +205,7 @@ def split_leaf(leaf: Leaf):
     return True
 
 
-def get_room(leaf: Leaf):
+def get_room(leaf: Leaf) -> Optional[Rect]:
     """
     Grabs the "room" associated with a given leaf.
     Note: Need to confirm the behavior of this because it will randomly pick a room if both are available.
@@ -189,6 +253,7 @@ class Leaf:
     """
     child_1: Optional[Leaf]
     child_2: Optional[Leaf]
+    connections: Dict[int, (Leaf, Rect)]
 
     def __init__(self, x, y, width, height, parent: Optional[Leaf]):
         self.x = x
@@ -196,11 +261,11 @@ class Leaf:
         self.width = width
         self.height = height
         self.MIN_LEAF_SIZE = 10
-        self.MAX_LEAF_SIZE = 25
+        self.MAX_LEAF_SIZE = 22
         self.child_1 = None
         self.child_2 = None
         self.parent = parent
         self.room = None
-        self.hall = None
+        self.connections = dict()
         self.id = -1
 
