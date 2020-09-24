@@ -28,6 +28,7 @@ from Core.LevelGenerator.tiled_mapper.tiled_compatible_level import (
 from Core.PlayerCharacter import PlayerCharacter
 from Core.Projectile_Manager import ProjectileManager
 
+
 class GameResources:
     """
     Load arcade resources
@@ -195,4 +196,3 @@ class GameResources:
 
     def on_update(self, delta_time):
         pass
-

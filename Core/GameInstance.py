@@ -11,7 +11,6 @@ from Graphics.Particles.Torch.TorchSystem import TorchSystem
 from Graphics.Particles.Fireball.Fireball import FireBall
 
 
-
 class GameInstance:
     """
     This is an instance of the game and all of the different components needed to render it.
