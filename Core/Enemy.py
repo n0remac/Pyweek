@@ -1,7 +1,7 @@
 import arcade
 import math
 
-from Constants.Game import SPRITE_SIZE, SPRITE_SCALING_PLAYER
+from Constants.Game import SPRITE_SIZE, SPRITE_SCALING_PLAYER, ENEMY_AWARENESS
 from Constants.Physics import PLAYER_MOVEMENT_SPEED
 from Physics.EnemyPhysicsEngine import setup_enemy_physics_engine
 
@@ -59,16 +59,16 @@ class EnemyManager:
         grid_size = SPRITE_SIZE
 
         playing_field_left_boundary = self.game_resources.player_sprite.center_x - (
-            10 * SPRITE_SIZE
+            ENEMY_AWARENESS * SPRITE_SIZE
         )
         playing_field_right_boundary = self.game_resources.player_sprite.center_x + (
-            10 * SPRITE_SIZE
+            ENEMY_AWARENESS * SPRITE_SIZE
         )
         playing_field_top_boundary = self.game_resources.player_sprite.center_y + (
-            10 * SPRITE_SIZE
+            ENEMY_AWARENESS * SPRITE_SIZE
         )
         playing_field_bottom_boundary = self.game_resources.player_sprite.center_y - (
-            10 * SPRITE_SIZE
+            ENEMY_AWARENESS * SPRITE_SIZE
         )
 
         self.barrier_list = arcade.AStarBarrierList(

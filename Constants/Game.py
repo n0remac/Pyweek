@@ -31,3 +31,6 @@ LEFT_VIEWPORT_MARGIN = 250
 RIGHT_VIEWPORT_MARGIN = 250
 BOTTOM_VIEWPORT_MARGIN = 200
 TOP_VIEWPORT_MARGIN = 200
+
+# How close the player needs to be for the enemy to track it.
+ENEMY_AWARENESS = 10
