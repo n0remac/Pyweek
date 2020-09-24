@@ -1,7 +1,7 @@
 import arcade
 import math
 
-from Constants.Game import SPRITE_SIZE, SPRITE_SCALING_PLAYER
+from Constants.Game import SPRITE_SIZE, SPRITE_SCALING_PLAYER, ENEMY_AWARENESS
 from Constants.Physics import PLAYER_MOVEMENT_SPEED
 from Physics.EnemyPhysicsEngine import setup_enemy_physics_engine
 
@@ -50,12 +50,25 @@ class EnemyManager:
         # Add to enemy sprite list
         self.enemy_list.append(self.enemy)
 
+        self.make_barrier_list()
+
+        self.path = self.enemy.path
+
+    def make_barrier_list(self):
         grid_size = SPRITE_SIZE
 
-        playing_field_left_boundary = -SPRITE_SIZE * 200
-        playing_field_right_boundary = SPRITE_SIZE * 200
-        playing_field_top_boundary = SPRITE_SIZE * 200
-        playing_field_bottom_boundary = -SPRITE_SIZE * 200
+        playing_field_left_boundary = self.game_resources.player_sprite.center_x - (
+            ENEMY_AWARENESS * SPRITE_SIZE
+        )
+        playing_field_right_boundary = self.game_resources.player_sprite.center_x + (
+            ENEMY_AWARENESS * SPRITE_SIZE
+        )
+        playing_field_top_boundary = self.game_resources.player_sprite.center_y + (
+            ENEMY_AWARENESS * SPRITE_SIZE
+        )
+        playing_field_bottom_boundary = self.game_resources.player_sprite.center_y - (
+            ENEMY_AWARENESS * SPRITE_SIZE
+        )
 
         self.barrier_list = arcade.AStarBarrierList(
             self.enemy,
@@ -66,7 +79,6 @@ class EnemyManager:
             playing_field_bottom_boundary,
             playing_field_top_boundary,
         )
-        self.path = self.enemy.path
 
     def setup(self):
         # Enemy Physics engine

@@ -25,6 +25,7 @@ from Core.LevelGenerator.shapes import Rect
 from Core.LevelGenerator.tiled_mapper.tiled_compatible_level import (
     generate_tiled_compatible_level,
 )
+from Core.PlayerCharacter import PlayerCharacter
 from Core.Projectile_Manager import ProjectileManager
 
 
@@ -113,9 +114,7 @@ class GameResources:
         # )
 
         # Create player sprite
-        self.player_sprite = arcade.Sprite(
-            "Graphics/player.png", SPRITE_SCALING_PLAYER,
-        )
+        self.player_sprite = PlayerCharacter()
 
         # Set player location
         i = random.randint(0, len(self.floor_list))
@@ -135,6 +134,12 @@ class GameResources:
         pass
 
     def on_draw(self):
+        self.wall_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.floor_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.light_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.bullet_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.player_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.object_list.draw()
         # --- Manage Scrolling ---
 
         # Track if we need to change the viewport
