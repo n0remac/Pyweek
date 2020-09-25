@@ -114,7 +114,7 @@ class GameResources:
         # )
 
         # Create player sprite
-        self.player_sprite = PlayerCharacter()
+        self.player_sprite = PlayerCharacter(self)
 
         # Set player location
         i = random.randint(0, len(self.floor_list))
@@ -139,7 +139,7 @@ class GameResources:
         self.light_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         self.bullet_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         self.player_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
-        self.object_list.draw()
+        self.object_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         # --- Manage Scrolling ---
 
         # Track if we need to change the viewport
@@ -184,14 +184,14 @@ class GameResources:
                 SCREEN_HEIGHT + self.view_bottom,
             )
 
-        self.wall_list.draw()
-        self.floor_list.draw()
-        self.light_list.draw()
-        self.object_list.draw()
-        self.bullet_list.draw()
-        self.player_list.draw()
+        self.wall_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.floor_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.light_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.object_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.bullet_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.player_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
 
-        self.enemy_manager.enemy_list.draw()
+        self.enemy_manager.enemy_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         self.enemy_manager.enemy.draw()
 
     def on_update(self, delta_time):
