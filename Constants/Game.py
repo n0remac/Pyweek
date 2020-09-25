@@ -33,4 +33,5 @@ BOTTOM_VIEWPORT_MARGIN = 200
 TOP_VIEWPORT_MARGIN = 200
 
 # How close the player needs to be for the enemy to track it.
-ENEMY_AWARENESS = 10
+# starts to break above 15
+ENEMY_AWARENESS = 15

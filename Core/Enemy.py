@@ -28,14 +28,14 @@ class Enemy(arcade.Sprite):
         self.path = path
         if self.path and len(self.path) > 1:
             if self.path[0][0] < self.path[1][0]:
-                self.center_x = self.center_x + 3
+                self.center_x = self.center_x + self.speed / 5
             elif self.path[0][0] > self.path[1][0]:
-                self.center_x = self.center_x - 3
+                self.center_x = self.center_x - self.speed / 5
 
             if self.path[0][1] < self.path[1][1]:
-                self.center_y = self.center_y + 3
+                self.center_y = self.center_y + self.speed / 5
             elif self.path[0][1] > self.path[1][1]:
-                self.center_y = self.center_y - 3
+                self.center_y = self.center_y - self.speed / 5
 
 
 class EnemyManager:
