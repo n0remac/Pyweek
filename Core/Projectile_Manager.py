@@ -1,8 +1,10 @@
 import arcade
 import math
 
+from Constants.Game import SCREEN_HEIGHT, SCREEN_WIDTH
 from Constants.Physics import BULLET_MOVE_FORCE
 from Graphics.Lights.PointLight import DynamicPointLight
+
 
 class ProjectileManager:
     """ Handles mouse press presses to fire bullets and creates bullet objects. """
@@ -54,7 +56,7 @@ class ProjectileManager:
     def on_mouse_press(self, x, y, button, modifiers):
         """ Called whenever the mouse button is clicked. """
 
-        bullet = BulletSprite(20, 5, arcade.color.DARK_YELLOW)
+        bullet = BulletSprite(self.game_resources, 20, 5, arcade.color.DARK_YELLOW)
         self.game_resources.bullet_list.append(bullet)
 
         # Position the bullet at the player's current location
@@ -66,15 +68,15 @@ class ProjectileManager:
         if(self.last_type >= 3):
             self.last_type = 0
 
-        #add light to sprite
         #TODO:Color based on light
-        bullet.point_light = DynamicPointLight( (1.5,1.0,0.2) , 128.0)
+        # add light to sprite
+        bullet.point_light = DynamicPointLight((1.5, 1.0, 0.2), 128.0)
 
         # Get from the mouse the destination location for the bullet
         # IMPORTANT! If you have a scrolling screen, you will also need
         # to add in self.view_bottom and self.view_left.
-        dest_x = x
-        dest_y = y
+        dest_x = x + self.game_resources.view_left
+        dest_y = y + self.game_resources.view_bottom
 
         # Do math to calculate how to get the bullet to the destination.
         # Calculation the angle in radians between the start points
@@ -114,8 +116,17 @@ class ProjectileManager:
 class BulletSprite(arcade.SpriteSolidColor):
     """ Bullet Sprite """
 
+    def __init__(self, game_resources, *args):
+        super().__init__(*args)
+        self.game_resources = game_resources
+
     def pymunk_moved(self, physics_engine, dx, dy, d_angle):
         """ Handle when the sprite is moved by the physics engine. """
         # If the bullet falls below the screen, remove it
-        if self.center_y < -100:
+        if (
+            self.bottom < self.game_resources.view_bottom
+            or self.top > self.game_resources.view_bottom + SCREEN_HEIGHT
+            or self.right > self.game_resources.view_left + SCREEN_WIDTH
+            or self.left < self.game_resources.view_left
+        ):
             self.remove_from_sprite_lists()

@@ -13,8 +13,6 @@ def setup_physics_engine(game_resources: GameResources):
         solids.append(obj)
 
     # Create the physics engine
-    physics_engine = arcade.PhysicsEngineSimple(
-        game_resources.player_sprite, solids
-    )
+    physics_engine = arcade.PhysicsEngineSimple(game_resources.player_sprite, solids)
 
     return physics_engine

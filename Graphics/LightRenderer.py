@@ -67,9 +67,9 @@ class LightRenderer:
 
     def draw_dynamic_point_lights(self, sprite_list):
         for sprite in sprite_list:
-            if not hasattr(sprite,'point_light'):
+            if not hasattr(sprite, "point_light"):
                 continue
-            #else append this
+            # else append this
             self.dynamic_point_light_buffer.append(sprite.center_x)
             self.dynamic_point_light_buffer.append(sprite.center_y)
             self.dynamic_point_light_buffer.extend(sprite.point_light.color)
