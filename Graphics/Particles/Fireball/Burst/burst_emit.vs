@@ -23,7 +23,11 @@ float rand(float val){
 float get_life_offset(){
     if(u_type == 1.0){
 
-        return u_time + floor(rand(2.0) * 3.0 ) * 0.2;
+        if(gl_VertexID % 5 > 0){
+            return u_time - 1000.0;
+        }
+
+        return u_time + floor(rand(2.0) * 3.0 ) * 0.4;
         //return u_time + 0.1;
 
     }
