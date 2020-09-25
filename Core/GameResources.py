@@ -1,9 +1,10 @@
 import math
-from random import random
+import random
 
 import arcade
 from pytiled_parser.objects import TileLayer, Size
 
+from Core.Enemy import Enemy, EnemyManager
 from Constants.Game import (
     SPRITE_SCALING_TILES,
     SPRITE_SCALING_PLAYER,
@@ -15,10 +16,17 @@ from Constants.Game import (
     BOTTOM_VIEWPORT_MARGIN,
     TOP_VIEWPORT_MARGIN,
 )
-from Core.LevelGenerator.generate_game_level import generate_game_level, place_room, place_tunnel
+from Core.LevelGenerator.generate_game_level import (
+    generate_game_level,
+    place_room,
+    place_tunnel,
+)
 from Core.LevelGenerator.shapes import Rect
-from Core.LevelGenerator.tiled_mapper.tiled_compatible_level import generate_tiled_compatible_level
-from Core.Enemy import Enemy
+from Core.LevelGenerator.tiled_mapper.tiled_compatible_level import (
+    generate_tiled_compatible_level,
+)
+from Core.PlayerCharacter import PlayerCharacter
+from Core.Projectile_Manager import ProjectileManager
 
 
 class GameResources:
@@ -106,44 +114,32 @@ class GameResources:
         # )
 
         # Create player sprite
-        self.player_sprite = arcade.Sprite(
-            "Graphics/player.png", SPRITE_SCALING_PLAYER,
-        )
+        self.player_sprite = PlayerCharacter()
 
         # Set player location
+        i = random.randint(0, len(self.floor_list))
+        start_pos = self.floor_list[i].position
         grid_x = 20
         grid_y = 25
-        self.player_sprite.center_x = SPRITE_SIZE * grid_x + SPRITE_SIZE / 2
-        self.player_sprite.center_y = SPRITE_SIZE * grid_y + SPRITE_SIZE / 2
+        self.player_sprite.position = start_pos
         # Add to player sprite list
         self.player_list.append(self.player_sprite)
 
-        # Enemy
-        self.enemy = Enemy(grid_x, grid_y, [self.player_sprite.center_x, self.player_sprite.center_y], my_map)
-
-        # Add to enemy sprite list
-        self.enemy_list.append(self.enemy.enemy_sprite)
-
-        grid_size = SPRITE_SIZE
-
-        playing_field_left_boundary = -SPRITE_SIZE * 2
-        playing_field_right_boundary = SPRITE_SIZE * 35
-        playing_field_top_boundary = SPRITE_SIZE * 17
-        playing_field_bottom_boundary = -SPRITE_SIZE * 2
-
-        self.barrier_list = arcade.AStarBarrierList(self.enemy.enemy_sprite,
-                                                    self.wall_list,
-                                                    grid_size,
-                                                    playing_field_left_boundary,
-                                                    playing_field_right_boundary,
-                                                    playing_field_bottom_boundary,
-                                                    playing_field_top_boundary)
-        self.path = self.enemy.path
+        # Game managers
+        self.projectile_manager = ProjectileManager(self)
+        self.enemy_manager = EnemyManager(self)
+        self.enemy_manager.setup()
 
     def on_mouse_motion(self, x, y, dx, dy):
         pass
 
     def on_draw(self):
+        self.wall_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.floor_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.light_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.bullet_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.player_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.object_list.draw()
         # --- Manage Scrolling ---
 
         # Track if we need to change the viewport
@@ -194,10 +190,9 @@ class GameResources:
         self.object_list.draw()
         self.bullet_list.draw()
         self.player_list.draw()
-        self.enemy_list.draw()
-        self.enemy.draw()
+
+        self.enemy_manager.enemy_list.draw()
+        self.enemy_manager.enemy.draw()
 
     def on_update(self, delta_time):
         pass
-
-

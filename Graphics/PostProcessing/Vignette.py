@@ -32,8 +32,7 @@ class Vignette(PostEffect):
     @outer_distance.setter
     def outer_distance(self, value):
         self._outer_distance = value
-        self.program['u_outer_distance'] = value
-
+        self.program["u_outer_distance"] = value
 
     @property
     def inner_distance(self):
@@ -42,8 +41,7 @@ class Vignette(PostEffect):
     @inner_distance.setter
     def inner_distance(self, value):
         self._inner_distance = value
-        self.program['u_inner_distance'] = value
-
+        self.program["u_inner_distance"] = value
 
     @property
     def color(self):
@@ -52,4 +50,4 @@ class Vignette(PostEffect):
     @color.setter
     def color(self, value):
         self._color = value
-        self.program['u_color'] = value
+        self.program["u_color"] = value

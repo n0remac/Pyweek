@@ -6,6 +6,7 @@ from Graphics.PostProcessing.Tonemap import Tonemap
 from Graphics.PostProcessing.Bloom import Bloom
 from Graphics.PostProcessing.Vignette import Vignette
 
+
 class RendererFactory:
     def create_renderer(window):
 
@@ -23,7 +24,7 @@ class RendererFactory:
         return scene_renderer
 
     def setup_post_processing(scene_renderer):
-        
+
         RendererFactory.setup_bloom(scene_renderer)
         RendererFactory.setup_tonemap(scene_renderer)
         RendererFactory.setup_vignette(scene_renderer)

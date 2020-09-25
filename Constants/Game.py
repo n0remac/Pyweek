@@ -18,9 +18,20 @@ SCREEN_GRID_HEIGHT = 28
 SCREEN_WIDTH = SPRITE_SIZE * SCREEN_GRID_WIDTH
 SCREEN_HEIGHT = SPRITE_SIZE * SCREEN_GRID_HEIGHT
 
+
+# Constants used to track if the player is facing left or right
+DOWN_FACING = 0
+UP_FACING = 1
+RIGHT_FACING = 0
+LEFT_FACING = 1
+
 # How many pixels to keep as a minimum margin between the character
 # and the edge of the screen.
 LEFT_VIEWPORT_MARGIN = 250
 RIGHT_VIEWPORT_MARGIN = 250
 BOTTOM_VIEWPORT_MARGIN = 200
 TOP_VIEWPORT_MARGIN = 200
+
+# How close the player needs to be for the enemy to track it.
+# starts to break above 15
+ENEMY_AWARENESS = 15
