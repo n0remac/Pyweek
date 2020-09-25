@@ -54,14 +54,6 @@ class GameResources:
         # Procedurally generated map
         generated_map = generate_game_level(100, 100)
 
-        # Static map for testing
-        # generated_map = generate_tiled_compatible_level(70, 70)
-        # place_room(Rect(1, 1, 5, 5), generated_map)
-        # place_room(Rect(10, 1, 10, 10), generated_map)
-        # place_room(Rect(1, 10, 8, 8), generated_map)
-        # place_tunnel(Rect(6, 3, 5, 1), generated_map)
-        # place_tunnel(Rect(3, 6, 1, 5), generated_map)
-
         fake_walls_layer = TileLayer(
             id_=1,
             name="Walls",
@@ -102,17 +94,6 @@ class GameResources:
             my_map, fake_floor_layer, scaling=SPRITE_SCALING_TILES
         )
 
-        # Uncomment if you want to actually load the level from the Tiled map.
-        # self.wall_list = arcade.tilemap.process_layer(
-        #     my_map, "Walls", SPRITE_SCALING_TILES
-        # )
-        # self.floor_list = arcade.tilemap.process_layer(
-        #     my_map, "Floor", SPRITE_SCALING_TILES
-        # )
-        # self.light_list = arcade.tilemap.process_layer(
-        #     my_map, "Lighting", SPRITE_SCALING_TILES
-        # )
-
         # Create player sprite
         self.player_sprite = PlayerCharacter()
 
@@ -126,9 +107,8 @@ class GameResources:
         self.player_list.append(self.player_sprite)
 
         # Game managers
-        self.projectile_manager = ProjectileManager(self)
         self.enemy_manager = EnemyManager(self)
-        self.enemy_manager.setup()
+        self.projectile_manager = ProjectileManager(self)
 
     def on_mouse_motion(self, x, y, dx, dy):
         pass
@@ -190,9 +170,7 @@ class GameResources:
         self.object_list.draw()
         self.bullet_list.draw()
         self.player_list.draw()
-
         self.enemy_manager.enemy_list.draw()
-        self.enemy_manager.enemy.draw()
 
     def on_update(self, delta_time):
         pass
