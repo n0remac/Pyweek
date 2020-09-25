@@ -25,13 +25,6 @@ class ProjectileManager:
             collision_type="object",
             body_type=arcade.PymunkPhysicsEngine.STATIC,
         )
-        for s in self.game_resources.enemy_manager.enemy_list:
-            print(s)
-        self.projectile_physics.add_sprite_list(
-            self.game_resources.enemy_manager.enemy_list,
-            collision_type="enemy",
-            body_type=arcade.PymunkPhysicsEngine.STATIC,
-        )
 
         def wall_hit_handler(bullet_sprite, _wall_sprite, _arbiter, _space, _data):
             """ Called for bullet/wall collision """
@@ -55,19 +48,6 @@ class ProjectileManager:
 
         self.projectile_physics.add_collision_handler(
             "bullet", "object", post_handler=object_hit_handler
-        )
-
-        def enemy_hit_handler(bullet_sprite, _enemy_sprite, _arbiter, _space, _data):
-            """ Called for bullet/enemy collision """
-
-            if self.on_bullet_death is not None:
-                self.on_bullet_death(bullet_sprite)
-
-            bullet_sprite.remove_from_sprite_lists()
-            _enemy_sprite.remove_from_sprite_lists()
-
-        self.projectile_physics.add_collision_handler(
-            "bullet", "enemy", post_handler=enemy_hit_handler
         )
 
     def on_mouse_press(self, x, y, button, modifiers):
@@ -135,6 +115,16 @@ class BulletSprite(arcade.SpriteSolidColor):
     def pymunk_moved(self, physics_engine, dx, dy, d_angle):
         """ Handle when the sprite is moved by the physics engine. """
         # If the bullet falls below the screen, remove it
+
+        # itterate throught the enemy_list
+        collisions = self.collides_with_list(
+            self.game_resources.enemy_manager.enemy_list
+        )
+        if len(collisions) > 0:
+            self.remove_from_sprite_lists()
+            for c in collisions:
+                self.game_resources.enemy_manager.enemy_list.remove(c)
+
         if (
             self.bottom < self.game_resources.view_bottom
             or self.top > self.game_resources.view_bottom + SCREEN_HEIGHT

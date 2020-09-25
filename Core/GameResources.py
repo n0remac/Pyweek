@@ -52,7 +52,7 @@ class GameResources:
         my_map = arcade.tilemap.read_tmx(map_name)
 
         # Procedurally generated map
-        generated_map = generate_game_level(100, 100)
+        generated_map = generate_game_level(50, 50)
 
         fake_walls_layer = TileLayer(
             id_=1,
