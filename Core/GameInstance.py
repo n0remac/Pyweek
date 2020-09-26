@@ -1,12 +1,6 @@
-import arcade
-import math
-
-from Constants.Physics import PLAYER_MOVEMENT_SPEED
 from Core.GameResources import GameResources
-from Core.RendererFactory import RendererFactory
 from Core.ObjectManager import ObjectManager
-from Core.HealthRing import Health
-from Physics.EnemyPhysicsEngine import setup_enemy_physics_engine
+from Core.RendererFactory import RendererFactory
 from Physics.PhysicsEngine import setup_physics_engine
 from Graphics.Particles.Torch.TorchSystem import TorchSystem
 from Graphics.Particles.Fireball.Fireball import FireBall
@@ -19,8 +13,12 @@ class GameInstance:
 
     def __init__(self, window):
 
-        # Refernce to main window object
+        # Reference to main window object
         self.window = window
+
+        # create default scene renderer via factory.
+        # This configures the post processing stack and default lighting
+        self.scene_renderer = RendererFactory.create_renderer(window)
 
         # Core game resources
         self.game_resources = GameResources(self)
@@ -28,21 +26,12 @@ class GameInstance:
 
         # Physics engine
         self.physics_engine = setup_physics_engine(self.game_resources)
-        # self.physics_engine = setup_physics_engine(self.game_resources)
-        # Enemy Physics engine
-        self.enemy_physics_engine = setup_enemy_physics_engine(self.game_resources)
 
         self.horizontal_key_list = []
         self.verticle_key_list = []
 
-        self.up_pressed = False
-        self.down_pressed = False
-        self.left_pressed = False
-        self.right_pressed = False
 
-        # create default scene renderer via factory.
-        # This configures the post processing stack and default lighting
-        self.scene_renderer = RendererFactory.create_renderer(window)
+
 
         # bind rendering callbacks
         self.scene_renderer.draw_primary_callback = self.on_draw_scene
@@ -61,26 +50,21 @@ class GameInstance:
         )
 
         # dim the ambient lighting to make the player's light more vibrant
-        self.scene_renderer.light_renderer.ambient_light = (0.25, 0.25, 0.25)
+        self.scene_renderer.light_renderer.ambient_light = (0.2, 0.2, 0.2)
         #self.scene_renderer.light_renderer.ambient_light = (0.01, 0.01, 0.01)
+
+        # Core game resources
+        self.game_resources = GameResources(self)
+        self.object_manager = ObjectManager(self.game_resources, self)
+
+        # Physics engine
+        self.physics_engine = setup_physics_engine(self.game_resources)
 
         # create light sources
         self.light_list = []
 
-        self.player_light = self.scene_renderer.light_renderer.create_point_light(
-            (400, 400),  # Position
-            (
-                1.75,
-                1.75,
-                1.75,
-            ),  # Color, 0 = black, 1 = white, 0.5 = grey, order is RGB This can go over 1.0 because of HDR
-            160.0,
-        )  # Radius
 
-        # player heath system
-        self.player_health = Health(
-            self.player_light, self.scene_renderer.post_processing
-        )
+
 
         # torch particle system
         self.torch_particle_system = TorchSystem(window.ctx)
@@ -96,7 +80,7 @@ class GameInstance:
         )
 
         # dict used to determine radius of light based on light_type
-        radius_by_type = {"torch": 70.0, "candle": 40.0}
+        radius_by_type = {"torch": 300.0, "candle": 250.0}
 
         for light in self.game_resources.light_list:
             radius = radius_by_type.get(light.properties["type"])
@@ -104,9 +88,9 @@ class GameInstance:
                 self.scene_renderer.light_renderer.create_point_light(
                     (light.center_x, light.center_y),  # Position
                     (
-                        1.75,
-                        2.75,
-                        1.75,
+                        2.5,
+                        1.25,
+                        0.5,
                     ),  # Color, 0 = black, 1 = white, 0.5 = grey, order is RGB This can go over 1.0 because of HDR
                     radius,
                 )  # Radius
@@ -119,34 +103,14 @@ class GameInstance:
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed. """
-
-        if key == arcade.key.UP or key == arcade.key.W:
-            self.up_pressed = True
-        elif key == arcade.key.DOWN or key == arcade.key.S:
-            self.down_pressed = True
-        elif key == arcade.key.LEFT or key == arcade.key.A:
-            self.left_pressed = True
-        elif key == arcade.key.RIGHT or key == arcade.key.D:
-            self.right_pressed = True
-        elif key == arcade.key.SPACE:
-            self.game_resources.object_manager.candle(self.game_resources.player_sprite.position[0] - 5,
-                                                      self.game_resources.player_sprite.position[1])
+        self.game_resources.player_sprite.on_key_press(key, modifiers)
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """
-        force = (0, 0)
-
-        if key == arcade.key.UP or key == arcade.key.W:
-            self.up_pressed = False
-        elif key == arcade.key.DOWN or key == arcade.key.S:
-            self.down_pressed = False
-        elif key == arcade.key.LEFT or key == arcade.key.A:
-            self.left_pressed = False
-        elif key == arcade.key.RIGHT or key == arcade.key.D:
-            self.right_pressed = False
+        self.game_resources.player_sprite.on_key_release(key, modifiers)
 
     def on_mouse_motion(self, x, y, dx, dy):
-        pass
+        self.game_resources.player_sprite.on_mouse_motion(x, y, dx, dy)
 
     def on_mouse_press(self, x, y, button, modifiers):
         self.game_resources.projectile_manager.on_mouse_press(x, y, button, modifiers)
@@ -185,19 +149,9 @@ class GameInstance:
     def on_update(self, delta_time):
         """ Movement and game logic """
 
-        x_force = 0
-        y_force = 0
-        speed = 120
-
-        if self.up_pressed:
-            y_force += speed
-        if self.down_pressed:
-            y_force -= speed
-        if self.left_pressed:
-            x_force -= speed
-        if self.right_pressed:
-            x_force += speed
-
+        x_force = self.game_resources.player_sprite.x_force
+        y_force = self.game_resources.player_sprite.y_force
+        self.game_resources.player_sprite.on_update(delta_time)
         self.game_resources.projectile_manager.projectile_physics.apply_impulse(self.game_resources.player_sprite, (x_force, y_force))
 
         # Move the player with the physics engine
@@ -208,11 +162,7 @@ class GameInstance:
         # move projectiles
         self.game_resources.projectile_manager.on_update(delta_time)
 
-        # move the player light to the player
-        self.player_light.position = (
-            self.game_resources.player_sprite.center_x,
-            self.game_resources.player_sprite.center_y,
-        )
+
         # update animations
         self.game_resources.player_sprite.update_animation(delta_time)
         self.game_resources.object_manager.on_update(delta_time)
