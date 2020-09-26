@@ -123,7 +123,7 @@ class GameResources:
         self.start_location = generated_map["start_location"][0].location
 
         # Create player sprite
-        self.player_sprite = PlayerCharacter(convert_from_tiled_coordinates(my_map, generated_map["start_location"][0].location))
+        self.player_sprite = PlayerCharacter(convert_from_tiled_coordinates(my_map, generated_map["start_location"][0].location), self)
 
         # Set player location
         i = random.randint(0, len(self.floor_list))
@@ -142,14 +142,6 @@ class GameResources:
         pass
 
     def on_draw(self):
-        self.wall_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
-        self.floor_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
-        self.light_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
-        self.warps_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
-        self.bullet_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
-        self.player_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
-        self.object_manager.object_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
-        self.enemy_manager.enemy_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
 
         # --- Manage Scrolling ---
 

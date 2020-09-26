@@ -4,7 +4,6 @@ import math
 from Constants.Physics import PLAYER_MOVEMENT_SPEED
 from Core.GameResources import GameResources
 from Core.RendererFactory import RendererFactory
-from Core.ObjectManager import ObjectManager
 from Core.HealthRing import Health
 from Physics.EnemyPhysicsEngine import setup_enemy_physics_engine
 from Physics.PhysicsEngine import setup_physics_engine
@@ -28,7 +27,6 @@ class GameInstance:
 
         # Physics engine
         self.physics_engine = setup_physics_engine(self.game_resources)
-        # self.physics_engine = setup_physics_engine(self.game_resources)
 
         self.horizontal_key_list = []
         self.verticle_key_list = []
@@ -144,7 +142,7 @@ class GameInstance:
             self.right_pressed = False
 
     def on_mouse_motion(self, x, y, dx, dy):
-        pass
+        self.game_resources.player_sprite.on_mouse_motion(x, y, dx, dy)
 
     def on_mouse_press(self, x, y, button, modifiers):
         self.game_resources.projectile_manager.on_mouse_press(x, y, button, modifiers)
