@@ -187,7 +187,7 @@ class GameInstance:
 
         x_force = 0
         y_force = 0
-        speed = 160
+        speed = 120
 
         if self.up_pressed:
             y_force += speed
