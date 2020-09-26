@@ -10,7 +10,7 @@ from Constants.Physics import PLAYER_MOVEMENT_SPEED
 
 
 class Enemy(arcade.Sprite):
-    def __init__(self, game_resources):
+    def __init__(self, barrier_list, game_resources):
         super().__init__(
             "Graphics/Character_animation/monsters_idle/skeleton1/v1/skeleton_v1_1.png",
             SPRITE_SCALING_PLAYER,
@@ -22,7 +22,8 @@ class Enemy(arcade.Sprite):
             self.game_resources.player_sprite.center_y,
         ]
         self.obstacles = self.game_resources.wall_list
-        self.barrier_list = self.make_barrier_list()
+
+        self.barrier_list = barrier_list
 
         self.light = game_resources.game_instance.scene_renderer.light_renderer.create_point_light(
             (-1000, -1000), (1.5, 0.5, 0.25), 196
@@ -43,32 +44,6 @@ class Enemy(arcade.Sprite):
             self.game_resources.player_sprite.position,
             self.barrier_list,
             diagonal_movement=True,
-        )
-
-    def make_barrier_list(self):
-        grid_size = SPRITE_SIZE
-
-        playing_field_left_boundary = self.game_resources.player_sprite.position[0] - (
-                ENEMY_AWARENESS * SPRITE_SIZE
-        )
-        playing_field_right_boundary = self.game_resources.player_sprite.position[0] + (
-                ENEMY_AWARENESS * SPRITE_SIZE
-        )
-        playing_field_top_boundary = self.game_resources.player_sprite.position[1] + (
-                ENEMY_AWARENESS * SPRITE_SIZE
-        )
-        playing_field_bottom_boundary = self.game_resources.player_sprite.position[1] - (
-                ENEMY_AWARENESS * SPRITE_SIZE
-        )
-
-        return arcade.AStarBarrierList(
-            self.game_resources.player_sprite,
-            self.game_resources.wall_list,
-            grid_size,
-            playing_field_left_boundary,
-            playing_field_right_boundary,
-            playing_field_bottom_boundary,
-            playing_field_top_boundary,
         )
 
     def update_position(self):
@@ -104,9 +79,9 @@ class EnemyManager:
         self.game_resources = game_resources
         self.enemy_list = arcade.SpriteList()
 
-    def spawn_enemy(self, position):
+    def spawn_enemy(self, barrier_list, position):
         # Enemy
-        enemy = Enemy(self.game_resources)
+        enemy = Enemy(barrier_list, self.game_resources)
         enemy.position = position
 
         self.path = enemy.path
@@ -119,6 +94,32 @@ class EnemyManager:
     def kill_enemy(self, enemy):
         if enemy in self.enemy_list:
             self.enemy_list.remove(enemy)
+
+    def make_barrier_list(self):
+        grid_size = SPRITE_SIZE
+
+        playing_field_left_boundary = self.game_resources.player_sprite.position[0] - (
+                ENEMY_AWARENESS * SPRITE_SIZE
+        )
+        playing_field_right_boundary = self.game_resources.player_sprite.position[0] + (
+                ENEMY_AWARENESS * SPRITE_SIZE
+        )
+        playing_field_top_boundary = self.game_resources.player_sprite.position[1] + (
+                ENEMY_AWARENESS * SPRITE_SIZE
+        )
+        playing_field_bottom_boundary = self.game_resources.player_sprite.position[1] - (
+                ENEMY_AWARENESS * SPRITE_SIZE
+        )
+
+        return arcade.AStarBarrierList(
+            self.game_resources.player_sprite,
+            self.game_resources.wall_list,
+            grid_size,
+            playing_field_left_boundary,
+            playing_field_right_boundary,
+            playing_field_bottom_boundary,
+            playing_field_top_boundary,
+        )
 
     def setup(self):
         pass
