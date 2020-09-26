@@ -21,7 +21,7 @@ class PlayerCharacter(Character):
 
         # Set up parent class
         super().__init__(position)
-        self.main_path = "Graphics/Character_animation/priests_idle/priest1/v1/priest1_v1"
+        self.main_path = "Graphics/Character_animation/player_animation/player_animation_down_idle"
         self.load_textures()
 
         #store game resources

@@ -1,6 +1,8 @@
 import arcade
 import math
 import ctypes
+import platform
+import subprocess
 
 from Constants.Physics import PLAYER_MOVEMENT_SPEED
 from Constants.Game import SCREEN_WIDTH, SCREEN_HEIGHT
@@ -45,8 +47,19 @@ class GameInstance:
         # This configures the post processing stack and default lighting
         self.scene_renderer = RendererFactory.create_renderer(window)
         self.window = window
-        user32 = ctypes.windll.user32
-        self.screensize = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
+        #handle getting screen size
+        if platform.system() == 'Linux':
+            cmd = ['xrandr']
+            cmd2 = ['grep', '*']
+            p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+            p2 = subprocess.Popen(cmd2, stdin=p.stdout, stdout=subprocess.PIPE)
+            p.stdout.close()
+            resolution_string, junk = p2.communicate()
+            resolution = resolution_string.split()[0]
+            self.screensize = resolution.split('x')
+        elif platform.system() == 'Windows':
+            user32 = ctypes.windll.user32
+            self.screensize = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
 
         # bind rendering callbacks
         self.scene_renderer.draw_primary_callback = self.on_draw_scene
