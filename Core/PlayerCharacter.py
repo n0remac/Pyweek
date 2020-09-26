@@ -27,8 +27,22 @@ class PlayerCharacter(Character):
         self.main_path = "Graphics/Character_animation/Acolyte/player_animation_down_idle"
         self.load_textures()
 
-        #store game resources
-        self.game_resources = game_resources
+        self.up_pressed = False
+        self.down_pressed = False
+        self.left_pressed = False
+        self.right_pressed = False
+
+        self.x_force = 0
+        self.y_force = 0
+        self.speed = 40
+
+        self.walk_textures = []
+        walk_path = 'Graphics/Character_animation/Acolyte/player_animation_down_walk'
+        for i in range(1, 5):
+            self.walk_textures.append(arcade.load_texture_pair(
+            f"{walk_path}_{i}.png"
+        ))
+
 
 
     def on_mouse_motion(self, x, y, dx, dy):
@@ -58,4 +72,46 @@ class PlayerCharacter(Character):
             if self.cur_texture > (self.frames-1):
                 self.cur_texture = 0
             # idle animation
-            self.texture = self.idle_list[self.cur_texture][self.character_face_direction_horizontal]
+            if self.x_force != 0 or self.y_force != 0:
+                self.texture = self.walk_textures[self.cur_texture][self.character_face_direction_horizontal]
+            else:
+                self.texture = self.idle_list[self.cur_texture][self.character_face_direction_horizontal]
+
+    def on_key_press(self, key, modifiers):
+        """Called whenever a key is pressed. """
+
+        if key == arcade.key.UP or key == arcade.key.W:
+            self.up_pressed = True
+        elif key == arcade.key.DOWN or key == arcade.key.S:
+            self.down_pressed = True
+        elif key == arcade.key.LEFT or key == arcade.key.A:
+            self.left_pressed = True
+        elif key == arcade.key.RIGHT or key == arcade.key.D:
+            self.right_pressed = True
+        elif key == arcade.key.SPACE:
+            self.game_resources.object_manager.candle(self.game_resources.player_sprite.position[0] - 5,
+                                                      self.game_resources.player_sprite.position[1])
+
+    def on_key_release(self, key, modifiers):
+        """Called when the user releases a key. """
+        if key == arcade.key.UP or key == arcade.key.W:
+            self.up_pressed = False
+        elif key == arcade.key.DOWN or key == arcade.key.S:
+            self.down_pressed = False
+        elif key == arcade.key.LEFT or key == arcade.key.A:
+            self.left_pressed = False
+        elif key == arcade.key.RIGHT or key == arcade.key.D:
+            self.right_pressed = False
+
+    def on_update(self, delta_time):
+        self.x_force = 0
+        self.y_force = 0
+
+        if self.up_pressed:
+            self.y_force += self.speed
+        if self.down_pressed:
+            self.y_force -= self.speed
+        if self.left_pressed:
+            self.x_force -= self.speed
+        if self.right_pressed:
+            self.x_force += self.speed
