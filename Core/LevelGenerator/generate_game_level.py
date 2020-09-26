@@ -29,8 +29,8 @@ def place_room(room: Rect, warp_next: Optional[int], warp_dest_room: Rect, outpu
             output_level["Warps"] = []
 
         # Warp to location, with a slight offset
-        warp_to_x = (warp_dest_room.x1 + ((warp_dest_room.x2 - warp_dest_room.x1) / 2) + 80) * 3 * SPRITE_IMAGE_SIZE
-        warp_to_y = (warp_dest_room.y1 + ((warp_dest_room.y2 - warp_dest_room.y1) / 2) + 80) * 3 * SPRITE_IMAGE_SIZE
+        warp_to_x = (warp_dest_room.x1 + ((warp_dest_room.x2 - warp_dest_room.x1) / 2)) * 3 * SPRITE_IMAGE_SIZE + 32
+        warp_to_y = (warp_dest_room.y1 + ((warp_dest_room.y2 - warp_dest_room.y1) / 2)) * 3 * SPRITE_IMAGE_SIZE + 32
 
         properties_dict = dict()
         properties_dict["warp_to_id"] = warp_next
@@ -150,8 +150,9 @@ def generate_game_level(width, height):
 
         if leaf.id in room_to_warp_map:
             warp_to_id = room_to_warp_map[leaf.id]
+            warp_to_location = get_room_by_leaf_id(bsp_level, warp_to_id)
 
-        place_room(leaf.room, warp_to_id, get_room_by_leaf_id(bsp_level, leaf.id), output_level)
+        place_room(leaf.room, warp_to_id, warp_to_location, output_level)
 
 
     # TODO: Fix this logic because it's totally broken

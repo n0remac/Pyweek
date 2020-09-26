@@ -6,6 +6,7 @@ from arcade import Sprite
 from Constants.Game import SCREEN_HEIGHT, SCREEN_WIDTH
 from Constants.Physics import BULLET_MOVE_FORCE
 from Core.ArcadeUtils import convert_from_tiled_coordinates
+from Core.PlayerCharacter import PlayerCharacter
 from Graphics.Lights.PointLight import DynamicPointLight
 
 
@@ -80,12 +81,27 @@ class ProjectileManager:
 
             current_position = player_sprite.position
 
+            self.projectile_physics.remove_sprite(game_resources.player_sprite)
+
             new_position = convert_from_tiled_coordinates(
                 game_resources.my_map,
                 warp_sprite.properties["warp_to_location"]
             )
 
             self.game_resources.player_sprite.set_position(new_position[0], new_position[1])
+
+            self.projectile_physics.add_sprite(game_resources.player_sprite,
+                                               damping=0.00007,
+                                               friction=10.0,
+                                               mass=2.0,
+                                               moment=arcade.PymunkPhysicsEngine.MOMENT_INF,
+                                               collision_type="player",
+                                               max_horizontal_velocity=1200,
+                                               max_vertical_velocity=1200,
+                                               body_type=arcade.PymunkPhysicsEngine.DYNAMIC)
+
+            #
+            # game_resources.player_sprite = PlayerCharacter(new_position)
             print("warping player")
             return False
 
@@ -96,17 +112,6 @@ class ProjectileManager:
 
         handler = self.projectile_physics.space.add_collision_handler(first_type_id, second_type_id)
         handler.begin = warp_hit_handler
-        # self.projectile_physics.add_collision_handler(
-        #     "warp", "player", pre_handler=warp_hit_handler
-        # )
-
-        # def player_wall_hit_handler(wall_sprite, player_sprite, _arbiter, _space, _data):
-        #     print("v0")
-        #     # self.projectile_physics.set_velocity(player_sprite, (0, 0))
-        #
-        # self.projectile_physics.add_collision_handler(
-        #     "wall", "player", post_handler=player_wall_hit_handler
-        # )
 
     light_colors = [
         (1.5, 1.0, 0.2),

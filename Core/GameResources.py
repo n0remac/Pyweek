@@ -98,15 +98,6 @@ class GameResources:
                 my_map, fake_warps_layer, scaling=SPRITE_SCALING_TILES, use_spatial_hash=True
             )
 
-        start_location_layer = ObjectLayer(
-            id_=5,
-            name="StartLocation",
-            tiled_objects=generated_map["start_location"],
-            offset=None,
-            opacity=None,
-            properties=None,
-        )
-
         self.wall_list = arcade.tilemap._process_tile_layer(
             my_map, fake_walls_layer, scaling=SPRITE_SCALING_TILES, use_spatial_hash=True
         )
@@ -128,18 +119,14 @@ class GameResources:
         #     my_map, "Lighting", SPRITE_SCALING_TILES
         # )
 
+        self.start_location = generated_map["start_location"][0].location
+
         # Create player sprite
-        self.player_sprite = PlayerCharacter()
+        self.player_sprite = PlayerCharacter(convert_from_tiled_coordinates(my_map, generated_map["start_location"][0].location))
 
         # Set player location
         i = random.randint(0, len(self.floor_list))
         start_pos = self.floor_list[i].position
-        grid_x = 20
-        grid_y = 25
-        self.player_sprite.center_x = SPRITE_SIZE * grid_x + SPRITE_SIZE / 2
-        self.player_sprite.center_y = SPRITE_SIZE * grid_y + SPRITE_SIZE / 2
-
-        self.player_sprite.position = convert_from_tiled_coordinates(my_map, generated_map["start_location"][0].location)
 
         # Add to player sprite list
         self.player_list.append(self.player_sprite)

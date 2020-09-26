@@ -8,7 +8,7 @@ from Constants.Game import (
     UP_FACING,
     RIGHT_FACING,
     LEFT_FACING,
-)
+    SPRITE_SIZE)
 from Constants.Animation import WALK_CYCLE_LENGTH, IDLE_CYCLE_LENGTH
 
 # from Core.Projectiles.Projectile_Manager import angle
@@ -17,7 +17,7 @@ from Constants.Animation import WALK_CYCLE_LENGTH, IDLE_CYCLE_LENGTH
 class PlayerCharacter(arcade.Sprite):
     """ Player Sprite"""
 
-    def __init__(self):
+    def __init__(self, position):
 
         # Set up parent class
         super().__init__()
@@ -82,6 +82,13 @@ class PlayerCharacter(arcade.Sprite):
         # a different hit box, you can do it like the code below.
         # self.set_hit_box([[-22, -64], [22, -64], [22, 28], [-22, 28]])
         self.set_hit_box(self.texture.hit_box_points)
+
+        grid_x = 20
+        grid_y = 25
+        self.center_x = SPRITE_SIZE * grid_x + SPRITE_SIZE / 2
+        self.center_y = SPRITE_SIZE * grid_y + SPRITE_SIZE / 2
+
+        self.position = position
 
     def update_animation(self, delta_time: float = 1 / 60):
         # Animation
