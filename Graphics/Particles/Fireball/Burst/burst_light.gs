@@ -4,6 +4,7 @@ layout (triangle_strip, max_vertices = 4) out;
 
 in float v_time[];
 in float v_velocity[];
+in int v_type[];
 
 uniform float u_time;
 uniform mat4x4 u_projection;
@@ -12,6 +13,7 @@ out float vf_time;
 out float vf_scale;
 out float vf_velocity;
 out vec2 vf_uv;
+flat out int vf_type;
 
 out float vf_radius;
 out vec2 vf_light_pos;
@@ -40,6 +42,7 @@ void EmitVert(vec2 offset, float scale)
 
     vf_radius = scale;
     vf_light_pos = localPos;//Use this local pos to make light calculations easy
+    vf_type = v_type[0];
 
     EmitVertex();
 }

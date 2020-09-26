@@ -25,7 +25,7 @@ vec2 rand_dir_range(float val, vec2 base, float range){
     return vec2(cos(rand_val), sin(rand_val));
 }
 
-const float TRAIL_POWER = 1.0;
+const float TRAIL_POWER[] = float[](1.0, 1.0,6.0);
 
 vec2 perpendicular(vec2 val){
     return vec2(val.y, -val.x);
@@ -36,7 +36,7 @@ void main()
 
     out_position = in_position;
 
-    out_velocity = -0.1 * TRAIL_POWER * in_base_vel + 0.125 * TRAIL_POWER * perpendicular(in_base_vel) * (rand(1.0) -0.5) * 2.0;
+    out_velocity = -0.1 * TRAIL_POWER[int(in_type)] * in_base_vel + 0.125 * TRAIL_POWER[int(in_type)] * perpendicular(in_base_vel) * (rand(1.0) -0.5) * 2.0;
     out_life_offset = u_time + rand(1.0) * 0.0;    
 
     out_type = in_type;

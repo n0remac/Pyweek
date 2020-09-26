@@ -13,6 +13,9 @@ class ProjectileManager:
 
         self.game_resources = game_resources
 
+        #used for test stuff
+        self.last_type = 0
+
         self.projectile_physics = arcade.PymunkPhysicsEngine()
         self.projectile_physics.add_sprite_list(
             self.game_resources.wall_list,
@@ -60,7 +63,12 @@ class ProjectileManager:
         start_x = self.game_resources.player_sprite.center_x
         start_y = self.game_resources.player_sprite.center_y
         bullet.position = self.game_resources.player_sprite.position
+        bullet.art_type = self.last_type
+        self.last_type += 1
+        if(self.last_type >= 3):
+            self.last_type = 0
 
+        #TODO:Color based on light
         # add light to sprite
         bullet.point_light = DynamicPointLight((1.5, 1.0, 0.2), 128.0)
 
