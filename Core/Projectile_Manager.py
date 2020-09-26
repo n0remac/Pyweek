@@ -102,7 +102,6 @@ class ProjectileManager:
 
             #
             # game_resources.player_sprite = PlayerCharacter(new_position)
-            print("warping player")
             return False
 
         self.projectile_physics.collision_types.append("warp")
