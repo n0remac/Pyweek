@@ -27,6 +27,7 @@ class GameResources:
 
     def __init__(self, game_instance):
 
+        self.game_instance = game_instance
         # Create the sprite lists
         self.sprite_list = arcade.SpriteList(use_spatial_hash=True)
         self.player_list = arcade.SpriteList()

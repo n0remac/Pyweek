@@ -20,6 +20,10 @@ class Enemy(arcade.Sprite):
         ]
         self.obstacles = self.game_resources.wall_list
 
+        #self.light = game_resources.game_instance.scene_renderer.light_renderer.create_point_light(
+        #    (-1000, -1000), (10.0, 1.0, 0.5), 128
+        #)
+
     def draw(self):
         if self.path:
             arcade.draw_line_strip(self.path, arcade.color.BLUE, 2)
@@ -36,6 +40,10 @@ class Enemy(arcade.Sprite):
                 self.center_y = self.center_y + self.speed / 5
             elif self.path[0][1] > self.path[1][1]:
                 self.center_y = self.center_y - self.speed / 5
+        #self.light.position = (self.center_x, self.center_y)
+
+    def on_death(self):
+        self.game_resources.game_instance.scene_renderer.light_renderer.destroy_light(self.light)
 
 
 class EnemyManager:
