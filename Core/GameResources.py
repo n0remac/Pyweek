@@ -123,7 +123,7 @@ class GameResources:
         self.start_location = generated_map["start_location"][0].location
 
         # Create player sprite
-        self.player_sprite = PlayerCharacter(convert_from_tiled_coordinates(my_map, generated_map["start_location"][0].location))
+        self.player_sprite = PlayerCharacter(convert_from_tiled_coordinates(my_map, generated_map["start_location"][0].location), self)
 
         # Set player location
         i = random.randint(0, len(self.floor_list))
