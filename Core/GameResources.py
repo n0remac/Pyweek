@@ -148,7 +148,7 @@ class GameResources:
         self.warps_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         self.bullet_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         self.player_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
-        self.object_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.object_manager.object_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         self.enemy_manager.enemy_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
 
         # --- Manage Scrolling ---
@@ -200,7 +200,7 @@ class GameResources:
         self.warps_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         self.bullet_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         self.player_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
-        self.object_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.object_manager.object_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         self.enemy_manager.enemy_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
 
     def on_update(self, delta_time):
