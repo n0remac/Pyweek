@@ -1,5 +1,7 @@
 # Used for the areas that the player is able to navigate
 import random
+from typing import Optional, List
+
 from Core.LevelGenerator.tiled_mapper.constants import *
 from Core.LevelGenerator.tiled_mapper.tiled_compatible_level import (
     generate_tiled_compatible_level,

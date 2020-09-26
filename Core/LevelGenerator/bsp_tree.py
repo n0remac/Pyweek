@@ -1,18 +1,15 @@
 import random
+from typing import List, Tuple
 
-from Core.LevelGenerator.common import (
-    Leaf,
-    split_leaf,
-    create_rooms,
-    create_hall,
-    get_room,
-)
+from Core.LevelGenerator.common import split_leaf, create_rooms, create_hall, get_room, InvalidTunnelException
+from Core.LevelGenerator.leaf import Leaf
+from Core.LevelGenerator.graph import populate_subgraph
 from Core.LevelGenerator.level import Level
 
 # TODO: Take this level generator and feed the output into a Tiled converter.
 
 
-def ascii_print_level(level):
+def ascii_print_level(level: Level):
     for y in range(0, level.height):
         row = ""
         for x in range(0, level.width):
@@ -62,8 +59,8 @@ def generate_bsp_level(map_width, map_height):
 
     # TODO: Finish an algorithm to connect all rooms.
     # Or maybe just add warps to the "second" room?
-    all_end_leafs = []
-    leaf_pairs = []
+    all_end_leafs: List[Leaf] = []
+    leaf_pairs: List[Tuple[Leaf, Leaf]] = []
 
     # Python is so weird
     leaf_id = dict()
@@ -85,20 +82,84 @@ def generate_bsp_level(map_width, map_height):
             recurse_leaf(leaf.child_2)
 
         if leaf.child_1 and leaf.child_2:
-            if child_has_no_children(leaf.child_1) and child_has_no_children(
-                leaf.child_2
-            ):
+            if child_has_no_children(leaf.child_1) and child_has_no_children(leaf.child_2):
                 leaf_pairs.append((leaf.child_1, leaf.child_2))
 
     recurse_leaf(root_leaf)
 
+    # Attaches a room to every end leaf (and skips hallway logic)
+    for end_leaf in all_end_leafs:
+        create_rooms(level_instance, end_leaf)
+
+    # Creates hallways between siblings
     for leaf_pair in leaf_pairs:
-        create_rooms(level_instance, leaf_pair[0])
-        create_rooms(level_instance, leaf_pair[1])
-        create_hall(level_instance, get_room(leaf_pair[0]), get_room(leaf_pair[1]))
+        try:
+            create_hall(level_instance, leaf_pair[0], leaf_pair[1])
+        except InvalidTunnelException:
+            continue
+
+    def collect_children(parent: Leaf):
+        children = []
+
+        if parent.child_1:
+            children.append(parent.child_1)
+            children = children + collect_children(parent.child_1)
+
+        if parent.child_2:
+            children.append(parent.child_2)
+            children = children + collect_children(parent.child_2)
+
+        return children
+
+    def get_other_child(parent: Leaf, child: Leaf):
+        if parent.child_1 == child:
+            return parent.child_2
+
+        return parent.child_1
+
+    def connect_cousins(cousin_leaf: Leaf):
+        parent = cousin_leaf.parent
+
+        other_child = get_other_child(parent, cousin_leaf)
+
+        other_cousins = collect_children(other_child)
+
+        cousins_with_rooms = filter(lambda c: c.room is not None, other_cousins)
+
+        for another_cousin in cousins_with_rooms:
+            try:
+                create_hall(level_instance, cousin_leaf, another_cousin)
+            except InvalidTunnelException:
+                # Safe exception to ignore because it just means we couldn't connect to any of our cousins
+                continue
+
+    # merge cousins
+    for end_leaf in all_end_leafs:
+        # don't add connections for leafs that already have some.
+        # TODO: potentially add them but only if they don't already have a bunch?
+        if len(end_leaf.connections) >= 1:
+            continue
+
+        connect_cousins(end_leaf)
+
+    all_parent_leafs = filter(lambda l: l.room is None, all_end_leafs)
+
+
+    for unconnected_leaf in filter(lambda l: len(l.connections) == 0, all_end_leafs):
+        for another_node in all_end_leafs:
+            try:
+                create_hall(level_instance, unconnected_leaf, another_node)
+            except InvalidTunnelException:
+                # Safe exception to ignore because it just means we couldn't connect to any of our cousins
+                continue
 
     # Commented out because these tunnels won't work for the game. They pass through other rooms.
     # create_rooms(level_instance, root_leaf)
+
+    node_to_graph = populate_subgraph(leafs)
+
+    level_instance.node_to_graph = node_to_graph
+    level_instance.end_leafs = all_end_leafs
 
     return level_instance
 

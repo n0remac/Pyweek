@@ -1,8 +1,12 @@
 import arcade
 import math
 
+from arcade import Sprite
+
 from Constants.Game import SCREEN_HEIGHT, SCREEN_WIDTH
 from Constants.Physics import BULLET_MOVE_FORCE
+from Core.ArcadeUtils import convert_from_tiled_coordinates
+from Core.PlayerCharacter import PlayerCharacter
 from Graphics.Lights.PointLight import DynamicPointLight
 
 
@@ -20,12 +24,31 @@ class ProjectileManager:
         self.projectile_physics.add_sprite_list(
             self.game_resources.wall_list,
             collision_type="wall",
+            friction=1.0,
             body_type=arcade.PymunkPhysicsEngine.STATIC,
         )
 
         self.projectile_physics.add_sprite_list(
             self.game_resources.object_list,
             collision_type="object",
+            body_type=arcade.PymunkPhysicsEngine.STATIC,
+        )
+
+        self.projectile_physics.add_sprite(
+            self.game_resources.player_sprite,
+            damping=0.00007,
+            friction=10.0,
+            mass=2.0,
+            moment=arcade.PymunkPhysicsEngine.MOMENT_INF,
+            collision_type="player",
+            max_horizontal_velocity=1200,
+            max_vertical_velocity=1200,
+            body_type=arcade.PymunkPhysicsEngine.DYNAMIC
+        )
+
+        self.projectile_physics.add_sprite_list(
+            self.game_resources.warps_list,
+            collision_type="warp",
             body_type=arcade.PymunkPhysicsEngine.STATIC,
         )
 
@@ -53,6 +76,43 @@ class ProjectileManager:
             "bullet", "object", post_handler=object_hit_handler
         )
 
+        def warp_hit_handler(_arbiter, _space, _data):
+            warp_sprite, player_sprite = self.projectile_physics.get_sprites_from_arbiter(_arbiter)
+
+            current_position = player_sprite.position
+
+            self.projectile_physics.remove_sprite(game_resources.player_sprite)
+
+            new_position = convert_from_tiled_coordinates(
+                game_resources.my_map,
+                warp_sprite.properties["warp_to_location"]
+            )
+
+            self.game_resources.player_sprite.set_position(new_position[0], new_position[1])
+
+            self.projectile_physics.add_sprite(game_resources.player_sprite,
+                                               damping=0.00007,
+                                               friction=10.0,
+                                               mass=2.0,
+                                               moment=arcade.PymunkPhysicsEngine.MOMENT_INF,
+                                               collision_type="player",
+                                               max_horizontal_velocity=1200,
+                                               max_vertical_velocity=1200,
+                                               body_type=arcade.PymunkPhysicsEngine.DYNAMIC)
+
+            #
+            # game_resources.player_sprite = PlayerCharacter(new_position)
+            print("warping player")
+            return False
+
+        self.projectile_physics.collision_types.append("warp")
+        self.projectile_physics.collision_types.append("player")
+        first_type_id = self.projectile_physics.collision_types.index("warp")
+        second_type_id = self.projectile_physics.collision_types.index("player")
+
+        handler = self.projectile_physics.space.add_collision_handler(first_type_id, second_type_id)
+        handler.begin = warp_hit_handler
+
     light_colors = [
         (1.5, 1.0, 0.2),
         (0.2, 1.0, 1.5),
@@ -75,7 +135,7 @@ class ProjectileManager:
             self.last_type = 0
 
 
-        
+
 
         #TODO:Color based on light
         # add light to sprite
@@ -119,7 +179,7 @@ class ProjectileManager:
         self.projectile_physics.apply_force(bullet, force)
 
     def on_update(self, delta_time):
-        self.projectile_physics.step()
+        self.projectile_physics.step(delta_time=delta_time)
 
 
 class BulletSprite(arcade.SpriteSolidColor):

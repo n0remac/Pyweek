@@ -70,3 +70,8 @@ all_open_floor_tiles = (
 
 # lights
 light_fixtures = [90, 93, 95]
+
+# warp
+warps = [38, 39]
+
+

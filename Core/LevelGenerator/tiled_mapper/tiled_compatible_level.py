@@ -1,5 +1,7 @@
 from typing import AnyStr, Dict, List
 
+from pytiled_parser.objects import ObjectLayer
+
 from Core.LevelGenerator.tiled_mapper.constants import all_open_floor_tiles
 
 
@@ -61,8 +63,8 @@ def merge_levels_with_offset(
     :param offset_y: Y Offset in the parent for the smaller map to be merged. Set to zero if you dont want an offset
     :return: Mutates inputs
     """
-    for layer in parent.keys():
-        if child[layer] is None:
+    for layer in child.keys():
+        if parent[layer] is None:
             raise Exception("Unable to merge maps because of missing layer")
 
         merge_level_layer_with_offset(parent, child, offset_x, offset_y, layer)
