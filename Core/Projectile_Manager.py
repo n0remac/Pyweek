@@ -14,10 +14,9 @@ from Graphics.Lights.PointLight import DynamicPointLight
 class ProjectileManager:
     """ Handles mouse press presses to fire bullets and creates bullet objects. """
 
-    def __init__(self, game_resources, window):
+    def __init__(self, game_resources):
 
         self.game_resources = game_resources
-        self.window = window
 
         #used for test stuff
         self.last_type = 0
