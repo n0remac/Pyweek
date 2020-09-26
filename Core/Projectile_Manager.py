@@ -31,7 +31,7 @@ class ProjectileManager:
         )
 
         self.projectile_physics.add_sprite_list(
-            self.game_resources.object_list,
+            self.game_resources.object_manager.object_list,
             collision_type="object",
             body_type=arcade.PymunkPhysicsEngine.STATIC,
         )
@@ -76,6 +76,23 @@ class ProjectileManager:
 
         self.projectile_physics.add_collision_handler(
             "bullet", "object", post_handler=object_hit_handler
+        )
+
+        def player_object_hit_handler(bullet_sprite, _object_sprite, _arbiter, _space, _data):
+            """ Called for bullet/wall collision """
+
+            _object_sprite.remove_from_sprite_lists()
+
+        self.projectile_physics.add_collision_handler(
+            "player", "object", post_handler=player_object_hit_handler
+        )
+
+        def player_enemy_hit_handler(bullet_sprite, _object_sprite, _arbiter, _space, _data):
+            """ Called for bullet/wall collision """
+            self.game_resources.player_sprite.player_health.health -= 1
+
+        self.projectile_physics.add_collision_handler(
+            "player", "enemy", post_handler=player_enemy_hit_handler
         )
 
         def warp_hit_handler(_arbiter, _space, _data):
@@ -123,7 +140,11 @@ class ProjectileManager:
                 self.game_resources.object_manager.candle_drop(enemy_sprite.center_x, enemy_sprite.center_y)
             elif will_drop > 3:
                 self.game_resources.object_manager.flask(enemy_sprite.center_x, enemy_sprite.center_y)
-
+            self.projectile_physics.add_sprite_list(
+                self.game_resources.object_manager.object_list,
+                collision_type="object",
+                body_type=arcade.PymunkPhysicsEngine.STATIC,
+            )
             bullet_sprite.remove_from_sprite_lists()
 
             if self.on_bullet_death is not None:
