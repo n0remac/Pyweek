@@ -31,8 +31,6 @@ class GameInstance:
         self.verticle_key_list = []
 
 
-
-
         # bind rendering callbacks
         self.scene_renderer.draw_primary_callback = self.on_draw_scene
         self.scene_renderer.draw_emissive_callback = self.on_draw_emissive

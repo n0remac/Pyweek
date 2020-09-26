@@ -15,21 +15,42 @@ import arcade
 from Constants.Game import SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE
 from Core.GameInstance import GameInstance
 
+class TitleScreen(arcade.View):
+    # Title Screen view
 
-class GameWindow(arcade.Window):
+    def on_show(self):
+        """ This is run once when we switch to this view """
+        arcade.set_background_color(arcade.csscolor.BLACK)
+
+        # Reset the viewport, necessary if we have a scrolling game and we need
+        # to reset the viewport back to the start so we can see what we draw.
+        arcade.set_viewport(0, SCREEN_WIDTH - 1, 0, SCREEN_HEIGHT - 1)
+
+    def on_draw(self):
+        """ Draw this view """
+        arcade.start_render()
+        arcade.draw_text("Castaway Wizard", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2,
+                         arcade.color.WHITE, font_size=50, anchor_x="center")
+        arcade.draw_text("Click to advance", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2-75,
+                         arcade.color.WHITE, font_size=20, anchor_x="center")
+
+    def on_mouse_press(self, _x, _y, _button, _modifiers):
+        """ If the user presses the mouse button, start the game. """
+        game_view = GameView()
+        game_view.setup()
+        self.window.show_view(game_view)
+
+class GameView(arcade.View):
     """ Main Window """
 
-    def __init__(self, width, height, title):
+    def __init__(self):
         """ Create the variables """
-
-        super().__init__(width, height, title)
+        super().__init__()
         self.game_instance: Optional[GameInstance] = None
 
     def setup(self):
         """ Set up everything with the game """
-
-        window_size = self.get_size()
-        self.game_instance = GameInstance(self)
+        self.game_instance = GameInstance(self.window)
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed. """
@@ -57,8 +78,11 @@ class GameWindow(arcade.Window):
 
 def main():
     """ Main method """
-    window = GameWindow(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
-    window.setup()
+    #window = GameWindow(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    #window.setup()
+    game_window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    title_screen = TitleScreen()
+    game_window.show_view(title_screen)
     arcade.run()
 
 
@@ -66,11 +90,3 @@ if __name__ == "__main__":
     main()
 
 
-def load_texture_pair(filename):
-    """
-    Load a texture pair, with the second being a mirror image.
-    """
-    return [
-        arcade.load_texture(filename),
-        arcade.load_texture(filename, flipped_horizontally=True),
-    ]
