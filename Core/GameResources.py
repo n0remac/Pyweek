@@ -1,5 +1,7 @@
 import random
 import arcade
+import math
+from Core.lerp import lerp
 from pytiled_parser.objects import TileLayer, Size, ObjectLayer
 
 from Core.Enemy import EnemyManager
@@ -8,10 +10,8 @@ from Constants.Game import (
     SPRITE_SIZE,
     SCREEN_WIDTH,
     SCREEN_HEIGHT,
-    LEFT_VIEWPORT_MARGIN,
-    RIGHT_VIEWPORT_MARGIN,
-    BOTTOM_VIEWPORT_MARGIN,
-    TOP_VIEWPORT_MARGIN,
+    LERP_MARGIN,
+    CAMERA_SPEED
 )
 from Core.ArcadeUtils import convert_from_tiled_coordinates
 from Core.LevelGenerator.generate_game_level import generate_game_level
@@ -47,6 +47,12 @@ class GameResources:
 
         # Procedurally generated map
         generated_map = generate_game_level(100, 100)
+
+        # Screenshake
+        self.shake_remain = 0
+        self.shake_strength = 1
+        self.shake_x = 0
+        self.shake_y = 0
 
         # Static map for testing
         # generated_map = generate_tiled_compatible_level(70, 70)
@@ -142,50 +148,11 @@ class GameResources:
         pass
 
     def on_draw(self):
-
         # --- Manage Scrolling ---
+        if math.fabs(self.player_sprite.center_x-self.view_left+(SCREEN_WIDTH/2)) > LERP_MARGIN*SCREEN_HEIGHT or math.fabs(self.player_sprite.center_y-self.view_bottom+(SCREEN_HEIGHT/2)) > LERP_MARGIN*SCREEN_HEIGHT:
+            self.view_left = int(lerp(self.view_left,self.player_sprite.center_x-(SCREEN_WIDTH/2),CAMERA_SPEED))
+            self.view_bottom = int(lerp(self.view_bottom,self.player_sprite.center_y-(SCREEN_HEIGHT/2),CAMERA_SPEED))
 
-        # Track if we need to change the viewport
-
-        changed = False
-
-        # Scroll left
-        left_boundary = self.view_left + LEFT_VIEWPORT_MARGIN
-        if self.player_sprite.left < left_boundary:
-            self.view_left -= left_boundary - self.player_sprite.left
-            changed = True
-
-        # Scroll right
-        right_boundary = self.view_left + SCREEN_WIDTH - RIGHT_VIEWPORT_MARGIN
-        if self.player_sprite.right > right_boundary:
-            self.view_left += self.player_sprite.right - right_boundary
-            changed = True
-
-        # Scroll up
-        top_boundary = self.view_bottom + SCREEN_HEIGHT - TOP_VIEWPORT_MARGIN
-        if self.player_sprite.top > top_boundary:
-            self.view_bottom += self.player_sprite.top - top_boundary
-            changed = True
-
-        # Scroll down
-        bottom_boundary = self.view_bottom + BOTTOM_VIEWPORT_MARGIN
-        if self.player_sprite.bottom < bottom_boundary:
-            self.view_bottom -= bottom_boundary - self.player_sprite.bottom
-            changed = True
-
-        if changed:
-            # Only scroll to integers. Otherwise we end up with pixels that
-            # don't line up on the screen
-            self.view_bottom = int(self.view_bottom)
-            self.view_left = int(self.view_left)
-
-            # Do the scrolling
-            arcade.set_viewport(
-                self.view_left,
-                SCREEN_WIDTH + self.view_left,
-                self.view_bottom,
-                SCREEN_HEIGHT + self.view_bottom,
-            )
         self.wall_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         self.floor_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         self.light_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
@@ -196,4 +163,17 @@ class GameResources:
         self.enemy_manager.enemy_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
 
     def on_update(self, delta_time):
-        pass
+        if self.shake_remain > 0:
+            self.shake_x = random.randrange(-self.shake_strength,self.shake_strength)
+            self.shake_y = random.randrange(-self.shake_strength,self.shake_strength)
+            self.shake_remain -= 1
+        else:
+            self.shake_x = 0
+            self.shake_y = 0
+
+        arcade.set_viewport(
+            self.view_left+self.shake_x,
+            (SCREEN_WIDTH) + self.view_left+self.shake_x,
+            self.view_bottom+self.shake_y,
+            (SCREEN_HEIGHT) + self.view_bottom+self.shake_y,
+        )
