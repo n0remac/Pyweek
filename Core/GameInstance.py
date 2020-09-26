@@ -29,8 +29,6 @@ class GameInstance:
         # Physics engine
         self.physics_engine = setup_physics_engine(self.game_resources)
         # self.physics_engine = setup_physics_engine(self.game_resources)
-        # Enemy Physics engine
-        self.enemy_physics_engine = setup_enemy_physics_engine(self.game_resources)
 
         self.horizontal_key_list = []
         self.verticle_key_list = []
