@@ -4,7 +4,6 @@ import math
 from Constants.Physics import PLAYER_MOVEMENT_SPEED
 from Core.GameResources import GameResources
 from Core.RendererFactory import RendererFactory
-from Core.ObjectManager import ObjectManager
 from Core.HealthRing import Health
 from Physics.EnemyPhysicsEngine import setup_enemy_physics_engine
 from Physics.PhysicsEngine import setup_physics_engine
@@ -24,7 +23,6 @@ class GameInstance:
 
         # Core game resources
         self.game_resources = GameResources()
-        self.object_manager = ObjectManager(self.game_resources)
 
         # Physics engine
         self.physics_engine = setup_physics_engine(self.game_resources)
