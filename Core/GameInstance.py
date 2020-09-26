@@ -30,6 +30,8 @@ class GameInstance:
         self.game_resources = GameResources(self)
         self.object_manager = ObjectManager(self.game_resources, self)
 
+        self.screensize = [1920,1080]
+
         # Fullscreen information get based on OS
         if platform.system() == 'Linux':
             print("This game expects linux users to be using a 1080p, 16:9 monitor.  Other aspect ratios or resolutions on linux may cause issues.")
