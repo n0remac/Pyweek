@@ -115,7 +115,7 @@ class GameResources:
         # )
 
         # Create player sprite
-        self.player_sprite = PlayerCharacter()
+        self.player_sprite = PlayerCharacter(self)
 
         # Set player location
         i = random.randint(0, len(self.floor_list))
