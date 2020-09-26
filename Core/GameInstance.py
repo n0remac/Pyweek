@@ -215,4 +215,5 @@ class GameInstance:
             self.game_resources.player_sprite.center_x,
             self.game_resources.player_sprite.center_y,
         )
+        self.game_resources.player_sprite.update_animation(delta_time)
 

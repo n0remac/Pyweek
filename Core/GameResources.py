@@ -142,6 +142,14 @@ class GameResources:
         pass
 
     def on_draw(self):
+        self.wall_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.floor_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.light_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.warps_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.bullet_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.player_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.object_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.enemy_manager.enemy_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
 
         # --- Manage Scrolling ---
 
