@@ -19,4 +19,11 @@ Run the game!
 ### Dependencies
 All dependencies for this project are located in the `requirements.txt` file
 
-### Build 
+### Build Installer
+To create a binary, use `pyinstaller`
+
+Install pyinstaller:
+`pip install pyinstaller`
+
+Tell it to package the game:
+`pyinstaller run_game.spec`
