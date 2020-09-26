@@ -36,4 +36,4 @@ LEFT_FACING = 1
 
 # How close the player needs to be for the enemy to track it.
 # starts to break above 15
-ENEMY_AWARENESS = 15
+ENEMY_AWARENESS = 32

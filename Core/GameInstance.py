@@ -7,8 +7,8 @@ import subprocess
 from Constants.Physics import PLAYER_MOVEMENT_SPEED
 from Constants.Game import SCREEN_WIDTH, SCREEN_HEIGHT
 from Core.GameResources import GameResources
-from Core.RendererFactory import RendererFactory
 from Core.ObjectManager import ObjectManager
+from Core.RendererFactory import RendererFactory
 from Core.HealthRing import Health
 from Physics.EnemyPhysicsEngine import setup_enemy_physics_engine
 from Physics.PhysicsEngine import setup_physics_engine
@@ -22,18 +22,15 @@ class GameInstance:
 
     def __init__(self, window):
 
-        # Refernce to main window object
+        # Reference to main window object
         self.window = window
 
         # Core game resources
-        self.game_resources = GameResources(window)
-        self.object_manager = ObjectManager(self.game_resources)
+        self.game_resources = GameResources(self)
+        self.object_manager = ObjectManager(self.game_resources, self)
 
         # Physics engine
         self.physics_engine = setup_physics_engine(self.game_resources)
-        # self.physics_engine = setup_physics_engine(self.game_resources)
-        # Enemy Physics engine
-        self.enemy_physics_engine = setup_enemy_physics_engine(self.game_resources)
 
         self.horizontal_key_list = []
         self.verticle_key_list = []
@@ -108,6 +105,7 @@ class GameInstance:
 
         # torch particle system
         self.torch_particle_system = TorchSystem(window.ctx)
+        self.game_resources.torch_particle_system = self.torch_particle_system
 
         # TODO:MOVE THIS STUFF
         self.fireball_system = FireBall(
@@ -139,9 +137,6 @@ class GameInstance:
                 self.torch_particle_system.add_torch((light.center_x, light.center_y))
             else:
                 self.torch_particle_system.add_candle((light.center_x, light.center_y))
-
-        # TODO: This code will crash if there are zero lights loaded. Please fix!
-        self.torch_particle_system.build_buffer()
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed. """
@@ -184,7 +179,7 @@ class GameInstance:
             self.right_pressed = False
 
     def on_mouse_motion(self, x, y, dx, dy):
-        pass
+        self.game_resources.player_sprite.on_mouse_motion(x, y, dx, dy)
 
     def on_mouse_press(self, x, y, button, modifiers):
         self.game_resources.projectile_manager.on_mouse_press(x, y, button, modifiers)

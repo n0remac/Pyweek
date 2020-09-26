@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 import arcade
 import math
 
@@ -6,7 +8,6 @@ from arcade import Sprite
 from Constants.Game import SCREEN_HEIGHT, SCREEN_WIDTH
 from Constants.Physics import BULLET_MOVE_FORCE
 from Core.ArcadeUtils import convert_from_tiled_coordinates
-from Core.PlayerCharacter import PlayerCharacter
 from Graphics.Lights.PointLight import DynamicPointLight
 
 
@@ -37,7 +38,7 @@ class ProjectileManager:
 
         self.projectile_physics.add_sprite(
             self.game_resources.player_sprite,
-            damping=0.00007,
+            damping=0.0001,
             friction=10.0,
             mass=2.0,
             moment=arcade.PymunkPhysicsEngine.MOMENT_INF,
@@ -80,8 +81,6 @@ class ProjectileManager:
         def warp_hit_handler(_arbiter, _space, _data):
             warp_sprite, player_sprite = self.projectile_physics.get_sprites_from_arbiter(_arbiter)
 
-            current_position = player_sprite.position
-
             self.projectile_physics.remove_sprite(game_resources.player_sprite)
 
             new_position = convert_from_tiled_coordinates(
@@ -92,7 +91,7 @@ class ProjectileManager:
             self.game_resources.player_sprite.set_position(new_position[0], new_position[1])
 
             self.projectile_physics.add_sprite(game_resources.player_sprite,
-                                               damping=0.00007,
+                                               damping=0.0001,
                                                friction=10.0,
                                                mass=2.0,
                                                moment=arcade.PymunkPhysicsEngine.MOMENT_INF,
@@ -101,24 +100,60 @@ class ProjectileManager:
                                                max_vertical_velocity=1200,
                                                body_type=arcade.PymunkPhysicsEngine.DYNAMIC)
 
+            enemy = game_resources.enemy_manager.spawn_enemy((new_position[0] + 32, new_position[1] + 32))
+            self.add_enemy(enemy)
+
             #
             # game_resources.player_sprite = PlayerCharacter(new_position)
-            print("warping player")
             return False
 
         self.projectile_physics.collision_types.append("warp")
         self.projectile_physics.collision_types.append("player")
-        first_type_id = self.projectile_physics.collision_types.index("warp")
-        second_type_id = self.projectile_physics.collision_types.index("player")
+        warp_physics_id = self.projectile_physics.collision_types.index("warp")
+        player_physics_id = self.projectile_physics.collision_types.index("player")
 
-        handler = self.projectile_physics.space.add_collision_handler(first_type_id, second_type_id)
+        handler = self.projectile_physics.space.add_collision_handler(warp_physics_id, player_physics_id)
         handler.begin = warp_hit_handler
+
+        def enemy_bullet_handler(_arbiter, _space, _data):
+            bullet_sprite, enemy_sprite = self.projectile_physics.get_sprites_from_arbiter(_arbiter)
+            enemy_sprite.remove_from_sprite_lists()
+            bullet_sprite.remove_from_sprite_lists()
+
+            if self.on_bullet_death is not None:
+                self.on_bullet_death(bullet_sprite)
+
+            return False
+
+        self.projectile_physics.collision_types.append("bullet")
+        self.projectile_physics.collision_types.append("enemy")
+        bullet_physics_id = self.projectile_physics.collision_types.index("bullet")
+        enemy_physics_id = self.projectile_physics.collision_types.index("enemy")
+
+        handler = self.projectile_physics.space.add_collision_handler(bullet_physics_id, enemy_physics_id)
+        handler.begin = enemy_bullet_handler
 
     light_colors = [
         (1.5, 1.0, 0.2),
         (0.2, 1.0, 1.5),
         (1.0, 0.8, 1.5)
     ]
+
+    def add_enemy(self, enemy_sprite: arcade.Sprite):
+        self.projectile_physics.add_sprite(
+            enemy_sprite,
+            damping=0.0001,
+            friction=10.0,
+            mass=2.0,
+            moment=arcade.PymunkPhysicsEngine.MOMENT_INF,
+            collision_type="enemy",
+            max_horizontal_velocity=1200,
+            max_vertical_velocity=1200,
+            body_type=arcade.PymunkPhysicsEngine.DYNAMIC
+        )
+
+    def remove_enemy(self, enemy_sprite: arcade.Sprite):
+        self.projectile_physics.remove_sprite(enemy_sprite)
 
     def on_mouse_press(self, x, y, button, modifiers):
         """ Called whenever the mouse button is clicked. """

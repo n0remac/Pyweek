@@ -25,9 +25,7 @@ class GameResources:
     Load arcade resources
     """
 
-    def __init__(self,window):
-
-        self.window = window
+    def __init__(self, game_instance):
 
         # Create the sprite lists
         self.sprite_list = arcade.SpriteList(use_spatial_hash=True)
@@ -132,7 +130,7 @@ class GameResources:
         self.start_location = generated_map["start_location"][0].location
 
         # Create player sprite
-        self.player_sprite = PlayerCharacter(convert_from_tiled_coordinates(my_map, generated_map["start_location"][0].location),self)
+        self.player_sprite = PlayerCharacter(convert_from_tiled_coordinates(my_map, generated_map["start_location"][0].location), self)
 
         # Set player location
         i = random.randint(0, len(self.floor_list))
@@ -142,23 +140,15 @@ class GameResources:
         self.player_list.append(self.player_sprite)
 
         # Game managers
-        self.object_manager = ObjectManager(self)
-        self.projectile_manager = ProjectileManager(self,window)
+        self.object_manager = ObjectManager(self, game_instance)
         self.enemy_manager = EnemyManager(self)
         self.enemy_manager.setup()
+        self.projectile_manager = ProjectileManager(self)
 
     def on_mouse_motion(self, x, y, dx, dy):
         pass
 
     def on_draw(self):
-        self.wall_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
-        self.floor_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
-        self.light_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
-        self.warps_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
-        self.bullet_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
-        self.player_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
-        self.object_manager.object_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
-        self.enemy_manager.enemy_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
 
         # --- Manage Scrolling ---
         if math.fabs(self.player_sprite.center_x-self.view_left+(SCREEN_WIDTH/2)) > LERP_MARGIN*SCREEN_HEIGHT or math.fabs(self.player_sprite.center_y-self.view_bottom+(SCREEN_HEIGHT/2)) > LERP_MARGIN*SCREEN_HEIGHT:

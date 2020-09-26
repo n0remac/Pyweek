@@ -28,6 +28,7 @@ class TorchSystem(ParticleSystem):
 
         self.torch_data = []
         self.burst_count = 0
+        self.is_dirty = False
         self.frame_count = 0
 
     # Torch is type 0
@@ -45,8 +46,11 @@ class TorchSystem(ParticleSystem):
         self.torch_data.append(position[1])
         self.torch_data.append(light_type)
         self.burst_count += 1
+        self.is_dirty = True
 
     def build_buffer(self):
+        if self.burst_count == 0:
+            return
         asArray = array("f", self.torch_data)
         self._emit_buffer = self.context.buffer(data=asArray)
         buffer_description = arcade.gl.BufferDescription(
@@ -60,6 +64,13 @@ class TorchSystem(ParticleSystem):
         )
 
     def render(self, projection_matrix):
+        if self.is_dirty:
+            self.build_buffer()
+            self.is_dirty = False
+
+        if self.burst_count == 0:
+            return
+
         self.frame_count += 1
         if self.frame_count % 10 == 0:
             self.do_burst()
