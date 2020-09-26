@@ -1,6 +1,7 @@
 import arcade
 import math
 
+from Constants.Game import SPRITE_IMAGE_SIZE
 from Constants.Physics import PLAYER_MOVEMENT_SPEED
 from Core.GameResources import GameResources
 from Core.RendererFactory import RendererFactory
@@ -120,11 +121,8 @@ class GameInstance:
             self.horizontal_key_list.insert(0, -PLAYER_MOVEMENT_SPEED)
         elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.horizontal_key_list.insert(0, PLAYER_MOVEMENT_SPEED)
-        elif key == arcade.key.P:
-            self.player_health.health += 10.0
-        elif key == arcade.key.O:
-            self.player_health.health -= 10.0
-
+        elif key == arcade.key.SPACE:
+            self.game_resources.object_manager.candle(self.game_resources.player_sprite.position[0], self.game_resources.player_sprite.position[1]+2)
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """
 
@@ -205,4 +203,4 @@ class GameInstance:
         )
 
         # update game resources
-        self.game_resources.on_update(delta_time)
+        # self.game_resources.on_update(delta_time)

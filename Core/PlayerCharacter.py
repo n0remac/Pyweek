@@ -25,6 +25,8 @@ class PlayerCharacter(arcade.Sprite):
         # Hold game game resources
         self.game_resources = game_resources
 
+        self.inventory = arcade.SpriteList()
+
         # Default to face-right
         self.character_face_direction = DOWN_FACING
         self.character_face_direction_horizontal = RIGHT_FACING
@@ -123,6 +125,8 @@ class PlayerCharacter(arcade.Sprite):
                     self.texture = self.up_walk_textures[self.cur_texture][
                         self.character_face_direction_horizontal
                     ]
+    def place_item(self):
+        return self.game_resources
 
     def on_mouse_motion(self, x, y, dx, dy):
         # Figure out if we need to flip face up or down or left or right

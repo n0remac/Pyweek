@@ -26,6 +26,7 @@ from Core.LevelGenerator.tiled_mapper.tiled_compatible_level import (
     generate_tiled_compatible_level,
 )
 from Core.PlayerCharacter import PlayerCharacter
+from Core.ObjectManager import ObjectManager
 from Core.Projectile_Manager import ProjectileManager
 
 
@@ -120,6 +121,9 @@ class GameResources:
         # Game managers
         self.enemy_manager = EnemyManager(self)
         self.projectile_manager = ProjectileManager(self)
+        self.object_manager = ObjectManager(self)
+
+
 
     def on_mouse_motion(self, x, y, dx, dy):
         pass
@@ -130,7 +134,11 @@ class GameResources:
         self.light_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         self.bullet_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         self.player_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
-        self.object_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.object_manager.object_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+
+        self.enemy_manager.enemy_list.draw(
+            filter=(arcade.gl.NEAREST, arcade.gl.NEAREST)
+        )
         # --- Manage Scrolling ---
 
         # Track if we need to change the viewport
@@ -175,16 +183,7 @@ class GameResources:
                 SCREEN_HEIGHT + self.view_bottom,
             )
 
-        self.wall_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
-        self.floor_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
-        self.light_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
-        self.object_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
-        self.bullet_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
-        self.player_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
 
-        self.enemy_manager.enemy_list.draw(
-            filter=(arcade.gl.NEAREST, arcade.gl.NEAREST)
-        )
 
     def on_update(self, delta_time):
         if len(self.enemy_manager.enemy_list) < 5:
