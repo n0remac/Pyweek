@@ -127,6 +127,9 @@ class ProjectileManager:
 
             self.game_resources.player_sprite.set_position(new_position[0], new_position[1])
 
+            self.game_resources.view_left = new_position[0]
+            self.game_resources.view_bottom = new_position[1]
+
             self.projectile_physics.add_sprite(game_resources.player_sprite,
                                                damping=0.0001,
                                                friction=10.0,
@@ -142,9 +145,23 @@ class ProjectileManager:
             barrier_list = game_resources.enemy_manager.make_barrier_list()
 
             def spawn_enemy_in_room():
-                rand_x = random.randint(-16, 16)
-                rand_y = random.randint(-16, 16)
-                enemy = game_resources.enemy_manager.spawn_enemy(barrier_list, (new_position[0] + rand_x * 16, new_position[1] + rand_y * 16))
+                room_raw = warp_sprite.properties["warp_room_size"]
+
+                x_range = room_raw.x2 - room_raw.x1
+                y_range = room_raw.y2 - room_raw.y1
+
+                rand_x = random.randint(room_raw.x1, room_raw.x2 + x_range - 1)
+                rand_y = random.randint(room_raw.y1, room_raw.y2 + y_range - 1)
+
+                enemy_location = convert_from_tiled_coordinates(
+                    game_resources.my_map,
+                    (
+                        round(warp_sprite.properties["warp_to_location"][0] + round(rand_x * 3)),
+                        round(warp_sprite.properties["warp_to_location"][1] + round(rand_y * 3))
+                    )
+                )
+
+                enemy = game_resources.enemy_manager.spawn_enemy(barrier_list, enemy_location)
                 self.add_enemy(enemy)
 
             num_enemies = random.randint(2, 6)
@@ -164,24 +181,29 @@ class ProjectileManager:
 
         def enemy_bullet_handler(_arbiter, _space, _data):
             bullet_sprite, enemy_sprite = self.projectile_physics.get_sprites_from_arbiter(_arbiter)
-            enemy_sprite.remove_from_sprite_lists()
-            will_drop = random.randint(0, 10)
-            if will_drop > 5:
-                self.game_resources.object_manager.flask(enemy_sprite.center_x, enemy_sprite.center_y)
-            #elif will_drop > 1:
-            #    self.game_resources.object_manager.candle_drop(enemy_sprite.center_x, enemy_sprite.center_y)
-            self.projectile_physics.add_sprite_list(
-                self.game_resources.object_manager.object_list,
-                collision_type="object",
-                body_type=arcade.PymunkPhysicsEngine.STATIC,
-            )
-            bullet_sprite.remove_from_sprite_lists()
-            enemy_sprite.on_death()
 
-            if self.on_bullet_death is not None:
-                self.on_bullet_death(bullet_sprite)
+            if enemy_sprite:
+                enemy_sprite.remove_from_sprite_lists()
 
-            self.on_projectile_death(bullet_sprite)
+                will_drop = random.randint(0, 10)
+                if will_drop > 7:
+                    obj = self.game_resources.object_manager.flask(enemy_sprite.center_x, enemy_sprite.center_y)
+                    self.projectile_physics.add_sprite(
+                        obj,
+                        collision_type="object",
+                        body_type=arcade.PymunkPhysicsEngine.STATIC,
+                    )
+                elif will_drop >= 5 and will_drop <= 7:
+                    self.game_resources.object_manager.candle_drop(enemy_sprite.center_x, enemy_sprite.center_y)
+                enemy_sprite.on_death()
+
+            if bullet_sprite:
+                bullet_sprite.remove_from_sprite_lists()
+
+                if self.on_bullet_death is not None:
+                    self.on_bullet_death(bullet_sprite)
+
+                self.on_projectile_death(bullet_sprite)
 
             if len(game_resources.enemy_manager.enemy_list) == 0:
                 game_resources.doors_enabled = False

@@ -1,3 +1,6 @@
+import arcade
+
+from Constants.Game import SCREEN_WIDTH, SCREEN_HEIGHT
 from Core.GameResources import GameResources
 import ctypes
 import platform
@@ -35,7 +38,6 @@ class GameInstance:
 
         # create default scene renderer via factory.
         # This configures the post processing stack and default lighting
-        self.scene_renderer = RendererFactory.create_renderer(window)
         self.window = window
         #handle getting screen size
         if platform.system() == 'Linux':
@@ -52,8 +54,7 @@ class GameInstance:
             self.screensize[0] = width
             self.screensize[1] = height
             """
-            self.screensize[0] = 1920
-            self.screensize[1] = 1080
+            self.screensize = (1920, 1080)
         elif platform.system() == 'Windows':
             user32 = ctypes.windll.user32
             self.screensize = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
@@ -129,6 +130,16 @@ class GameInstance:
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed. """
         self.game_resources.player_sprite.on_key_press(key, modifiers)
+        if key == arcade.key.F:
+            self.window.set_fullscreen(not self.window.fullscreen)
+            if self.window.fullscreen:
+                if SCREEN_WIDTH > SCREEN_HEIGHT:
+                    self.window.screensize_multiplier = self.screensize[0]/SCREEN_WIDTH
+                else:
+                    self.window.screensize_multiplier = self.screensize[1]/SCREEN_HEIGHT
+            else:
+                self.window.set_size(self.window.original_size[0],self.window.original_size[1])
+                self.window.screensize_multiplier = 1
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """

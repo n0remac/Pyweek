@@ -47,7 +47,7 @@ class GameResources:
         self.my_map = my_map
 
         # Procedurally generated map
-        generated_map = generate_game_level(100, 100)
+        generated_map = generate_game_level(60, 60)
 
         # Screenshake
         self.shake_remain = 0
