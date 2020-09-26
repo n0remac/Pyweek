@@ -9,9 +9,10 @@ from Graphics.Lights.PointLight import DynamicPointLight
 class ProjectileManager:
     """ Handles mouse press presses to fire bullets and creates bullet objects. """
 
-    def __init__(self, game_resources):
+    def __init__(self, game_resources, window):
 
         self.game_resources = game_resources
+        self.window = window
 
         self.projectile_physics = arcade.PymunkPhysicsEngine()
         self.projectile_physics.add_sprite_list(

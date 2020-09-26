@@ -78,7 +78,7 @@ class SceneRenderer:
 
         # run post processing on final texture
         final_image = self.post_processing.apply_chain(self.final_target)
-
+        final_image.texture.filter = (self.context.NEAREST, self.context.NEAREST)
         # blit final image to screen
         self.window.use()
         final_image.blit_to_current_target()

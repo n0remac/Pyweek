@@ -1,7 +1,9 @@
 import arcade
 import math
+import ctypes
 
 from Constants.Physics import PLAYER_MOVEMENT_SPEED
+from Constants.Game import SCREEN_WIDTH, SCREEN_HEIGHT
 from Core.GameResources import GameResources
 from Core.RendererFactory import RendererFactory
 from Core.ObjectManager import ObjectManager
@@ -9,7 +11,6 @@ from Core.HealthRing import Health
 from Physics.PhysicsEngine import setup_physics_engine
 from Graphics.Particles.Torch.TorchSystem import TorchSystem
 from Graphics.Particles.Fireball.Fireball import FireBall
-
 
 class GameInstance:
     """
@@ -22,7 +23,7 @@ class GameInstance:
         self.window = window
 
         # Core game resources
-        self.game_resources = GameResources()
+        self.game_resources = GameResources(window)
 
         # Physics engine
         self.physics_engine = setup_physics_engine(self.game_resources)
@@ -33,6 +34,9 @@ class GameInstance:
         # create default scene renderer via factory.
         # This configures the post processing stack and default lighting
         self.scene_renderer = RendererFactory.create_renderer(window)
+        self.window = window
+        user32 = ctypes.windll.user32
+        self.screensize = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
 
         # bind rendering callbacks
         self.scene_renderer.draw_primary_callback = self.on_draw_scene
@@ -124,6 +128,16 @@ class GameInstance:
             self.player_health.health += 10.0
         elif key == arcade.key.O:
             self.player_health.health -= 10.0
+        elif key == arcade.key.F:
+            self.window.set_fullscreen(not self.window.fullscreen)
+            if self.window.fullscreen:
+                if SCREEN_WIDTH > SCREEN_HEIGHT:
+                    self.window.screensize_multiplier = self.screensize[0]/SCREEN_WIDTH
+                else:
+                    self.window.screensize_multiplier = self.screensize[1]/SCREEN_HEIGHT
+            else:
+                self.window.set_size(self.window.original_size[0],self.window.original_size[1])
+                self.window.screensize_multiplier = 1
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """
@@ -202,4 +216,11 @@ class GameInstance:
         self.player_light.position = (
             self.game_resources.player_sprite.center_x,
             self.game_resources.player_sprite.center_y,
+        )
+        """scroll screen if necessary"""
+        arcade.set_viewport(
+            self.game_resources.view_left,
+            (SCREEN_WIDTH) + self.game_resources.view_left,
+            self.game_resources.view_bottom,
+            (SCREEN_HEIGHT) + self.game_resources.view_bottom,
         )

@@ -62,17 +62,17 @@ class PlayerCharacter(arcade.Sprite):
 
         self.down_idle_textures = []
         for i in range(IDLE_CYCLE_LENGTH):
-            texture = arcade.load_texture_pair(f"{main_path}_down_idle{i}.png")
+            texture = arcade.load_texture_pair(f"{main_path}_down_walk{i}.png")
             self.down_idle_textures.append(texture)
 
         self.up_walk_textures = []
         for i in range(WALK_CYCLE_LENGTH):
-            texture = arcade.load_texture_pair(f"{main_path}_up_walk{i}.png")
+            texture = arcade.load_texture_pair(f"{main_path}_down_walk{i}.png")
             self.up_walk_textures.append(texture)
 
         self.up_idle_textures = []
         for i in range(IDLE_CYCLE_LENGTH):
-            texture = arcade.load_texture_pair(f"{main_path}_up_idle{i}.png")
+            texture = arcade.load_texture_pair(f"{main_path}_down_walk{i}.png")
             self.up_idle_textures.append(texture)
 
         # Set the initial texture
