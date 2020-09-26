@@ -12,11 +12,16 @@ class GameWindow(arcade.Window):
 
         super().__init__(width, height, title)
         self.game_instance: Optional[GameInstance] = None
+        # Save original size when we exit fullscreen
+        self.original_size = self.get_size()
+        # screensize multiplier so that the viewport gets scaled up in fullscreen
+        self.screensize_multiplier = 1
 
     def setup(self):
         """ Set up everything with the game """
 
         window_size = self.get_size()
+
         self.game_instance = GameInstance(self)
 
     def on_key_press(self, key, modifiers):
@@ -28,11 +33,17 @@ class GameWindow(arcade.Window):
         self.game_instance.on_key_release(key, modifiers)
 
     def on_mouse_motion(self, x, y, dx, dy):
-        self.game_instance.on_mouse_motion(x, y, dx, dy)
-        self.game_instance.game_resources.player_sprite.on_mouse_motion(x, y, dx, dy)
+        scaledx = (x/self.screensize_multiplier)
+        scaledy = (y/self.screensize_multiplier)
+        scaleddx = (dx/self.screensize_multiplier)
+        scaleddy = (dy/self.screensize_multiplier)
+        self.game_instance.on_mouse_motion(scaledx, scaledy, dx, dy)
+        self.game_instance.game_resources.player_sprite.on_mouse_motion(scaledx, scaledy, dx, dy)
 
     def on_mouse_press(self, x, y, button, modifiers):
-        self.game_instance.on_mouse_press(x, y, button, modifiers)
+        scaledx = (x/self.screensize_multiplier)
+        scaledy = (y/self.screensize_multiplier)
+        self.game_instance.on_mouse_press(scaledx, scaledy, button, modifiers)
 
     def on_update(self, delta_time):
         """ Movement and game logic """
@@ -41,7 +52,10 @@ class GameWindow(arcade.Window):
     def on_draw(self):
         """ Draw everything """
         self.game_instance.on_draw()
-
+        # Debug for everyone else who doesn't know what this is
+        text_size = 10
+        margin = 2
+        arcade.draw_text("Press F to toggle between full screen and windowed mode", (SCREEN_WIDTH // 2) + self.game_instance.game_resources.view_left, margin + self.game_instance.game_resources.view_bottom,arcade.color.WHITE, text_size, anchor_x="center")
 
 def main():
     """ Main method """
@@ -52,13 +66,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-def load_texture_pair(filename):
-    """
-    Load a texture pair, with the second being a mirror image.
-    """
-    return [
-        arcade.load_texture(filename),
-        arcade.load_texture(filename, flipped_horizontally=True),
-    ]

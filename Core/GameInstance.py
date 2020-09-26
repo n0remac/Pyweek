@@ -1,7 +1,9 @@
 import arcade
 import math
+import ctypes
 
 from Constants.Physics import PLAYER_MOVEMENT_SPEED
+from Constants.Game import SCREEN_WIDTH, SCREEN_HEIGHT
 from Core.GameResources import GameResources
 from Core.RendererFactory import RendererFactory
 from Core.ObjectManager import ObjectManager
@@ -10,7 +12,6 @@ from Physics.EnemyPhysicsEngine import setup_enemy_physics_engine
 from Physics.PhysicsEngine import setup_physics_engine
 from Graphics.Particles.Torch.TorchSystem import TorchSystem
 from Graphics.Particles.Fireball.Fireball import FireBall
-
 
 class GameInstance:
     """
@@ -23,7 +24,7 @@ class GameInstance:
         self.window = window
 
         # Core game resources
-        self.game_resources = GameResources()
+        self.game_resources = GameResources(window)
         self.object_manager = ObjectManager(self.game_resources)
 
         # Physics engine
@@ -43,6 +44,9 @@ class GameInstance:
         # create default scene renderer via factory.
         # This configures the post processing stack and default lighting
         self.scene_renderer = RendererFactory.create_renderer(window)
+        self.window = window
+        user32 = ctypes.windll.user32
+        self.screensize = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
 
         # bind rendering callbacks
         self.scene_renderer.draw_primary_callback = self.on_draw_scene
@@ -133,6 +137,16 @@ class GameInstance:
         elif key == arcade.key.SPACE:
             self.game_resources.object_manager.candle(self.game_resources.player_sprite.position[0] - 5,
                                                       self.game_resources.player_sprite.position[1])
+        elif key == arcade.key.F:
+            self.window.set_fullscreen(not self.window.fullscreen)
+            if self.window.fullscreen:
+                if SCREEN_WIDTH > SCREEN_HEIGHT:
+                    self.window.screensize_multiplier = self.screensize[0]/SCREEN_WIDTH
+                else:
+                    self.window.screensize_multiplier = self.screensize[1]/SCREEN_HEIGHT
+            else:
+                self.window.set_size(self.window.original_size[0],self.window.original_size[1])
+                self.window.screensize_multiplier = 1
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """
@@ -218,4 +232,4 @@ class GameInstance:
         # update animations
         self.game_resources.player_sprite.update_animation(delta_time)
         self.game_resources.object_manager.on_update(delta_time)
-
+        self.game_resources.on_update(delta_time)

@@ -1,5 +1,6 @@
 import random
 import arcade
+import math
 from pytiled_parser.objects import TileLayer, Size, ObjectLayer
 
 from Core.Enemy import EnemyManager
@@ -8,10 +9,8 @@ from Constants.Game import (
     SPRITE_SIZE,
     SCREEN_WIDTH,
     SCREEN_HEIGHT,
-    LEFT_VIEWPORT_MARGIN,
-    RIGHT_VIEWPORT_MARGIN,
-    BOTTOM_VIEWPORT_MARGIN,
-    TOP_VIEWPORT_MARGIN,
+    LERP_MARGIN,
+    CAMERA_SPEED
 )
 from Core.ArcadeUtils import convert_from_tiled_coordinates
 from Core.LevelGenerator.generate_game_level import generate_game_level
@@ -19,13 +18,16 @@ from Core.PlayerCharacter import PlayerCharacter
 from Core.ObjectManager import ObjectManager
 from Core.Projectile_Manager import ProjectileManager
 
+from Core.lerp import lerp
 
 class GameResources:
     """
     Load arcade resources
     """
 
-    def __init__(self):
+    def __init__(self,window):
+
+        self.window = window
 
         # Create the sprite lists
         self.sprite_list = arcade.SpriteList(use_spatial_hash=True)
@@ -123,7 +125,7 @@ class GameResources:
         self.start_location = generated_map["start_location"][0].location
 
         # Create player sprite
-        self.player_sprite = PlayerCharacter(convert_from_tiled_coordinates(my_map, generated_map["start_location"][0].location))
+        self.player_sprite = PlayerCharacter(convert_from_tiled_coordinates(my_map, generated_map["start_location"][0].location),self)
 
         # Set player location
         i = random.randint(0, len(self.floor_list))
@@ -134,7 +136,7 @@ class GameResources:
 
         # Game managers
         self.object_manager = ObjectManager(self)
-        self.projectile_manager = ProjectileManager(self)
+        self.projectile_manager = ProjectileManager(self,window)
         self.enemy_manager = EnemyManager(self)
         self.enemy_manager.setup()
 
@@ -152,56 +154,17 @@ class GameResources:
         self.enemy_manager.enemy_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
 
         # --- Manage Scrolling ---
+        if math.fabs(self.player_sprite.center_x-self.view_left+(SCREEN_WIDTH/2)) > LERP_MARGIN*SCREEN_HEIGHT or math.fabs(self.player_sprite.center_y-self.view_bottom+(SCREEN_HEIGHT/2)) > LERP_MARGIN*SCREEN_HEIGHT:
+            self.view_left = int(lerp(self.view_left,self.player_sprite.center_x-(SCREEN_WIDTH/2),CAMERA_SPEED))
+            self.view_bottom = int(lerp(self.view_bottom,self.player_sprite.center_y-(SCREEN_HEIGHT/2),CAMERA_SPEED))
 
-        # Track if we need to change the viewport
-
-        changed = False
-
-        # Scroll left
-        left_boundary = self.view_left + LEFT_VIEWPORT_MARGIN
-        if self.player_sprite.left < left_boundary:
-            self.view_left -= left_boundary - self.player_sprite.left
-            changed = True
-
-        # Scroll right
-        right_boundary = self.view_left + SCREEN_WIDTH - RIGHT_VIEWPORT_MARGIN
-        if self.player_sprite.right > right_boundary:
-            self.view_left += self.player_sprite.right - right_boundary
-            changed = True
-
-        # Scroll up
-        top_boundary = self.view_bottom + SCREEN_HEIGHT - TOP_VIEWPORT_MARGIN
-        if self.player_sprite.top > top_boundary:
-            self.view_bottom += self.player_sprite.top - top_boundary
-            changed = True
-
-        # Scroll down
-        bottom_boundary = self.view_bottom + BOTTOM_VIEWPORT_MARGIN
-        if self.player_sprite.bottom < bottom_boundary:
-            self.view_bottom -= bottom_boundary - self.player_sprite.bottom
-            changed = True
-
-        if changed:
-            # Only scroll to integers. Otherwise we end up with pixels that
-            # don't line up on the screen
-            self.view_bottom = int(self.view_bottom)
-            self.view_left = int(self.view_left)
-
-            # Do the scrolling
-            arcade.set_viewport(
-                self.view_left,
-                SCREEN_WIDTH + self.view_left,
-                self.view_bottom,
-                SCREEN_HEIGHT + self.view_bottom,
-            )
-        self.wall_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
-        self.floor_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
-        self.light_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
-        self.warps_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
-        self.bullet_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
-        self.player_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
-        self.object_manager.object_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
-        self.enemy_manager.enemy_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        # Scrolling is done in on_update
 
     def on_update(self, delta_time):
-        pass
+        """scroll screen if necessary"""
+        arcade.set_viewport(
+            self.view_left,
+            (SCREEN_WIDTH) + self.view_left,
+            self.view_bottom,
+            (SCREEN_HEIGHT) + self.view_bottom,
+        )
