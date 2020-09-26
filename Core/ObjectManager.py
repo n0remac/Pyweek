@@ -19,7 +19,7 @@ class ObjectManager:
         box = DestructableObject(
             center_x=x,
             center_y=y,
-            filename="Graphics/items and trap_animation/box_2/box_2_3.png",
+            filename="Graphics/items and trap_animations/flask/flasks_1_1.png",
             scale=SPRITE_SCALING_TILES,
         )
         self.game_resources.object_list.append(box)
