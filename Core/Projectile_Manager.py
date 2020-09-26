@@ -36,7 +36,7 @@ class ProjectileManager:
 
         self.projectile_physics.add_sprite(
             self.game_resources.player_sprite,
-            damping=0.00007,
+            damping=0.0001,
             friction=10.0,
             mass=2.0,
             moment=arcade.PymunkPhysicsEngine.MOMENT_INF,
@@ -91,7 +91,7 @@ class ProjectileManager:
             self.game_resources.player_sprite.set_position(new_position[0], new_position[1])
 
             self.projectile_physics.add_sprite(game_resources.player_sprite,
-                                               damping=0.00007,
+                                               damping=0.0001,
                                                friction=10.0,
                                                mass=2.0,
                                                moment=arcade.PymunkPhysicsEngine.MOMENT_INF,
