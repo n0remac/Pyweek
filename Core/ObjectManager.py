@@ -16,6 +16,7 @@ class ObjectManager:
     def flask(self, x, y):
         obj = Item((x, y), 'Graphics/items/flasks/flasks_1', 'flask')
         self.object_list.append(obj)
+        return obj
 
     def candle_drop(self, x, y):
         obj = Item((x, y), 'Graphics/items/torch/candle_drop','candle_drop')

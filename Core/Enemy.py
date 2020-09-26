@@ -83,15 +83,17 @@ class Enemy(arcade.Sprite):
 
             impulse_force = (0, 0)
 
+            move_force = 20
+
             if position_difference_x > 0:
-                impulse_force = (-100, impulse_force[1])
+                impulse_force = (-move_force, impulse_force[1])
             elif position_difference_x < 0:
-                impulse_force = (100, impulse_force[1])
+                impulse_force = (move_force, impulse_force[1])
 
             if position_difference_y > 0:
-                impulse_force = (impulse_force[0], -100)
+                impulse_force = (impulse_force[0], -move_force)
             elif position_difference_y < 0:
-                impulse_force = (impulse_force[0], 100)
+                impulse_force = (impulse_force[0], move_force)
 
             physics_engine.apply_impulse(self, impulse_force)
             self.light.position = (self.center_x, self.center_y)

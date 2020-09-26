@@ -1,6 +1,10 @@
 
 import arcade
 import math
+import arcade
+
+from Constants.Game import SCREEN_WIDTH, SCREEN_HEIGHT
+from Core.GameResources import GameResources
 import ctypes
 import platform
 import subprocess
@@ -51,6 +55,7 @@ class GameInstance:
             self.screensize[0] = width
             self.screensize[1] = height
             """
+            self.screensize = (1920, 1080)
         elif platform.system() == 'Windows':
             user32 = ctypes.windll.user32
             self.screensize = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
