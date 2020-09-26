@@ -65,7 +65,7 @@ class PlayerCharacter(arcade.Sprite):
 
         self.down_idle_textures = []
         for i in range(IDLE_CYCLE_LENGTH):
-            texture = arcade.load_texture_pair(f"{main_path}_down_walk{i}.png")
+            texture = arcade.load_texture_pair(f"{main_path}_down_idle{i}.png")
             self.down_idle_textures.append(texture)
 
         self.up_walk_textures = []
@@ -75,13 +75,13 @@ class PlayerCharacter(arcade.Sprite):
 
         self.up_idle_textures = []
         for i in range(IDLE_CYCLE_LENGTH):
-            texture = arcade.load_texture_pair(f"{main_path}_down_walk{i}.png")
+            texture = arcade.load_texture_pair(f"{main_path}_down_idle{i}.png")
             self.up_idle_textures.append(texture)
 
         # Set the initial texture
         self.texture = self.down_idle_texture_pair[0]
         # Speed multiplier, animation always takes one second by default
-        self.speed_multiplier = 4
+        self.speed_multiplier = 1
 
         # Hit box will be set based on the first image used. If you want to specify
         # a different hit box, you can do it like the code below.
