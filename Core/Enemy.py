@@ -1,13 +1,11 @@
 from typing import List, Union
 
 import arcade
-import random
 
 from arcade import SpriteList
 
 from Constants.Game import SPRITE_SIZE, SPRITE_SCALING_PLAYER, ENEMY_AWARENESS
 from Constants.Physics import PLAYER_MOVEMENT_SPEED
-from Physics.EnemyPhysicsEngine import setup_enemy_physics_engine
 
 
 class Enemy(arcade.Sprite):
@@ -88,17 +86,6 @@ class Enemy(arcade.Sprite):
 
             physics_engine.apply_impulse(self, impulse_force)
 
-            # if self.path[0][0] < self.path[1][0]:
-            #     self.position = (self.position[0])
-            #     self.position[0] = self.position[0] + self.speed / 5
-            # elif self.path[0][0] > self.path[1][0]:
-            #     self.center_x = self.center_x - self.speed / 5
-            #
-            # if self.path[0][1] < self.path[1][1]:
-            #     self.center_y = self.center_y + self.speed / 5
-            # elif self.path[0][1] > self.path[1][1]:
-            #     self.center_y = self.center_y - self.speed / 5
-
 
 class EnemyManager:
     enemy_list: Union[SpriteList, List[Enemy]]
@@ -110,27 +97,6 @@ class EnemyManager:
     def spawn_enemy(self, position):
         # Enemy
         enemy = Enemy(self.game_resources)
-        #
-        # y_spawn_location = []
-        # x_spawn_location = []
-        #
-        # for i in self.game_resources.floor_list:
-        #     if i.position[0] == self.game_resources.player_sprite.position[0]:
-        #         print("i - ps y", i.position[1] - self.game_resources.player_sprite.position[1])
-        #         if i.position[1] - self.game_resources.player_sprite.position[1] < 500:
-        #             if i.position[1] - self.game_resources.player_sprite.position[1] > -500:
-        #                 y_spawn_location.append(i.position[1])
-        #
-        # for i in self.game_resources.floor_list:
-        #     if i.position[1] == self.game_resources.player_sprite.position[1]:
-        #         print("i - ps x", i.position[0] - self.game_resources.player_sprite.position[0])
-        #         if i.position[0] - self.game_resources.player_sprite.position[0] < 500:
-        #             if i.position[0] - self.game_resources.player_sprite.position[0] > -500:
-        #                 x_spawn_location.append(i.position[0])
-        #
-        # random_y = random.randint(0, len(y_spawn_location))
-        # random_x = random.randint(0, len(x_spawn_location))
-        # enemy_position = [x_spawn_location[random_x], y_spawn_location[random_y]]
         enemy.position = position
 
         self.path = enemy.path
@@ -148,9 +114,6 @@ class EnemyManager:
         pass
 
     def on_update(self, delta_time):
-
-        # print("position math x", abs(self.enemy.position[0]) - abs(self.game_resources.player_sprite.position[0]))
-        # print("position math y", abs(self.enemy.position[1]) - abs(self.game_resources.player_sprite.position[1]))
 
         for enemy in self.enemy_list:
             position = self.game_resources.player_sprite.position
