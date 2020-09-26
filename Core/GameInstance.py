@@ -203,3 +203,6 @@ class GameInstance:
             self.game_resources.player_sprite.center_x,
             self.game_resources.player_sprite.center_y,
         )
+
+        # update game resources
+        self.game_resources.on_update(delta_time)

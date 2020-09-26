@@ -52,7 +52,7 @@ class GameResources:
         my_map = arcade.tilemap.read_tmx(map_name)
 
         # Procedurally generated map
-        generated_map = generate_game_level(50, 50)
+        generated_map = generate_game_level(30, 30)
 
         fake_walls_layer = TileLayer(
             id_=1,
@@ -84,15 +84,26 @@ class GameResources:
             properties=None,
         )
 
-        self.wall_list = arcade.tilemap._process_tile_layer(
-            my_map, fake_walls_layer, scaling=SPRITE_SCALING_TILES
+        # Uncomment if you want to actually load the level from the Tiled map.
+        self.wall_list = arcade.tilemap.process_layer(
+            my_map, "Walls", SPRITE_SCALING_TILES
         )
-        self.light_list = arcade.tilemap._process_tile_layer(
-            my_map, fake_lighting_layer, scaling=SPRITE_SCALING_TILES
+        self.floor_list = arcade.tilemap.process_layer(
+            my_map, "Floor", SPRITE_SCALING_TILES
         )
-        self.floor_list = arcade.tilemap._process_tile_layer(
-            my_map, fake_floor_layer, scaling=SPRITE_SCALING_TILES
+        self.light_list = arcade.tilemap.process_layer(
+            my_map, "Lighting", SPRITE_SCALING_TILES
         )
+
+        # self.wall_list = arcade.tilemap._process_tile_layer(
+        #     my_map, fake_walls_layer, scaling=SPRITE_SCALING_TILES
+        # )
+        # self.light_list = arcade.tilemap._process_tile_layer(
+        #     my_map, fake_lighting_layer, scaling=SPRITE_SCALING_TILES
+        # )
+        # self.floor_list = arcade.tilemap._process_tile_layer(
+        #     my_map, fake_floor_layer, scaling=SPRITE_SCALING_TILES
+        # )
 
         # Create player sprite
         self.player_sprite = PlayerCharacter()
@@ -173,4 +184,5 @@ class GameResources:
         self.enemy_manager.enemy_list.draw()
 
     def on_update(self, delta_time):
-        pass
+        if len(self.enemy_manager.enemy_list) < 5:
+            enemy = self.enemy_manager.create_enemy()
