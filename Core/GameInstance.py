@@ -27,10 +27,6 @@ class GameInstance:
         self.horizontal_key_list = []
         self.verticle_key_list = []
 
-        self.up_pressed = False
-        self.down_pressed = False
-        self.left_pressed = False
-        self.right_pressed = False
 
         # create default scene renderer via factory.
         # This configures the post processing stack and default lighting
@@ -111,31 +107,11 @@ class GameInstance:
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed. """
-
-        if key == arcade.key.UP or key == arcade.key.W:
-            self.up_pressed = True
-        elif key == arcade.key.DOWN or key == arcade.key.S:
-            self.down_pressed = True
-        elif key == arcade.key.LEFT or key == arcade.key.A:
-            self.left_pressed = True
-        elif key == arcade.key.RIGHT or key == arcade.key.D:
-            self.right_pressed = True
-        elif key == arcade.key.SPACE:
-            self.game_resources.object_manager.candle(self.game_resources.player_sprite.position[0] - 5,
-                                                      self.game_resources.player_sprite.position[1])
+        self.game_resources.player_sprite.on_key_press(key, modifiers)
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """
-        force = (0, 0)
-
-        if key == arcade.key.UP or key == arcade.key.W:
-            self.up_pressed = False
-        elif key == arcade.key.DOWN or key == arcade.key.S:
-            self.down_pressed = False
-        elif key == arcade.key.LEFT or key == arcade.key.A:
-            self.left_pressed = False
-        elif key == arcade.key.RIGHT or key == arcade.key.D:
-            self.right_pressed = False
+        self.game_resources.player_sprite.on_key_release(key, modifiers)
 
     def on_mouse_motion(self, x, y, dx, dy):
         self.game_resources.player_sprite.on_mouse_motion(x, y, dx, dy)
@@ -177,19 +153,9 @@ class GameInstance:
     def on_update(self, delta_time):
         """ Movement and game logic """
 
-        x_force = 0
-        y_force = 0
-        speed = 120
-
-        if self.up_pressed:
-            y_force += speed
-        if self.down_pressed:
-            y_force -= speed
-        if self.left_pressed:
-            x_force -= speed
-        if self.right_pressed:
-            x_force += speed
-
+        x_force = self.game_resources.player_sprite.x_force
+        y_force = self.game_resources.player_sprite.y_force
+        self.game_resources.player_sprite.on_update(delta_time)
         self.game_resources.projectile_manager.projectile_physics.apply_impulse(self.game_resources.player_sprite, (x_force, y_force))
 
         # Move the player with the physics engine

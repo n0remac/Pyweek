@@ -27,6 +27,15 @@ class PlayerCharacter(Character):
         self.main_path = "Graphics/Character_animation/Acolyte/player_animation_down_idle"
         self.load_textures()
 
+        self.up_pressed = False
+        self.down_pressed = False
+        self.left_pressed = False
+        self.right_pressed = False
+
+        self.x_force = 0
+        self.y_force = 0
+        self.speed = 120
+
 
 
     def on_mouse_motion(self, x, y, dx, dy):
@@ -57,3 +66,42 @@ class PlayerCharacter(Character):
                 self.cur_texture = 0
             # idle animation
             self.texture = self.idle_list[self.cur_texture][self.character_face_direction_horizontal]
+
+    def on_key_press(self, key, modifiers):
+        """Called whenever a key is pressed. """
+
+        if key == arcade.key.UP or key == arcade.key.W:
+            self.up_pressed = True
+        elif key == arcade.key.DOWN or key == arcade.key.S:
+            self.down_pressed = True
+        elif key == arcade.key.LEFT or key == arcade.key.A:
+            self.left_pressed = True
+        elif key == arcade.key.RIGHT or key == arcade.key.D:
+            self.right_pressed = True
+        elif key == arcade.key.SPACE:
+            self.game_resources.object_manager.candle(self.game_resources.player_sprite.position[0] - 5,
+                                                      self.game_resources.player_sprite.position[1])
+
+    def on_key_release(self, key, modifiers):
+        """Called when the user releases a key. """
+        if key == arcade.key.UP or key == arcade.key.W:
+            self.up_pressed = False
+        elif key == arcade.key.DOWN or key == arcade.key.S:
+            self.down_pressed = False
+        elif key == arcade.key.LEFT or key == arcade.key.A:
+            self.left_pressed = False
+        elif key == arcade.key.RIGHT or key == arcade.key.D:
+            self.right_pressed = False
+
+    def on_update(self, delta_time):
+        self.x_force = 0
+        self.y_force = 0
+
+        if self.up_pressed:
+            self.y_force += self.speed
+        if self.down_pressed:
+            self.y_force -= self.speed
+        if self.left_pressed:
+            self.x_force -= self.speed
+        if self.right_pressed:
+            self.x_force += self.speed
