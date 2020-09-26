@@ -35,11 +35,11 @@ LEFT_FACING = 1
 
 # How many pixels to keep as a minimum margin between the character
 # and the edge of the screen.
-LEFT_VIEWPORT_MARGIN = 250
-RIGHT_VIEWPORT_MARGIN = 250
-BOTTOM_VIEWPORT_MARGIN = 200
-TOP_VIEWPORT_MARGIN = 200
+LEFT_VIEWPORT_MARGIN = 500 
+RIGHT_VIEWPORT_MARGIN = 500
+BOTTOM_VIEWPORT_MARGIN = 400
+TOP_VIEWPORT_MARGIN = 400
 
 # How close the player needs to be for the enemy to track it.
 # starts to break above 15
-ENEMY_AWARENESS = 32
+ENEMY_AWARENESS = 64

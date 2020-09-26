@@ -14,12 +14,13 @@ from Constants.Game import (
 from Constants.Animation import WALK_CYCLE_LENGTH, IDLE_CYCLE_LENGTH
 
 from Core.Character import Character
+from Core.HealthRing import Health
 
 
 class PlayerCharacter(Character):
     """ Player Sprite"""
 
-    def __init__(self, position, game_resources):
+    def __init__(self, position, game_resources, scene_renderer):
 
         # Set up parent class
         super().__init__(position)
@@ -43,7 +44,20 @@ class PlayerCharacter(Character):
             f"{walk_path}_{i}.png"
         ))
 
+        self.player_light = scene_renderer.light_renderer.create_point_light(
+            (400, 400),  # Position
+            (
+                1.75,
+                1.75,
+                1.75,
+            ),  # Color, 0 = black, 1 = white, 0.5 = grey, order is RGB This can go over 1.0 because of HDR
+            160.0,
+        )  # Radius
 
+        # player heath system
+        self.player_health = Health(
+            self.player_light, scene_renderer.post_processing
+        )
 
     def on_mouse_motion(self, x, y, dx, dy):
         # Figure out if we need to flip face up or down or left or right
@@ -115,3 +129,10 @@ class PlayerCharacter(Character):
             self.x_force -= self.speed
         if self.right_pressed:
             self.x_force += self.speed
+
+        # move the player light to the player
+        self.player_light.position = (
+            self.game_resources.player_sprite.center_x,
+            self.game_resources.player_sprite.center_y,
+        )
+

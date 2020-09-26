@@ -56,7 +56,7 @@ void main()
     }
     else
     {
-    float scale = mix(size_spark, size_flame, (1.0 - clamp(v_velocity[0] / 250.0, 0.0, 1.0)));
+    float scale = mix(size_spark, size_flame, (1.0 - clamp(v_velocity[0] / 200.0, 0.0, 1.0)));
 
     //Emit all 4 corners for a quad
     EmitVert(vec2(-1.0, -1.0), scale);
