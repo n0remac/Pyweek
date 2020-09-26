@@ -139,13 +139,13 @@ class ProjectileManager:
                                                body_type=arcade.PymunkPhysicsEngine.DYNAMIC)
 
             game_resources.doors_enabled = True
-            # TODO: Spawn a door
-            # TODO: Spawn enemies
+
+            barrier_list = game_resources.enemy_manager.make_barrier_list()
 
             def spawn_enemy_in_room():
-                rand_x = random.randint(-8, 8)
-                rand_y = random.randint(-8, 8)
-                enemy = game_resources.enemy_manager.spawn_enemy((new_position[0] + rand_x * 16, new_position[1] + rand_y * 16))
+                rand_x = random.randint(-16, 16)
+                rand_y = random.randint(-16, 16)
+                enemy = game_resources.enemy_manager.spawn_enemy(barrier_list, (new_position[0] + rand_x * 16, new_position[1] + rand_y * 16))
                 self.add_enemy(enemy)
 
             num_enemies = random.randint(2, 6)
@@ -214,6 +214,16 @@ class ProjectileManager:
 
         handler = self.projectile_physics.space.add_collision_handler(door_physics_id, player_physics_id)
         handler.begin = door_player_handler
+
+        def enemy_object_handler(_arbiter, _space, _data):
+            door_sprite, player_sprite = self.projectile_physics.get_sprites_from_arbiter(_arbiter)
+
+            return False
+
+        object_physics_id = self.projectile_physics.collision_types.index("object")
+
+        handler = self.projectile_physics.space.add_collision_handler(enemy_physics_id, object_physics_id)
+        handler.begin = enemy_object_handler
 
 
     light_colors = [
