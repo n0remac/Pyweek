@@ -56,7 +56,9 @@ class GameInstance:
             p.stdout.close()
             resolution_string, junk = p2.communicate()
             resolution = resolution_string.split()[0]
-            self.screensize = resolution.split('x')
+            width, height = resolution.split('x')
+            self.screensize[0] = width
+            self.screensize[1] = height
         elif platform.system() == 'Windows':
             user32 = ctypes.windll.user32
             self.screensize = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
