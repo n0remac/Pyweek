@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING
 
 import arcade
 import math
+import random
 
 from arcade import Sprite
 
@@ -30,7 +31,7 @@ class ProjectileManager:
         )
 
         self.projectile_physics.add_sprite_list(
-            self.game_resources.object_list,
+            self.game_resources.object_manager.object_list,
             collision_type="object",
             body_type=arcade.PymunkPhysicsEngine.STATIC,
         )
@@ -94,6 +95,25 @@ class ProjectileManager:
             "bullet", "object", post_handler=object_hit_handler
         )
 
+        def player_object_hit_handler(bullet_sprite, _object_sprite, _arbiter, _space, _data):
+            """ Called for bullet/wall collision """
+
+            _object_sprite.remove_from_sprite_lists()
+            if _object_sprite.kind == 'flask':
+                self.game_resources.player_sprite.player_health.health += 10
+
+        self.projectile_physics.add_collision_handler(
+            "player", "object", post_handler=player_object_hit_handler
+        )
+
+        def player_enemy_hit_handler(bullet_sprite, _object_sprite, _arbiter, _space, _data):
+            """ Called for bullet/wall collision """
+            self.game_resources.player_sprite.player_health.health -= 1
+
+        self.projectile_physics.add_collision_handler(
+            "player", "enemy", post_handler=player_enemy_hit_handler
+        )
+
         def warp_hit_handler(_arbiter, _space, _data):
             warp_sprite, player_sprite = self.projectile_physics.get_sprites_from_arbiter(_arbiter)
 
@@ -134,6 +154,16 @@ class ProjectileManager:
         def enemy_bullet_handler(_arbiter, _space, _data):
             bullet_sprite, enemy_sprite = self.projectile_physics.get_sprites_from_arbiter(_arbiter)
             enemy_sprite.remove_from_sprite_lists()
+            will_drop = random.randint(0, 10)
+            if will_drop > 5:
+                self.game_resources.object_manager.flask(enemy_sprite.center_x, enemy_sprite.center_y)
+            #elif will_drop > 1:
+            #    self.game_resources.object_manager.candle_drop(enemy_sprite.center_x, enemy_sprite.center_y)
+            self.projectile_physics.add_sprite_list(
+                self.game_resources.object_manager.object_list,
+                collision_type="object",
+                body_type=arcade.PymunkPhysicsEngine.STATIC,
+            )
             bullet_sprite.remove_from_sprite_lists()
             enemy_sprite.on_death()
 

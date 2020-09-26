@@ -1,6 +1,7 @@
 from typing import List, Union
 
 import arcade
+import random
 
 from arcade import SpriteList
 
