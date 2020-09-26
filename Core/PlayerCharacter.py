@@ -17,10 +17,13 @@ from Constants.Animation import WALK_CYCLE_LENGTH, IDLE_CYCLE_LENGTH
 class PlayerCharacter(arcade.Sprite):
     """ Player Sprite"""
 
-    def __init__(self):
+    def __init__(self, game_resources):
 
         # Set up parent class
         super().__init__()
+
+        # Hold game game resources
+        self.game_resources = game_resources
 
         # Default to face-right
         self.character_face_direction = DOWN_FACING
@@ -77,6 +80,8 @@ class PlayerCharacter(arcade.Sprite):
 
         # Set the initial texture
         self.texture = self.down_idle_texture_pair[0]
+        # Speed multiplier, animation always takes one second by default
+        self.speed_multiplier = 4
 
         # Hit box will be set based on the first image used. If you want to specify
         # a different hit box, you can do it like the code below.
@@ -85,13 +90,13 @@ class PlayerCharacter(arcade.Sprite):
 
     def update_animation(self, delta_time: float = 1 / 60):
         # Animation
-        self.sub_texture += 1  # delta_time/60
+        self.sub_texture += 1 * self.speed_multiplier  # delta_time/60
         if self.sub_texture > (60 / self.frames):
             self.sub_texture -= 60 / self.frames
             self.cur_texture += 1
             if self.change_x == 0 and self.change_y == 0:
                 self.frames = IDLE_CYCLE_LENGTH
-                if self.cur_texture > (self.frames - 2):
+                if self.cur_texture > (self.frames - 1):
                     self.cur_texture = 0
                 # idle animation
                 if self.character_face_direction == DOWN_FACING:
@@ -107,7 +112,7 @@ class PlayerCharacter(arcade.Sprite):
             else:
                 # Walking animation
                 self.frames = WALK_CYCLE_LENGTH
-                if self.cur_texture > (self.frames - 2):
+                if self.cur_texture > (self.frames - 1):
                     self.cur_texture = 0
                 if self.character_face_direction == DOWN_FACING:
                     self.texture = self.down_walk_textures[self.cur_texture][
@@ -121,17 +126,23 @@ class PlayerCharacter(arcade.Sprite):
 
     def on_mouse_motion(self, x, y, dx, dy):
         # Figure out if we need to flip face up or down or left or right
-        if self.center_y < y and self.character_face_direction == DOWN_FACING:
+        if (
+            self.center_y < (y + self.game_resources.view_bottom)
+            and self.character_face_direction == DOWN_FACING
+        ):
             self.character_face_direction = UP_FACING
-        elif self.center_y > y and self.character_face_direction == UP_FACING:
+        elif (
+            self.center_y > (y + self.game_resources.view_bottom)
+            and self.character_face_direction == UP_FACING
+        ):
             self.character_face_direction = DOWN_FACING
         if (
-            self.center_x < x
+            self.center_x < (x + self.game_resources.view_left)
             and self.character_face_direction_horizontal == LEFT_FACING
         ):
             self.character_face_direction_horizontal = RIGHT_FACING
         elif (
-            self.center_x > x
+            self.center_x > x + self.game_resources.view_left
             and self.character_face_direction_horizontal == RIGHT_FACING
         ):
             self.character_face_direction_horizontal = LEFT_FACING

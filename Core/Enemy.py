@@ -28,13 +28,14 @@ class Enemy(arcade.Sprite):
             self.game_resources.player_sprite.center_y,
         ]
         self.obstacles = self.game_resources.wall_list
+        self.astar_path = None
 
     def draw(self):
         if self.path:
             arcade.draw_line_strip(self.path, arcade.color.BLUE, 2)
 
-    def on_update(self, path, end):
-        self.path = path
+    def on_update(self, end):
+        self.path = self.astar_path
         if self.path and len(self.path) > 1:
             if self.path[0][0] < self.path[1][0]:
                 self.center_x = self.center_x + self.speed / 5
@@ -46,13 +47,22 @@ class Enemy(arcade.Sprite):
             elif self.path[0][1] > self.path[1][1]:
                 self.center_y = self.center_y - self.speed / 5
 
+    def set_astar_path(self, barrier_list):
+        self.astar_path = arcade.astar_calculate_path(
+            self.position,
+            self.game_resources.player_sprite.position,
+            barrier_list,
+            diagonal_movement=False,
+        )
+
 
 class EnemyManager:
     def __init__(self, game_resources):
         self.game_resources = game_resources
         self.enemy_list = arcade.SpriteList()
         self.make_barrier_list(self.game_resources.player_sprite)
-        self.prev_time = 0
+        self.prev_time = 0.0
+        self.path = None
 
     def create_enemy(self):
         # Enemy
@@ -66,7 +76,6 @@ class EnemyManager:
 
         grid_x = math.floor(x / SPRITE_IMAGE_SIZE)
         grid_y = math.floor(y / SPRITE_IMAGE_SIZE)
-        
 
         floor_tiles = []
 
@@ -86,7 +95,6 @@ class EnemyManager:
 
         # Add to enemy sprite list
         self.enemy_list.append(self.enemy)
-        
 
     def make_barrier_list(self, player):
         grid_size = SPRITE_SIZE
@@ -116,47 +124,9 @@ class EnemyManager:
 
     def on_update(self, delta_time):
         # update physics, path, and position for all the enemies.
-        #if delta_time > prev_time
+        self.prev_time += delta_time
+
         for enemy in self.enemy_list:
-            # Makes enemy collide with walls
             enemy.enemy_physics_engine.update()
-            path = arcade.astar_calculate_path(
-                enemy.position,
-                self.game_resources.player_sprite.position,
-                self.barrier_list,
-                diagonal_movement=False,
-            )
-            # print("path", self.path)
-            enemy.on_update(path, self.game_resources.player_sprite.position)
-
-
-"""
-# Enemy
-        enemy = Enemy(self.game_resources, obstacles)
-        y_spawn_location = []
-        x_spawn_location = []
-
-        for i in self.game_resources.floor_list:
-            if i.position[0] == self.game_resources.player_sprite.position[0]:
-                # print("i - ps y", i.position[1] - self.game_resources.player_sprite.position[1])
-                if i.position[1] - self.game_resources.player_sprite.position[1] < 500:
-                    if (
-                        i.position[1] - self.game_resources.player_sprite.position[1]
-                        > -500
-                    ):
-                        y_spawn_location.append(i.position[1])
-
-        for i in self.game_resources.floor_list:
-            if i.position[1] == self.game_resources.player_sprite.position[1]:
-                # print("i - ps x", i.position[0] - self.game_resources.player_sprite.position[0])
-                if i.position[0] - self.game_resources.player_sprite.position[0] < 500:
-                    if (
-                        i.position[0] - self.game_resources.player_sprite.position[0]
-                        > -500
-                    ):
-                        x_spawn_location.append(i.position[0])
-
-        # print("player pos", self.game_resources.player_sprite.position)
-        random_y = random.randint(0, len(y_spawn_location) - 1)
-        random_x = random.randint(0, len(x_spawn_location) - 1)
-"""
+            enemy.set_astar_path(self.barrier_list)
+            enemy.on_update(self.game_resources.player_sprite.position)
