@@ -60,9 +60,10 @@ class EnemyManager:
                     if i.position[0] - self.game_resources.player_sprite.position[0] > -500:
                         self.x_spawn_location.append(i.position[0]) 
         print("player pos", self.game_resources.player_sprite.position)
-        random_y = random.randint(0, len(self.y_spawn_location) - 1)
-        random_x = random.randint(0, len(self.x_spawn_location) - 1)
-        enemy_position = [self.x_spawn_location[random_x], self.y_spawn_location[random_y]]
+        random_y = random.randint(0, len(self.y_spawn_location))
+        random_x = random.randint(0, len(self.x_spawn_location))
+        # enemy_position = [self.x_spawn_location[random_x], self.y_spawn_location[random_y]]
+        enemy_position = [0, 0]
         print("enemy pos",enemy_position)
         self.enemy.position = enemy_position
 

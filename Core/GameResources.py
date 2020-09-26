@@ -1,13 +1,10 @@
-import math
 import random
-
 import arcade
-from pytiled_parser.objects import TileLayer, Size
+from pytiled_parser.objects import TileLayer, Size, ObjectLayer
 
-from Core.Enemy import Enemy, EnemyManager
+from Core.Enemy import EnemyManager
 from Constants.Game import (
     SPRITE_SCALING_TILES,
-    SPRITE_SCALING_PLAYER,
     SPRITE_SIZE,
     SCREEN_WIDTH,
     SCREEN_HEIGHT,
@@ -16,15 +13,8 @@ from Constants.Game import (
     BOTTOM_VIEWPORT_MARGIN,
     TOP_VIEWPORT_MARGIN,
 )
-from Core.LevelGenerator.generate_game_level import (
-    generate_game_level,
-    place_room,
-    place_tunnel,
-)
-from Core.LevelGenerator.shapes import Rect
-from Core.LevelGenerator.tiled_mapper.tiled_compatible_level import (
-    generate_tiled_compatible_level,
-)
+from Core.ArcadeUtils import convert_from_tiled_coordinates
+from Core.LevelGenerator.generate_game_level import generate_game_level
 from Core.PlayerCharacter import PlayerCharacter
 from Core.Projectile_Manager import ProjectileManager
 
@@ -37,10 +27,10 @@ class GameResources:
     def __init__(self):
 
         # Create the sprite lists
-        self.sprite_list = arcade.SpriteList()
+        self.sprite_list = arcade.SpriteList(use_spatial_hash=True)
         self.player_list = arcade.SpriteList()
         self.bullet_list = arcade.SpriteList()
-        self.object_list = arcade.SpriteList()
+        self.object_list = arcade.SpriteList(use_spatial_hash=True)
         self.enemy_list = arcade.SpriteList()
 
         # Used to keep track of our scrolling
@@ -50,6 +40,9 @@ class GameResources:
         # Read in the tiled map
         map_name = "Graphics/test_map.tmx"
         my_map = arcade.tilemap.read_tmx(map_name)
+
+        # Cache a copy of this to use for the location conversion function
+        self.my_map = my_map
 
         # Procedurally generated map
         generated_map = generate_game_level(100, 100)
@@ -92,14 +85,36 @@ class GameResources:
             properties=None,
         )
 
+        if "Warps" in generated_map:
+            fake_warps_layer = ObjectLayer(
+                id_=4,
+                name="Warps",
+                tiled_objects=generated_map["Warps"],
+                offset=None,
+                opacity=None,
+                properties=None,
+            )
+            self.warps_list = arcade.tilemap._process_object_layer(
+                my_map, fake_warps_layer, scaling=SPRITE_SCALING_TILES, use_spatial_hash=True
+            )
+
+        start_location_layer = ObjectLayer(
+            id_=5,
+            name="StartLocation",
+            tiled_objects=generated_map["start_location"],
+            offset=None,
+            opacity=None,
+            properties=None,
+        )
+
         self.wall_list = arcade.tilemap._process_tile_layer(
-            my_map, fake_walls_layer, scaling=SPRITE_SCALING_TILES
+            my_map, fake_walls_layer, scaling=SPRITE_SCALING_TILES, use_spatial_hash=True
         )
         self.light_list = arcade.tilemap._process_tile_layer(
-            my_map, fake_lighting_layer, scaling=SPRITE_SCALING_TILES
+            my_map, fake_lighting_layer, scaling=SPRITE_SCALING_TILES, use_spatial_hash=True
         )
         self.floor_list = arcade.tilemap._process_tile_layer(
-            my_map, fake_floor_layer, scaling=SPRITE_SCALING_TILES
+            my_map, fake_floor_layer, scaling=SPRITE_SCALING_TILES, use_spatial_hash=True
         )
 
         # Uncomment if you want to actually load the level from the Tiled map.
@@ -121,7 +136,11 @@ class GameResources:
         start_pos = self.floor_list[i].position
         grid_x = 20
         grid_y = 25
-        self.player_sprite.position = start_pos
+        self.player_sprite.center_x = SPRITE_SIZE * grid_x + SPRITE_SIZE / 2
+        self.player_sprite.center_y = SPRITE_SIZE * grid_y + SPRITE_SIZE / 2
+
+        self.player_sprite.position = convert_from_tiled_coordinates(my_map, generated_map["start_location"][0].location)
+
         # Add to player sprite list
         self.player_list.append(self.player_sprite)
 
@@ -187,6 +206,7 @@ class GameResources:
         self.wall_list.draw()
         self.floor_list.draw()
         self.light_list.draw()
+        self.warps_list.draw()
         self.object_list.draw()
         self.bullet_list.draw()
         self.player_list.draw()

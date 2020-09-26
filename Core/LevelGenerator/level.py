@@ -1,12 +1,15 @@
 import math
-from typing import List, Any
+from typing import List, Any, Dict
 
+from Core.LevelGenerator.leaf import Leaf
 from Core.LevelGenerator.shapes import Rect
 
 
 class Level:
     rooms: List[Rect]
     tunnels: List[Rect]
+    node_to_graph: Dict[int, Leaf]
+    end_leafs: List[Leaf]
 
     def __init__(self, width, height, mode="bsp"):
         if mode != "bsp":

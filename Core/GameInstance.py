@@ -6,6 +6,7 @@ from Core.GameResources import GameResources
 from Core.RendererFactory import RendererFactory
 from Core.ObjectManager import ObjectManager
 from Core.HealthRing import Health
+from Physics.EnemyPhysicsEngine import setup_enemy_physics_engine
 from Physics.PhysicsEngine import setup_physics_engine
 from Graphics.Particles.Torch.TorchSystem import TorchSystem
 from Graphics.Particles.Fireball.Fireball import FireBall
@@ -23,12 +24,21 @@ class GameInstance:
 
         # Core game resources
         self.game_resources = GameResources()
+        self.object_manager = ObjectManager(self.game_resources)
 
         # Physics engine
         self.physics_engine = setup_physics_engine(self.game_resources)
+        # self.physics_engine = setup_physics_engine(self.game_resources)
+        # Enemy Physics engine
+        self.enemy_physics_engine = setup_enemy_physics_engine(self.game_resources)
 
         self.horizontal_key_list = []
         self.verticle_key_list = []
+
+        self.up_pressed = False
+        self.down_pressed = False
+        self.left_pressed = False
+        self.right_pressed = False
 
         # create default scene renderer via factory.
         # This configures the post processing stack and default lighting
@@ -113,13 +123,13 @@ class GameInstance:
         """Called whenever a key is pressed. """
 
         if key == arcade.key.UP or key == arcade.key.W:
-            self.verticle_key_list.insert(0, PLAYER_MOVEMENT_SPEED)
+            self.up_pressed = True
         elif key == arcade.key.DOWN or key == arcade.key.S:
-            self.verticle_key_list.insert(0, -PLAYER_MOVEMENT_SPEED)
+            self.down_pressed = True
         elif key == arcade.key.LEFT or key == arcade.key.A:
-            self.horizontal_key_list.insert(0, -PLAYER_MOVEMENT_SPEED)
+            self.left_pressed = True
         elif key == arcade.key.RIGHT or key == arcade.key.D:
-            self.horizontal_key_list.insert(0, PLAYER_MOVEMENT_SPEED)
+            self.right_pressed = True
         elif key == arcade.key.P:
             self.player_health.health += 10.0
         elif key == arcade.key.O:
@@ -127,23 +137,17 @@ class GameInstance:
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """
+        force = (0, 0)
 
         if key == arcade.key.UP or key == arcade.key.W:
-            self.game_resources.player_sprite.change_y = 0
-            if len(self.verticle_key_list) > 0:
-                self.verticle_key_list.remove(PLAYER_MOVEMENT_SPEED)
+            self.up_pressed = False
         elif key == arcade.key.DOWN or key == arcade.key.S:
-            self.game_resources.player_sprite.change_y = 0
-            if len(self.verticle_key_list) > 0:
-                self.verticle_key_list.remove(-PLAYER_MOVEMENT_SPEED)
+            self.down_pressed = False
         elif key == arcade.key.LEFT or key == arcade.key.A:
-            self.game_resources.player_sprite.change_x = 0
-            if len(self.horizontal_key_list) > 0:
-                self.horizontal_key_list.remove(-PLAYER_MOVEMENT_SPEED)
+            self.left_pressed = False
         elif key == arcade.key.RIGHT or key == arcade.key.D:
-            self.game_resources.player_sprite.change_x = 0
-            if len(self.horizontal_key_list) > 0:
-                self.horizontal_key_list.remove(PLAYER_MOVEMENT_SPEED)
+            self.right_pressed = False
+
 
     def on_mouse_motion(self, x, y, dx, dy):
         pass
@@ -178,20 +182,30 @@ class GameInstance:
             self.window.ctx.projection_2d_matrix, self.game_resources.bullet_list
         )
 
-    # Drawn after all post processing, for things like UI        
+    # Drawn after all post processing, for things like UI
     def on_draw_after_post(self):
         pass
 
     def on_update(self, delta_time):
         """ Movement and game logic """
-        if len(self.horizontal_key_list) > 0:
-            self.game_resources.player_sprite.change_x = self.horizontal_key_list[0]
 
-        if len(self.verticle_key_list) > 0:
-            self.game_resources.player_sprite.change_y = self.verticle_key_list[0]
+        x_force = 0
+        y_force = 0
+        speed = 160
+
+        if self.up_pressed:
+            y_force += speed
+        if self.down_pressed:
+            y_force -= speed
+        if self.left_pressed:
+            x_force -= speed
+        if self.right_pressed:
+            x_force += speed
+
+        self.game_resources.projectile_manager.projectile_physics.apply_impulse(self.game_resources.player_sprite, (x_force, y_force))
 
         # Move the player with the physics engine
-        self.physics_engine.update()
+        # self.physics_engine.update()
 
         self.game_resources.enemy_manager.on_update(delta_time)
 
@@ -203,3 +217,4 @@ class GameInstance:
             self.game_resources.player_sprite.center_x,
             self.game_resources.player_sprite.center_y,
         )
+
