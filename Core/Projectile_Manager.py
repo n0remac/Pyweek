@@ -189,7 +189,6 @@ class ProjectileManager:
         if(self.last_type >= 3):
             self.last_type = 0
 
-
         self.shoot_sounds[bullet.art_type].play(0.2)
 
         #TODO:Color based on light

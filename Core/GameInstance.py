@@ -60,7 +60,7 @@ class GameInstance:
         )
 
         # dim the ambient lighting to make the player's light more vibrant
-        self.scene_renderer.light_renderer.ambient_light = (0.25, 0.25, 0.25)
+        self.scene_renderer.light_renderer.ambient_light = (0.2, 0.2, 0.2)
         #self.scene_renderer.light_renderer.ambient_light = (0.01, 0.01, 0.01)
 
         # create light sources
@@ -95,7 +95,7 @@ class GameInstance:
         )
 
         # dict used to determine radius of light based on light_type
-        radius_by_type = {"torch": 70.0, "candle": 40.0}
+        radius_by_type = {"torch": 300.0, "candle": 250.0}
 
         for light in self.game_resources.light_list:
             radius = radius_by_type.get(light.properties["type"])
@@ -103,9 +103,9 @@ class GameInstance:
                 self.scene_renderer.light_renderer.create_point_light(
                     (light.center_x, light.center_y),  # Position
                     (
-                        1.75,
-                        2.75,
-                        1.75,
+                        2.5,
+                        1.25,
+                        0.5,
                     ),  # Color, 0 = black, 1 = white, 0.5 = grey, order is RGB This can go over 1.0 because of HDR
                     radius,
                 )  # Radius
