@@ -10,7 +10,7 @@ from Constants.Game import SCREEN_HEIGHT, SCREEN_WIDTH
 from Constants.Physics import BULLET_MOVE_FORCE
 from Core.ArcadeUtils import convert_from_tiled_coordinates
 from Graphics.Lights.PointLight import DynamicPointLight
-
+from Sounds.SoundPool import SoundPool
 
 class ProjectileManager:
     """ Handles mouse press presses to fire bullets and creates bullet objects. """
@@ -54,12 +54,27 @@ class ProjectileManager:
             body_type=arcade.PymunkPhysicsEngine.STATIC,
         )
 
+        self.explosion_sounds = [
+            SoundPool("Sounds/explosion.wav", 5, 0.2),
+            SoundPool("Sounds/ice-hit.wav", 5, 0.1),
+            SoundPool("Sounds/explosion-ele.wav", 5, 0.2)
+        ]
+
+        self.shoot_sounds = [
+            SoundPool("Sounds/fire-cast.wav", 5, 0.2),
+            SoundPool("Sounds/ice-cast.wav", 5, 0.2),
+            SoundPool("Sounds/ele-cast.wav", 5, 0.2)
+        ]
+
         def wall_hit_handler(bullet_sprite, _wall_sprite, _arbiter, _space, _data):
             """ Called for bullet/wall collision """
             bullet_sprite.remove_from_sprite_lists()
+            self.on_projectile_death(bullet_sprite)
 
+            self.on_bullet_death(bullet_sprite)
             if self.on_bullet_death is not None:
                 self.on_bullet_death(bullet_sprite)
+                
 
         self.projectile_physics.add_collision_handler(
             "bullet", "wall", post_handler=wall_hit_handler
@@ -70,6 +85,8 @@ class ProjectileManager:
 
             if self.on_bullet_death is not None:
                 self.on_bullet_death(bullet_sprite)
+
+            self.on_projectile_death(bullet_sprite)
 
             bullet_sprite.remove_from_sprite_lists()
             _object_sprite.remove_from_sprite_lists()
@@ -148,9 +165,12 @@ class ProjectileManager:
                 body_type=arcade.PymunkPhysicsEngine.STATIC,
             )
             bullet_sprite.remove_from_sprite_lists()
+            enemy_sprite.on_death()
 
             if self.on_bullet_death is not None:
                 self.on_bullet_death(bullet_sprite)
+
+            self.on_projectile_death(bullet_sprite)
 
             return False
 
@@ -199,8 +219,7 @@ class ProjectileManager:
         if(self.last_type >= 3):
             self.last_type = 0
 
-
-
+        self.shoot_sounds[bullet.art_type].play(0.2)
 
         #TODO:Color based on light
         # add light to sprite
@@ -246,6 +265,9 @@ class ProjectileManager:
     def on_update(self, delta_time):
         self.projectile_physics.step(delta_time=delta_time)
 
+    def on_projectile_death(self, bullet_sprite):
+        #arcade.Sound.play(self.explosion_sound)
+        self.explosion_sounds[bullet_sprite.art_type].play(0.2)
 
 class BulletSprite(arcade.SpriteSolidColor):
     """ Bullet Sprite """

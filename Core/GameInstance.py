@@ -16,14 +16,22 @@ class GameInstance:
         # Reference to main window object
         self.window = window
 
+        # create default scene renderer via factory.
+        # This configures the post processing stack and default lighting
+        self.scene_renderer = RendererFactory.create_renderer(window)
+
+        # Core game resources
+        self.game_resources = GameResources(self)
+        self.object_manager = ObjectManager(self.game_resources, self)
+
+        # Physics engine
+        self.physics_engine = setup_physics_engine(self.game_resources)
 
         self.horizontal_key_list = []
         self.verticle_key_list = []
 
 
-        # create default scene renderer via factory.
-        # This configures the post processing stack and default lighting
-        self.scene_renderer = RendererFactory.create_renderer(window)
+
 
         # bind rendering callbacks
         self.scene_renderer.draw_primary_callback = self.on_draw_scene
@@ -42,7 +50,7 @@ class GameInstance:
         )
 
         # dim the ambient lighting to make the player's light more vibrant
-        self.scene_renderer.light_renderer.ambient_light = (0.25, 0.25, 0.25)
+        self.scene_renderer.light_renderer.ambient_light = (0.2, 0.2, 0.2)
         #self.scene_renderer.light_renderer.ambient_light = (0.01, 0.01, 0.01)
 
         # Core game resources
@@ -72,7 +80,7 @@ class GameInstance:
         )
 
         # dict used to determine radius of light based on light_type
-        radius_by_type = {"torch": 70.0, "candle": 40.0}
+        radius_by_type = {"torch": 300.0, "candle": 250.0}
 
         for light in self.game_resources.light_list:
             radius = radius_by_type.get(light.properties["type"])
@@ -80,9 +88,9 @@ class GameInstance:
                 self.scene_renderer.light_renderer.create_point_light(
                     (light.center_x, light.center_y),  # Position
                     (
-                        1.75,
-                        2.75,
-                        1.75,
+                        2.5,
+                        1.25,
+                        0.5,
                     ),  # Color, 0 = black, 1 = white, 0.5 = grey, order is RGB This can go over 1.0 because of HDR
                     radius,
                 )  # Radius

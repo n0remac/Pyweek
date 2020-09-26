@@ -24,9 +24,17 @@ class Enemy(arcade.Sprite):
         self.obstacles = self.game_resources.wall_list
         self.barrier_list = self.make_barrier_list()
 
+        self.light = game_resources.game_instance.scene_renderer.light_renderer.create_point_light(
+            (-1000, -1000), (1.5, 0.5, 0.25), 196
+        )
+
     def draw(self):
         if self.path:
-            arcade.draw_line_strip(self.path, arcade.color.BLUE, 2)
+            arcade.draw_line_strip(self.path, arcade.color.BLUE, 2)      
+
+    def on_death(self):
+        self.game_resources.game_instance.scene_renderer.light_renderer.destroy_light(self.light)
+
 
     def calculate_astar(self):
         # self.barrier_list = self.make_barrier_list()
@@ -86,6 +94,7 @@ class Enemy(arcade.Sprite):
                 impulse_force = (impulse_force[0], 100)
 
             physics_engine.apply_impulse(self, impulse_force)
+            self.light.position = (self.center_x, self.center_y)
 
 
 class EnemyManager:
