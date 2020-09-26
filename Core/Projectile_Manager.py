@@ -1,3 +1,4 @@
+import random
 from typing import TYPE_CHECKING
 
 import arcade
@@ -136,11 +137,21 @@ class ProjectileManager:
                                                max_vertical_velocity=1200,
                                                body_type=arcade.PymunkPhysicsEngine.DYNAMIC)
 
-            enemy = game_resources.enemy_manager.spawn_enemy((new_position[0] + 32, new_position[1] + 32))
-            self.add_enemy(enemy)
+            game_resources.doors_enabled = True
+            # TODO: Spawn a door
+            # TODO: Spawn enemies
 
-            #
-            # game_resources.player_sprite = PlayerCharacter(new_position)
+            def spawn_enemy_in_room():
+                rand_x = random.randint(-8, 8)
+                rand_y = random.randint(-8, 8)
+                enemy = game_resources.enemy_manager.spawn_enemy((new_position[0] + rand_x * 16, new_position[1] + rand_y * 16))
+                self.add_enemy(enemy)
+
+            num_enemies = random.randint(2, 6)
+
+            for i in range(0, num_enemies):
+                spawn_enemy_in_room()
+
             return False
 
         self.projectile_physics.collision_types.append("warp")
@@ -172,6 +183,9 @@ class ProjectileManager:
 
             self.on_projectile_death(bullet_sprite)
 
+            if len(game_resources.enemy_manager.enemy_list) == 0:
+                game_resources.doors_enabled = False
+
             return False
 
         self.projectile_physics.collision_types.append("bullet")
@@ -181,6 +195,25 @@ class ProjectileManager:
 
         handler = self.projectile_physics.space.add_collision_handler(bullet_physics_id, enemy_physics_id)
         handler.begin = enemy_bullet_handler
+
+        self.projectile_physics.add_sprite_list(
+            self.game_resources.doors_list,
+            collision_type="door",
+            friction=1.0,
+            body_type=arcade.PymunkPhysicsEngine.STATIC,
+        )
+
+        def door_player_handler(_arbiter, _space, _data):
+            door_sprite, player_sprite = self.projectile_physics.get_sprites_from_arbiter(_arbiter)
+
+            return game_resources.doors_enabled
+
+        self.projectile_physics.collision_types.append("door")
+        door_physics_id = self.projectile_physics.collision_types.index("door")
+
+        handler = self.projectile_physics.space.add_collision_handler(door_physics_id, player_physics_id)
+        handler.begin = door_player_handler
+
 
     light_colors = [
         (1.5, 1.0, 0.2),

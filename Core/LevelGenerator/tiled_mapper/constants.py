@@ -74,4 +74,10 @@ light_fixtures = [90, 93, 95]
 # warp
 warps = [38, 39]
 
+# doors
+vertical_door_top = [46]
+vertical_door_bottom = [56]
+horizontal_door_left = [36]
+horizontal_door_right = [37]
+
 
