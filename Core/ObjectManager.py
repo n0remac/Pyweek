@@ -17,6 +17,10 @@ class ObjectManager:
         obj = Item((x, y), 'Graphics/items/flasks/flasks_1')
         self.object_list.append(obj)
 
+    def candle_drop(self, x, y):
+        obj = Item((x, y), 'Graphics/items/torch/candle_drop')
+        self.object_list.append(obj)
+
     def candle(self, x, y):
         obj = Item((x, y), 'Graphics/items/torch/candlestick_1')
         self.object_list.append(obj)

@@ -1,12 +1,7 @@
-import arcade
-import math
-
-from Constants.Physics import PLAYER_MOVEMENT_SPEED
 from Core.GameResources import GameResources
 from Core.ObjectManager import ObjectManager
 from Core.RendererFactory import RendererFactory
 from Core.HealthRing import Health
-from Physics.EnemyPhysicsEngine import setup_enemy_physics_engine
 from Physics.PhysicsEngine import setup_physics_engine
 from Graphics.Particles.Torch.TorchSystem import TorchSystem
 from Graphics.Particles.Fireball.Fireball import FireBall

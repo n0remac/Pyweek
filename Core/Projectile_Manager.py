@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING
 
 import arcade
 import math
+import random
 
 from arcade import Sprite
 
@@ -117,6 +118,12 @@ class ProjectileManager:
         def enemy_bullet_handler(_arbiter, _space, _data):
             bullet_sprite, enemy_sprite = self.projectile_physics.get_sprites_from_arbiter(_arbiter)
             enemy_sprite.remove_from_sprite_lists()
+            will_drop = random.randint(0, 10)
+            if will_drop > 7:
+                self.game_resources.object_manager.candle_drop(enemy_sprite.center_x, enemy_sprite.center_y)
+            elif will_drop > 3:
+                self.game_resources.object_manager.flask(enemy_sprite.center_x, enemy_sprite.center_y)
+
             bullet_sprite.remove_from_sprite_lists()
 
             if self.on_bullet_death is not None:
