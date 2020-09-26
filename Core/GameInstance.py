@@ -23,8 +23,8 @@ class GameInstance:
         self.window = window
 
         # Core game resources
-        self.game_resources = GameResources()
-        self.object_manager = ObjectManager(self.game_resources)
+        self.game_resources = GameResources(self)
+        self.object_manager = ObjectManager(self.game_resources, self)
 
         # Physics engine
         self.physics_engine = setup_physics_engine(self.game_resources)
@@ -84,6 +84,7 @@ class GameInstance:
 
         # torch particle system
         self.torch_particle_system = TorchSystem(window.ctx)
+        self.game_resources.torch_particle_system = self.torch_particle_system
 
         # TODO:MOVE THIS STUFF
         self.fireball_system = FireBall(
@@ -115,9 +116,6 @@ class GameInstance:
                 self.torch_particle_system.add_torch((light.center_x, light.center_y))
             else:
                 self.torch_particle_system.add_candle((light.center_x, light.center_y))
-
-        # TODO: This code will crash if there are zero lights loaded. Please fix!
-        self.torch_particle_system.build_buffer()
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed. """

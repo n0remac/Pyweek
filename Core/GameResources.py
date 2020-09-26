@@ -25,7 +25,7 @@ class GameResources:
     Load arcade resources
     """
 
-    def __init__(self):
+    def __init__(self, game_instance):
 
         # Create the sprite lists
         self.sprite_list = arcade.SpriteList(use_spatial_hash=True)
@@ -133,7 +133,7 @@ class GameResources:
         self.player_list.append(self.player_sprite)
 
         # Game managers
-        self.object_manager = ObjectManager(self)
+        self.object_manager = ObjectManager(self, game_instance)
         self.projectile_manager = ProjectileManager(self)
         self.enemy_manager = EnemyManager(self)
         self.enemy_manager.setup()
