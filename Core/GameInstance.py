@@ -3,8 +3,8 @@ import math
 
 from Constants.Physics import PLAYER_MOVEMENT_SPEED
 from Core.GameResources import GameResources
-from Core.RendererFactory import RendererFactory
 from Core.ObjectManager import ObjectManager
+from Core.RendererFactory import RendererFactory
 from Core.HealthRing import Health
 from Physics.EnemyPhysicsEngine import setup_enemy_physics_engine
 from Physics.PhysicsEngine import setup_physics_engine
@@ -19,8 +19,12 @@ class GameInstance:
 
     def __init__(self, window):
 
-        # Refernce to main window object
+        # Reference to main window object
         self.window = window
+
+        # create default scene renderer via factory.
+        # This configures the post processing stack and default lighting
+        self.scene_renderer = RendererFactory.create_renderer(window)
 
         # Core game resources
         self.game_resources = GameResources(self)
@@ -28,9 +32,6 @@ class GameInstance:
 
         # Physics engine
         self.physics_engine = setup_physics_engine(self.game_resources)
-        # self.physics_engine = setup_physics_engine(self.game_resources)
-        # Enemy Physics engine
-        self.enemy_physics_engine = setup_enemy_physics_engine(self.game_resources)
 
         self.horizontal_key_list = []
         self.verticle_key_list = []
@@ -40,9 +41,7 @@ class GameInstance:
         self.left_pressed = False
         self.right_pressed = False
 
-        # create default scene renderer via factory.
-        # This configures the post processing stack and default lighting
-        self.scene_renderer = RendererFactory.create_renderer(window)
+
 
         # bind rendering callbacks
         self.scene_renderer.draw_primary_callback = self.on_draw_scene
@@ -146,7 +145,7 @@ class GameInstance:
             self.right_pressed = False
 
     def on_mouse_motion(self, x, y, dx, dy):
-        pass
+        self.game_resources.player_sprite.on_mouse_motion(x, y, dx, dy)
 
     def on_mouse_press(self, x, y, button, modifiers):
         self.game_resources.projectile_manager.on_mouse_press(x, y, button, modifiers)

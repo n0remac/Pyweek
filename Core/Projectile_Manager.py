@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 import arcade
 import math
 
@@ -6,9 +8,8 @@ from arcade import Sprite
 from Constants.Game import SCREEN_HEIGHT, SCREEN_WIDTH
 from Constants.Physics import BULLET_MOVE_FORCE
 from Core.ArcadeUtils import convert_from_tiled_coordinates
-from Core.PlayerCharacter import PlayerCharacter
 from Graphics.Lights.PointLight import DynamicPointLight
-
+from Sounds.SoundPool import SoundPool
 
 class ProjectileManager:
     """ Handles mouse press presses to fire bullets and creates bullet objects. """
@@ -52,12 +53,27 @@ class ProjectileManager:
             body_type=arcade.PymunkPhysicsEngine.STATIC,
         )
 
+        self.explosion_sounds = [
+            SoundPool("Sounds/explosion.wav", 5, 0.2),
+            SoundPool("Sounds/ice-hit.wav", 5, 0.1),
+            SoundPool("Sounds/explosion-ele.wav", 5, 0.2)
+        ]
+
+        self.shoot_sounds = [
+            SoundPool("Sounds/fire-cast.wav", 5, 0.2),
+            SoundPool("Sounds/ice-cast.wav", 5, 0.2),
+            SoundPool("Sounds/ele-cast.wav", 5, 0.2)
+        ]
+
         def wall_hit_handler(bullet_sprite, _wall_sprite, _arbiter, _space, _data):
             """ Called for bullet/wall collision """
             bullet_sprite.remove_from_sprite_lists()
+            self.on_projectile_death(bullet_sprite)
 
+            self.on_bullet_death(bullet_sprite)
             if self.on_bullet_death is not None:
                 self.on_bullet_death(bullet_sprite)
+                
 
         self.projectile_physics.add_collision_handler(
             "bullet", "wall", post_handler=wall_hit_handler
@@ -69,6 +85,8 @@ class ProjectileManager:
             if self.on_bullet_death is not None:
                 self.on_bullet_death(bullet_sprite)
 
+            self.on_projectile_death(bullet_sprite)
+
             bullet_sprite.remove_from_sprite_lists()
             _object_sprite.remove_from_sprite_lists()
 
@@ -78,8 +96,6 @@ class ProjectileManager:
 
         def warp_hit_handler(_arbiter, _space, _data):
             warp_sprite, player_sprite = self.projectile_physics.get_sprites_from_arbiter(_arbiter)
-
-            current_position = player_sprite.position
 
             self.projectile_physics.remove_sprite(game_resources.player_sprite)
 
@@ -100,23 +116,63 @@ class ProjectileManager:
                                                max_vertical_velocity=1200,
                                                body_type=arcade.PymunkPhysicsEngine.DYNAMIC)
 
+            enemy = game_resources.enemy_manager.spawn_enemy((new_position[0] + 32, new_position[1] + 32))
+            self.add_enemy(enemy)
+
             #
             # game_resources.player_sprite = PlayerCharacter(new_position)
             return False
 
         self.projectile_physics.collision_types.append("warp")
         self.projectile_physics.collision_types.append("player")
-        first_type_id = self.projectile_physics.collision_types.index("warp")
-        second_type_id = self.projectile_physics.collision_types.index("player")
+        warp_physics_id = self.projectile_physics.collision_types.index("warp")
+        player_physics_id = self.projectile_physics.collision_types.index("player")
 
-        handler = self.projectile_physics.space.add_collision_handler(first_type_id, second_type_id)
+        handler = self.projectile_physics.space.add_collision_handler(warp_physics_id, player_physics_id)
         handler.begin = warp_hit_handler
+
+        def enemy_bullet_handler(_arbiter, _space, _data):
+            bullet_sprite, enemy_sprite = self.projectile_physics.get_sprites_from_arbiter(_arbiter)
+            enemy_sprite.remove_from_sprite_lists()
+            bullet_sprite.remove_from_sprite_lists()
+            enemy_sprite.on_death()
+
+            if self.on_bullet_death is not None:
+                self.on_bullet_death(bullet_sprite)
+
+            self.on_projectile_death(bullet_sprite)
+
+            return False
+
+        self.projectile_physics.collision_types.append("bullet")
+        self.projectile_physics.collision_types.append("enemy")
+        bullet_physics_id = self.projectile_physics.collision_types.index("bullet")
+        enemy_physics_id = self.projectile_physics.collision_types.index("enemy")
+
+        handler = self.projectile_physics.space.add_collision_handler(bullet_physics_id, enemy_physics_id)
+        handler.begin = enemy_bullet_handler
 
     light_colors = [
         (1.5, 1.0, 0.2),
         (0.2, 1.0, 1.5),
         (1.0, 0.8, 1.5)
     ]
+
+    def add_enemy(self, enemy_sprite: arcade.Sprite):
+        self.projectile_physics.add_sprite(
+            enemy_sprite,
+            damping=0.0001,
+            friction=10.0,
+            mass=2.0,
+            moment=arcade.PymunkPhysicsEngine.MOMENT_INF,
+            collision_type="enemy",
+            max_horizontal_velocity=1200,
+            max_vertical_velocity=1200,
+            body_type=arcade.PymunkPhysicsEngine.DYNAMIC
+        )
+
+    def remove_enemy(self, enemy_sprite: arcade.Sprite):
+        self.projectile_physics.remove_sprite(enemy_sprite)
 
     def on_mouse_press(self, x, y, button, modifiers):
         """ Called whenever the mouse button is clicked. """
@@ -134,7 +190,7 @@ class ProjectileManager:
             self.last_type = 0
 
 
-
+        self.shoot_sounds[bullet.art_type].play(0.2)
 
         #TODO:Color based on light
         # add light to sprite
@@ -180,6 +236,9 @@ class ProjectileManager:
     def on_update(self, delta_time):
         self.projectile_physics.step(delta_time=delta_time)
 
+    def on_projectile_death(self, bullet_sprite):
+        #arcade.Sound.play(self.explosion_sound)
+        self.explosion_sounds[bullet_sprite.art_type].play(0.2)
 
 class BulletSprite(arcade.SpriteSolidColor):
     """ Bullet Sprite """
