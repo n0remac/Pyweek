@@ -17,6 +17,11 @@ from Core.GameInstance import GameInstance
 
 class TitleScreen(arcade.View):
     # Title Screen view
+    def __init__(self):
+        """ Create the variables """
+        super().__init__()
+        self.background = None
+        self.selected = 0
 
     def on_show(self):
         """ This is run once when we switch to this view """
@@ -29,16 +34,28 @@ class TitleScreen(arcade.View):
     def on_draw(self):
         """ Draw this view """
         arcade.start_render()
-        arcade.draw_text("Castaway Wizard", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2,
-                         arcade.color.WHITE, font_size=50, anchor_x="center")
-        arcade.draw_text("Click to advance", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2-75,
-                         arcade.color.WHITE, font_size=20, anchor_x="center")
+        if self.selected == 0:
+            self.background = arcade.load_texture("Graphics/title-screen-play.png")
+        else:
+            self.background = arcade.load_texture("Graphics/title-screen-quit.png")
+        arcade.draw_lrwh_rectangle_textured(0, 0,
+                                            SCREEN_WIDTH, SCREEN_HEIGHT,
+                                            self.background)
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         """ If the user presses the mouse button, start the game. """
         game_view = GameView()
         game_view.setup()
         self.window.show_view(game_view)
+
+    def on_key_press(self, key, modifiers):
+        """Called whenever a key is pressed. """
+        if key == arcade.key.UP or key == arcade.key.DOWN:
+            if self.selected == 0:
+                self.selected = 1
+            else:
+                self.selected = 0
+
 
 class GameView(arcade.View):
     """ Main Window """
@@ -88,5 +105,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
