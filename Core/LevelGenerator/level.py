@@ -39,10 +39,14 @@ class Level:
         start = min(x1, x2)
         end = max(x1, x2) + 1
 
-        self.tunnels.append(Rect(start, y, end - start, 1))
+        rect = Rect(start, y, end - start, 1)
+
+        self.tunnels.append(rect)
 
         for x in range(start, end):
             self.tiles[x][y][0] = 2
+
+        return rect
 
     def create_vir_tunnel(self, y1_raw, y2_raw, x_raw):
         y1 = math.floor(y1_raw)
@@ -52,7 +56,11 @@ class Level:
         start = min(y1, y2)
         end = max(y1, y2)
 
-        self.tunnels.append(Rect(x, start, 1, end - start))
+        rect = Rect(x, start, 1, end - start)
+
+        self.tunnels.append(rect)
 
         for y in range(start, end):
             self.tiles[x][y][0] = 2
+
+        return rect

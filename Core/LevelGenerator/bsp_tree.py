@@ -93,6 +93,8 @@ def generate_bsp_level(map_width, map_height):
 
     # Creates hallways between siblings
     for leaf_pair in leaf_pairs:
+        # create_rooms(level_instance, leaf_pair[0])
+        # create_rooms(level_instance, leaf_pair[1])
         try:
             create_hall(level_instance, leaf_pair[0], leaf_pair[1])
         except InvalidTunnelException:
@@ -134,6 +136,7 @@ def generate_bsp_level(map_width, map_height):
                 continue
 
     # merge cousins
+    # disabled because we just want pairs
     for end_leaf in all_end_leafs:
         # don't add connections for leafs that already have some.
         # TODO: potentially add them but only if they don't already have a bunch?
