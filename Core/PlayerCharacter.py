@@ -10,20 +10,21 @@ from Constants.Game import (
     LEFT_FACING,
 )
 from Constants.Animation import WALK_CYCLE_LENGTH, IDLE_CYCLE_LENGTH
-
-# from Core.Projectiles.Projectile_Manager import angle
+from Core.HealthRing import Health
 
 
 class PlayerCharacter(arcade.Sprite):
     """ Player Sprite"""
 
-    def __init__(self, game_resources):
+    def __init__(self, game_resources, player_light, scene_renderer):
 
         # Set up parent class
         super().__init__()
 
         # Hold game game resources
         self.game_resources = game_resources
+
+        self.player_health = Health(player_light, scene_renderer.post_processing)
 
         # Default to face-right
         self.character_face_direction = DOWN_FACING

@@ -116,7 +116,6 @@ class BulletSprite(arcade.SpriteSolidColor):
         """ Handle when the sprite is moved by the physics engine. """
         # If the bullet falls below the screen, remove it
 
-        # itterate throught the enemy_list
         collisions = self.collides_with_list(
             self.game_resources.enemy_manager.enemy_list
         )

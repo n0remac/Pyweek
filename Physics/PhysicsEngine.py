@@ -9,8 +9,7 @@ def setup_physics_engine(game_resources: GameResources):
 
     # Make a list for all impassable objects
     solids = game_resources.wall_list
-    for obj in game_resources.object_list:
-        solids.append(obj)
+    solids.extend(game_resources.object_list)
 
     # Create the physics engine
     physics_engine = arcade.PhysicsEngineSimple(game_resources.player_sprite, solids)

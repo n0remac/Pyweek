@@ -21,12 +21,6 @@ class GameInstance:
         # Refernce to main window object
         self.window = window
 
-        # Core game resources
-        self.game_resources = GameResources()
-
-        # Physics engine
-        self.physics_engine = setup_physics_engine(self.game_resources)
-
         self.horizontal_key_list = []
         self.verticle_key_list = []
 
@@ -67,10 +61,11 @@ class GameInstance:
             160.0,
         )  # Radius
 
-        # player heath system
-        self.player_health = Health(
-            self.player_light, self.scene_renderer.post_processing
-        )
+        # Core game resources
+        self.game_resources = GameResources(self.player_light, self.scene_renderer)
+
+        # Physics engine
+        self.physics_engine = setup_physics_engine(self.game_resources)
 
         # torch particle system
         self.torch_particle_system = TorchSystem(window.ctx)
@@ -120,10 +115,6 @@ class GameInstance:
             self.horizontal_key_list.insert(0, -PLAYER_MOVEMENT_SPEED)
         elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.horizontal_key_list.insert(0, PLAYER_MOVEMENT_SPEED)
-        elif key == arcade.key.P:
-            self.player_health.health += 10.0
-        elif key == arcade.key.O:
-            self.player_health.health -= 10.0
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """

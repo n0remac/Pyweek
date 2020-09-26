@@ -34,7 +34,7 @@ class GameResources:
     Load arcade resources
     """
 
-    def __init__(self):
+    def __init__(self, player_light, scene_renderer):
 
         # Create the sprite lists
         self.sprite_list = arcade.SpriteList()
@@ -106,7 +106,7 @@ class GameResources:
         # )
 
         # Create player sprite
-        self.player_sprite = PlayerCharacter(self)
+        self.player_sprite = PlayerCharacter(self, player_light, scene_renderer)
 
         # Set player location
         i = random.randint(0, len(self.floor_list))
@@ -189,3 +189,9 @@ class GameResources:
     def on_update(self, delta_time):
         if len(self.enemy_manager.enemy_list) < 5:
             enemy = self.enemy_manager.create_enemy()
+
+        collisions = self.player_sprite.collides_with_list(
+            self.enemy_manager.enemy_list
+        )
+        if len(collisions) > 0:
+            self.player_sprite.player_health.health -= 3.0
