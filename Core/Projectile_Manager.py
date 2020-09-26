@@ -82,6 +82,8 @@ class ProjectileManager:
             """ Called for bullet/wall collision """
 
             _object_sprite.remove_from_sprite_lists()
+            if _object_sprite.kind == 'flask':
+                self.game_resources.player_sprite.player_health.health += 10
 
         self.projectile_physics.add_collision_handler(
             "player", "object", post_handler=player_object_hit_handler
@@ -136,10 +138,10 @@ class ProjectileManager:
             bullet_sprite, enemy_sprite = self.projectile_physics.get_sprites_from_arbiter(_arbiter)
             enemy_sprite.remove_from_sprite_lists()
             will_drop = random.randint(0, 10)
-            if will_drop > 7:
-                self.game_resources.object_manager.candle_drop(enemy_sprite.center_x, enemy_sprite.center_y)
-            elif will_drop > 3:
+            if will_drop > 5:
                 self.game_resources.object_manager.flask(enemy_sprite.center_x, enemy_sprite.center_y)
+            #elif will_drop > 1:
+            #    self.game_resources.object_manager.candle_drop(enemy_sprite.center_x, enemy_sprite.center_y)
             self.projectile_physics.add_sprite_list(
                 self.game_resources.object_manager.object_list,
                 collision_type="object",

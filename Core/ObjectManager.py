@@ -14,15 +14,15 @@ class ObjectManager:
         #for floor in
 
     def flask(self, x, y):
-        obj = Item((x, y), 'Graphics/items/flasks/flasks_1')
+        obj = Item((x, y), 'Graphics/items/flasks/flasks_1', 'flask')
         self.object_list.append(obj)
 
     def candle_drop(self, x, y):
-        obj = Item((x, y), 'Graphics/items/torch/candle_drop')
+        obj = Item((x, y), 'Graphics/items/torch/candle_drop','candle_drop')
         self.object_list.append(obj)
 
     def candle(self, x, y):
-        obj = Item((x, y), 'Graphics/items/torch/candlestick_1')
+        obj = Item((x, y), 'Graphics/items/torch/candlestick_1', 'candle')
         self.object_list.append(obj)
         self.game_resources.torch_particle_system.add_candle((x,y))
         self.game_instance.scene_renderer.light_renderer.create_point_light(
@@ -36,7 +36,7 @@ class ObjectManager:
                 )  # Radius
 
     def coin(self, x, y):
-        obj = Item((x, y), 'Graphics/items/coin/coin')
+        obj = Item((x, y), 'Graphics/items/coin/coin', 'coin')
         self.object_list.append(obj)
 
     def on_update(self, delta_time):
@@ -44,7 +44,8 @@ class ObjectManager:
             obj.update_animation(delta_time)
 
 class Item(Character):
-    def __init__(self, position, main_path):
+    def __init__(self, position, main_path, kind):
         super().__init__(position)
         self.main_path = main_path
         self.load_textures()
+        self.kind = kind
