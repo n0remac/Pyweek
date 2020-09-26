@@ -24,11 +24,11 @@ class ObjectManager:
         self.game_instance.scene_renderer.light_renderer.create_point_light(
                     (x,y),  # Position
                     (
-                        1.75,
-                        2.75,
-                        1.75,
+                        2.5,
+                        1.25,
+                        0.5,
                     ),  # Color, 0 = black, 1 = white, 0.5 = grey, order is RGB This can go over 1.0 because of HDR
-                    40.0,
+                    250.0,
                 )  # Radius
 
     def coin(self, x, y):

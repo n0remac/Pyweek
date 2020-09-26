@@ -60,10 +60,10 @@ def generate_room(width, height):
             floors[x][y] = get_tile_from_list(open_floor_tile_ids)
 
     # throw a few lights around each room for fun
-    lights[2][2] = get_tile_from_list(light_fixtures)
-    lights[width - 3][2] = get_tile_from_list(light_fixtures)
-    lights[2][height - 3] = get_tile_from_list(light_fixtures)
-    lights[width - 3][height - 3] = get_tile_from_list(light_fixtures)
+    lights[6][6] = get_tile_from_list(light_fixtures)
+    lights[width - 7][6] = get_tile_from_list(light_fixtures)
+    lights[6][height - 7] = get_tile_from_list(light_fixtures)
+    lights[width - 7][height - 7] = get_tile_from_list(light_fixtures)
 
     return level
 
