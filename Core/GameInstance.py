@@ -1,16 +1,9 @@
-import arcade
-import math
+from Core.GameResources import GameResources
 import ctypes
 import platform
-import subprocess
 
-from Constants.Physics import PLAYER_MOVEMENT_SPEED
-from Constants.Game import SCREEN_WIDTH, SCREEN_HEIGHT
-from Core.GameResources import GameResources
 from Core.ObjectManager import ObjectManager
 from Core.RendererFactory import RendererFactory
-from Core.HealthRing import Health
-from Physics.EnemyPhysicsEngine import setup_enemy_physics_engine
 from Physics.PhysicsEngine import setup_physics_engine
 from Graphics.Particles.Torch.TorchSystem import TorchSystem
 from Graphics.Particles.Fireball.Fireball import FireBall
@@ -24,6 +17,10 @@ class GameInstance:
 
         # Reference to main window object
         self.window = window
+
+        # create default scene renderer via factory.
+        # This configures the post processing stack and default lighting
+        self.scene_renderer = RendererFactory.create_renderer(window)
 
         # Core game resources
         self.game_resources = GameResources(self)
@@ -78,26 +75,21 @@ class GameInstance:
         )
 
         # dim the ambient lighting to make the player's light more vibrant
-        self.scene_renderer.light_renderer.ambient_light = (0.25, 0.25, 0.25)
+        self.scene_renderer.light_renderer.ambient_light = (0.2, 0.2, 0.2)
         #self.scene_renderer.light_renderer.ambient_light = (0.01, 0.01, 0.01)
+
+        # Core game resources
+        self.game_resources = GameResources(self)
+        self.object_manager = ObjectManager(self.game_resources, self)
+
+        # Physics engine
+        self.physics_engine = setup_physics_engine(self.game_resources)
 
         # create light sources
         self.light_list = []
 
-        self.player_light = self.scene_renderer.light_renderer.create_point_light(
-            (400, 400),  # Position
-            (
-                1.75,
-                1.75,
-                1.75,
-            ),  # Color, 0 = black, 1 = white, 0.5 = grey, order is RGB This can go over 1.0 because of HDR
-            160.0,
-        )  # Radius
 
-        # player heath system
-        self.player_health = Health(
-            self.player_light, self.scene_renderer.post_processing
-        )
+
 
         # torch particle system
         self.torch_particle_system = TorchSystem(window.ctx)
@@ -113,7 +105,7 @@ class GameInstance:
         )
 
         # dict used to determine radius of light based on light_type
-        radius_by_type = {"torch": 70.0, "candle": 40.0}
+        radius_by_type = {"torch": 300.0, "candle": 250.0}
 
         for light in self.game_resources.light_list:
             radius = radius_by_type.get(light.properties["type"])
@@ -121,9 +113,9 @@ class GameInstance:
                 self.scene_renderer.light_renderer.create_point_light(
                     (light.center_x, light.center_y),  # Position
                     (
-                        1.75,
-                        2.75,
-                        1.75,
+                        2.5,
+                        1.25,
+                        0.5,
                     ),  # Color, 0 = black, 1 = white, 0.5 = grey, order is RGB This can go over 1.0 because of HDR
                     radius,
                 )  # Radius
@@ -195,11 +187,7 @@ class GameInstance:
         # move projectiles
         self.game_resources.projectile_manager.on_update(delta_time)
 
-        # move the player light to the player
-        self.player_light.position = (
-            self.game_resources.player_sprite.center_x,
-            self.game_resources.player_sprite.center_y,
-        )
+
         # update animations
         self.game_resources.player_sprite.update_animation(delta_time)
         self.game_resources.object_manager.on_update(delta_time)

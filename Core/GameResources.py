@@ -27,6 +27,7 @@ class GameResources:
 
     def __init__(self, game_instance):
 
+        self.game_instance = game_instance
         # Create the sprite lists
         self.sprite_list = arcade.SpriteList(use_spatial_hash=True)
         self.player_list = arcade.SpriteList()
@@ -106,6 +107,21 @@ class GameResources:
                 my_map, fake_warps_layer, scaling=SPRITE_SCALING_TILES, use_spatial_hash=True
             )
 
+        self.doors_enabled = False
+
+        if "Doors" in generated_map:
+            fake_doors_layer = ObjectLayer(
+                id_=5,
+                name="Doors",
+                tiled_objects=generated_map["Doors"],
+                offset=None,
+                opacity=None,
+                properties=None,
+            )
+            self.doors_list = arcade.tilemap._process_object_layer(
+                my_map, fake_doors_layer, scaling=SPRITE_SCALING_TILES, use_spatial_hash=True
+            )
+
         self.wall_list = arcade.tilemap._process_tile_layer(
             my_map, fake_walls_layer, scaling=SPRITE_SCALING_TILES, use_spatial_hash=True
         )
@@ -130,7 +146,7 @@ class GameResources:
         self.start_location = generated_map["start_location"][0].location
 
         # Create player sprite
-        self.player_sprite = PlayerCharacter(convert_from_tiled_coordinates(my_map, generated_map["start_location"][0].location), self)
+        self.player_sprite = PlayerCharacter(convert_from_tiled_coordinates(my_map, generated_map["start_location"][0].location), self, game_instance.scene_renderer)
 
         # Set player location
         i = random.randint(0, len(self.floor_list))
@@ -156,6 +172,16 @@ class GameResources:
             self.view_bottom = int(lerp(self.view_bottom,self.player_sprite.center_y-(SCREEN_HEIGHT/2),CAMERA_SPEED))
 
         # Scrolling is done in on_update
+        self.wall_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.floor_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.light_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.warps_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        if self.doors_enabled:
+            self.doors_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.bullet_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.player_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.object_manager.object_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.enemy_manager.enemy_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
 
     def on_update(self, delta_time):
         if self.shake_remain > 0:

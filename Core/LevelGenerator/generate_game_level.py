@@ -1,3 +1,4 @@
+import random
 from typing import List, Dict, AnyStr, Optional
 
 from pytiled_parser.objects import TiledObject, OrderedPair, Size
@@ -5,7 +6,8 @@ from pytiled_parser.objects import TiledObject, OrderedPair, Size
 from Constants.Game import SPRITE_IMAGE_SIZE
 from Core.LevelGenerator.bsp_tree import generate_bsp_level, ascii_print_level
 from Core.LevelGenerator.level import Level
-from Core.LevelGenerator.room_generation import generate_room, generate_tunnel, warps, get_tile_from_list
+from Core.LevelGenerator.room_generation import generate_room, generate_tunnel, warps, get_tile_from_list, \
+    horizontal_door_left, vertical_door_top, vertical_door_bottom
 
 from Core.LevelGenerator.shapes import Rect
 from Core.LevelGenerator.tiled_mapper.tiled_compatible_level import (
@@ -49,7 +51,7 @@ def place_room(room: Rect, warp_next: Optional[int], warp_dest_room: Rect, outpu
     return output_level
 
 
-def place_tunnel(tunnel, output_level):
+def place_tunnel(tunnel, output_level, direction):
     # Note: This function is not referentially transparent and relies on side effects to mutate output_level
     tunnel_width = (tunnel.x2 - tunnel.x1) * 3
     tunnel_height = (tunnel.y2 - tunnel.y1) * 3
@@ -69,6 +71,66 @@ def place_tunnel(tunnel, output_level):
     generated_tunnel = generate_tunnel(tunnel_width, tunnel_height)
 
     merge_levels_with_offset(output_level, generated_tunnel, x1, tunnel.y1 * 3 - 1)
+
+    if "Doors" not in output_level:
+        output_level["Doors"] = []
+
+    properties_dict = dict()
+    # properties_dict["door_id"] = room_id
+
+    def generate_horizontal_door(left_x, right_x, y_pos):
+        left = TiledObject(
+            id_=2000 + random.randint(1000, 100000000),
+            gid=get_tile_from_list(horizontal_door_left),
+            size=Size(width=SPRITE_IMAGE_SIZE, height=SPRITE_IMAGE_SIZE),
+            location = OrderedPair(
+                x=(left_x) * SPRITE_IMAGE_SIZE,
+                y=(y_pos) * SPRITE_IMAGE_SIZE
+            ),
+            properties=properties_dict)
+
+        right = TiledObject(
+            id_=2000 + random.randint(1000, 100000000),
+            gid=get_tile_from_list(horizontal_door_left),
+            size=Size(width=SPRITE_IMAGE_SIZE, height=SPRITE_IMAGE_SIZE),
+            location = OrderedPair(
+                x=(right_x) * SPRITE_IMAGE_SIZE,
+                y=(y_pos) * SPRITE_IMAGE_SIZE
+            ),
+            properties=properties_dict)
+
+        return [left, right]
+
+    def generate_vertical_door(top_y, bottom_y, x_pos):
+        top = TiledObject(
+            id_=2000 + random.randint(1000, 100000000),
+            gid=get_tile_from_list(vertical_door_top),
+            size=Size(width=SPRITE_IMAGE_SIZE, height=SPRITE_IMAGE_SIZE),
+            location = OrderedPair(
+                x=(x_pos) * SPRITE_IMAGE_SIZE,
+                y=(top_y) * SPRITE_IMAGE_SIZE
+            ),
+            properties=properties_dict)
+
+        bottom = TiledObject(
+            id_=2000 + random.randint(1000, 100000000),
+            gid=get_tile_from_list(vertical_door_bottom),
+            size=Size(width=SPRITE_IMAGE_SIZE, height=SPRITE_IMAGE_SIZE),
+            location = OrderedPair(
+                x=(x_pos) * SPRITE_IMAGE_SIZE,
+                y=(bottom_y) * SPRITE_IMAGE_SIZE
+            ),
+            properties=properties_dict)
+
+        return [top, bottom]
+
+    if direction == "up" or direction == "down":
+        output_level["Doors"] = output_level["Doors"] + generate_horizontal_door(x1 + 1, x1 + 2, tunnel.y1 * 3)
+        output_level["Doors"] = output_level["Doors"] + generate_horizontal_door(x1 + 1, x1 + 2, tunnel.y2 * 3 - 2)
+
+    if direction == "left" or direction == "right":
+        output_level["Doors"] = output_level["Doors"] + generate_vertical_door(tunnel.y1 * 3 + 1, tunnel.y1 * 3 + 2, tunnel.x1 * 3 - 1)
+        output_level["Doors"] = output_level["Doors"] + generate_vertical_door(tunnel.y1 * 3 + 1, tunnel.y1 * 3 + 2, tunnel.x2 * 3 - 3)
 
     return output_level
 
@@ -130,6 +192,8 @@ def generate_game_level(width, height):
         # connect first room to the last room in this graph
         room_to_warp_map[next_graph[0]] = end_room
 
+    connected_tunnels = dict()
+
     # Place all rooms into the map
     for leaf in bsp_level.end_leafs:
         warp_to_id: Optional[int] = None
@@ -156,9 +220,25 @@ def generate_game_level(width, height):
 
         place_room(leaf.room, warp_to_id, warp_to_location, output_level)
 
+        for connected_id in leaf.connections:
+            # tunnel already created
+            if (connected_id, leaf.id) in connected_tunnels:
+                continue
+
+            tunnel = leaf.connections[connected_id][1]
+
+            direction = leaf.connections[connected_id][2]
+
+            # place_tunnel(tunnel, output_level, leaf.id, direction)
+
     # TODO: Fix this logic because it's totally broken
     for tunnel in bsp_level.tunnels:
-        place_tunnel(tunnel, output_level)
+        direction = "up"
+
+        if (tunnel.x2 - tunnel.x1) > (tunnel.y2 - tunnel.y1):
+            direction = "right"
+
+        place_tunnel(tunnel, output_level, direction)
 
     return output_level
 

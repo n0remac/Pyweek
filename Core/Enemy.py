@@ -1,6 +1,7 @@
 from typing import List, Union
 
 import arcade
+import random
 
 from arcade import SpriteList
 
@@ -9,7 +10,7 @@ from Constants.Physics import PLAYER_MOVEMENT_SPEED
 
 
 class Enemy(arcade.Sprite):
-    def __init__(self, game_resources):
+    def __init__(self, barrier_list, game_resources):
         super().__init__(
             "Graphics/Character_animation/monsters_idle/skeleton1/v1/skeleton_v1_1.png",
             SPRITE_SCALING_PLAYER,
@@ -21,11 +22,20 @@ class Enemy(arcade.Sprite):
             self.game_resources.player_sprite.center_y,
         ]
         self.obstacles = self.game_resources.wall_list
-        self.barrier_list = self.make_barrier_list()
+
+        self.barrier_list = barrier_list
+
+        self.light = game_resources.game_instance.scene_renderer.light_renderer.create_point_light(
+            (-1000, -1000), (1.5, 0.5, 0.25), 196
+        )
 
     def draw(self):
         if self.path:
-            arcade.draw_line_strip(self.path, arcade.color.BLUE, 2)
+            arcade.draw_line_strip(self.path, arcade.color.BLUE, 2)      
+
+    def on_death(self):
+        self.game_resources.game_instance.scene_renderer.light_renderer.destroy_light(self.light)
+
 
     def calculate_astar(self):
         # self.barrier_list = self.make_barrier_list()
@@ -35,6 +45,55 @@ class Enemy(arcade.Sprite):
             self.barrier_list,
             diagonal_movement=True,
         )
+
+    def update_position(self):
+        if self.path and len(self.path) > 1:
+            first_leg = self.path[0]
+            second_leg = self.path[1]
+
+            position_difference_x = first_leg[0] - second_leg[0]
+            position_difference_y = first_leg[1] - second_leg[1]
+
+            physics_engine = self.game_resources.projectile_manager.projectile_physics
+
+            impulse_force = (0, 0)
+
+            if position_difference_x > 0:
+                impulse_force = (-100, impulse_force[1])
+            elif position_difference_x < 0:
+                impulse_force = (100, impulse_force[1])
+
+            if position_difference_y > 0:
+                impulse_force = (impulse_force[0], -100)
+            elif position_difference_y < 0:
+                impulse_force = (impulse_force[0], 100)
+
+            physics_engine.apply_impulse(self, impulse_force)
+            self.light.position = (self.center_x, self.center_y)
+
+
+class EnemyManager:
+    enemy_list: Union[SpriteList, List[Enemy]]
+
+    def __init__(self, game_resources):
+        self.game_resources = game_resources
+        self.enemy_list = arcade.SpriteList()
+
+    def spawn_enemy(self, barrier_list, position):
+        # Enemy
+        enemy = Enemy(barrier_list, self.game_resources)
+        enemy.position = position
+
+        self.path = enemy.path
+
+        # Add to enemy sprite list
+        self.enemy_list.append(enemy)
+
+        return enemy
+
+    def kill_enemy(self, enemy):
+        if enemy in self.enemy_list:
+            self.enemy_list.remove(enemy)
 
     def make_barrier_list(self):
         grid_size = SPRITE_SIZE
@@ -61,54 +120,6 @@ class Enemy(arcade.Sprite):
             playing_field_bottom_boundary,
             playing_field_top_boundary,
         )
-
-    def update_position(self):
-        if self.path and len(self.path) > 1:
-            first_leg = self.path[0]
-            second_leg = self.path[1]
-
-            position_difference_x = first_leg[0] - second_leg[0]
-            position_difference_y = first_leg[1] - second_leg[1]
-
-            physics_engine = self.game_resources.projectile_manager.projectile_physics
-
-            impulse_force = (0, 0)
-
-            if position_difference_x > 0:
-                impulse_force = (-100, impulse_force[1])
-            elif position_difference_x < 0:
-                impulse_force = (100, impulse_force[1])
-
-            if position_difference_y > 0:
-                impulse_force = (impulse_force[0], -100)
-            elif position_difference_y < 0:
-                impulse_force = (impulse_force[0], 100)
-
-            physics_engine.apply_impulse(self, impulse_force)
-
-
-class EnemyManager:
-    enemy_list: Union[SpriteList, List[Enemy]]
-
-    def __init__(self, game_resources):
-        self.game_resources = game_resources
-        self.enemy_list = arcade.SpriteList()
-
-    def spawn_enemy(self, position):
-        # Enemy
-        enemy = Enemy(self.game_resources)
-        enemy.position = position
-
-        self.path = enemy.path
-
-        # Add to enemy sprite list
-        self.enemy_list.append(enemy)
-
-        return enemy
-
-    def kill_enemy(self, enemy):
-        if enemy in self.enemy_list:
-            self.enemy_list.remove(enemy)
 
     def setup(self):
         pass
