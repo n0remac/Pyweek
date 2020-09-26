@@ -29,15 +29,18 @@ class Burst(ParticleSystem):
 
         self.init_system(
             50000,
-            "2f 2f 1f",
-            ["in_position", "in_velocity", "in_life_offset"],
-            [0.0, 0.0, 0.0, 0.0, 1000.0],
-            4.0,
-        )
 
-    def do_burst(self, position):
-        self.burst_program["u_position"] = position
-        self.emit_with_program(self.burst_program, 200)
+            '2f 2f 1f 1f', 
+            ['in_position', 'in_velocity', 'in_life_offset', 'in_type'],
+            [0.0, 0.0, 0.0, 0.0, 1000.0, 0.0],
+            10.0)
+
+
+    def do_burst(self, position, p_type):
+        self.burst_program['u_position'] = position
+        self.burst_program['u_type'] = p_type
+        self.emit_with_program(self.burst_program, 150)
+
         pass
 
     def update(self, deltaT):

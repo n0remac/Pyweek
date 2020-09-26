@@ -17,7 +17,7 @@ class FireBall:
 
     def on_particle_death(self, sprite):
         position = (sprite.center_x, sprite.center_y)
-        self.fireball_burst.do_burst(position)
+        self.fireball_burst.do_burst(position, sprite.art_type)
 
     def render(self, projection_matrix, projectile_list):
         self.fireball_burn.render(projection_matrix, projectile_list)

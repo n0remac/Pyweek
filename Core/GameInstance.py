@@ -52,7 +52,7 @@ class GameInstance:
 
         # dim the ambient lighting to make the player's light more vibrant
         self.scene_renderer.light_renderer.ambient_light = (0.25, 0.25, 0.25)
-        self.scene_renderer.light_renderer.ambient_light = (0.01, 0.01, 0.01)
+        #self.scene_renderer.light_renderer.ambient_light = (0.01, 0.01, 0.01)
 
         # create light sources
         self.light_list = []
@@ -178,7 +178,7 @@ class GameInstance:
             self.window.ctx.projection_2d_matrix, self.game_resources.bullet_list
         )
 
-    # Drawn after all post processing, for things like UI
+    # Drawn after all post processing, for things like UI        
     def on_draw_after_post(self):
         pass
 

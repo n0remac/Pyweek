@@ -29,12 +29,13 @@ class FireballTrail(ParticleSystem):
             "2f 2f 1f 1f",
             ["in_position", "in_velocity", "in_life_offset", "in_type"],
             [0.0, 0.0, 0.0, 0.0, 1000.0, 0.0],
-            4.0,
-        )
+            6.0)
+
+
 
     def render(self, projection_matrix, projectile_list):
         self.frame_count += 1
-        if self.frame_count % 2 == 0:
+        if (self.frame_count % 3 == 0):
             self.do_emission(projectile_list)
 
         super().render(projection_matrix)
@@ -55,7 +56,7 @@ class FireballTrail(ParticleSystem):
 
             data.append(velocity[0])
             data.append(velocity[1])
-            data.append(0.0)
+            data.append(projectile.art_type)
         return data
 
     def build_buffer(self, projectile_list):
