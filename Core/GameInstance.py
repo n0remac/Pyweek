@@ -49,6 +49,8 @@ class GameInstance:
         self.window = window
         #handle getting screen size
         if platform.system() == 'Linux':
+            print("This game expects linux users to be using a 1080p, 16:9 monitor.  Other aspect ratios or resolutions on linux may cause issues.")
+            """
             cmd = ['xrandr']
             cmd2 = ['grep', '*']
             p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
@@ -59,6 +61,9 @@ class GameInstance:
             width, height = resolution.split('x')
             self.screensize[0] = width
             self.screensize[1] = height
+            """
+            self.screensize[0] = 1920
+            self.screensize[1] = 1080
         elif platform.system() == 'Windows':
             user32 = ctypes.windll.user32
             self.screensize = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
@@ -162,6 +167,8 @@ class GameInstance:
             else:
                 self.window.set_size(self.window.original_size[0],self.window.original_size[1])
                 self.window.screensize_multiplier = 1
+        elif key == arcade.key.P:
+            self.game_resources.screenshake(60,2)
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """

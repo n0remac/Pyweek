@@ -50,6 +50,13 @@ class GameResources:
         # Procedurally generated map
         generated_map = generate_game_level(100, 100)
 
+        # Screenshake
+        self.shake_remain = 0
+        self.shake_strength = 1
+        self.shake_x = 0
+        self.shake_y = 0
+
+
         # Static map for testing
         # generated_map = generate_tiled_compatible_level(70, 70)
         # place_room(Rect(1, 1, 5, 5), generated_map)
@@ -161,10 +168,21 @@ class GameResources:
         # Scrolling is done in on_update
 
     def on_update(self, delta_time):
-        """scroll screen if necessary"""
+        if self.shake_remain > 0:
+            self.shake_x = random.randrange(-self.shake_strength,self.shake_strength)
+            self.shake_y = random.randrange(-self.shake_strength,self.shake_strength)
+            self.shake_remain -= 1
+        else:
+            self.shake_x = 0
+            self.shake_y = 0
+
         arcade.set_viewport(
-            self.view_left,
-            (SCREEN_WIDTH) + self.view_left,
-            self.view_bottom,
-            (SCREEN_HEIGHT) + self.view_bottom,
+            self.view_left+self.shake_x,
+            (SCREEN_WIDTH) + self.view_left+self.shake_x,
+            self.view_bottom+self.shake_y,
+            (SCREEN_HEIGHT) + self.view_bottom+self.shake_y,
         )
+
+    def screenshake(self,length,magnitude):
+        self.shake_remain = int(length)
+        self.shake_strength = int(magnitude)
