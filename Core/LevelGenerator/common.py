@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import math
 import random
-from typing import Optional
+from typing import Optional, AnyStr
 
 from Core.LevelGenerator.leaf import Leaf
 from Core.LevelGenerator.level import Level
@@ -54,9 +54,21 @@ def are_vertically_aligned(room1: Rect, room2: Rect):
     raise InvalidTunnelException("not aligned on any axis")
 
 
-def add_connection_to_leaf(leaf1: Leaf, leaf2: Leaf, tunnel: Rect):
-    leaf1.connections[leaf2.id] = (leaf2, tunnel)
-    leaf2.connections[leaf1.id] = (leaf1, tunnel)
+def add_connection_to_leaf(leaf1: Leaf, leaf2: Leaf, tunnel: Rect, direction: AnyStr):
+    leaf1.connections[leaf2.id] = (leaf2, tunnel, direction)
+
+    inverse_direction = None
+
+    if direction == "up":
+        inverse_direction = "down"
+    elif direction == "down":
+        inverse_direction = "up"
+    elif direction == "left":
+        inverse_direction = "right"
+    elif direction == "right":
+        inverse_direction = "left"
+
+    leaf2.connections[leaf1.id] = (leaf1, tunnel, inverse_direction)
 
 
 def create_hall(level: Level, leaf1: Leaf, leaf2: Leaf):
@@ -88,10 +100,12 @@ def create_hall(level: Level, leaf1: Leaf, leaf2: Leaf):
     vertically_aligned = are_vertically_aligned(room1, room2)
 
     if vertically_aligned:
+        direction = "down"
         if room1.y2 < room2.y1:
             top = room1.y2
             bottom = room2.y1 + 1
         else:
+            direction = "up"
             top = room2.y2
             bottom = room1.y1 + 1
 
@@ -120,13 +134,15 @@ def create_hall(level: Level, leaf1: Leaf, leaf2: Leaf):
 
         tunnel = level.create_vir_tunnel(top, bottom, left)
 
-        add_connection_to_leaf(leaf1, leaf2, tunnel)
+        add_connection_to_leaf(leaf1, leaf2, tunnel, direction)
         return
 
+    direction = "right"
     if room1.x2 < room2.x1:
         left = room1.x2
         right = room2.x1
     else:
+        direction = "left"
         left = room2.x2
         right = room1.x1
 
@@ -156,7 +172,7 @@ def create_hall(level: Level, leaf1: Leaf, leaf2: Leaf):
 
     tunnel = level.create_hor_tunnel(left, right, top)
 
-    add_connection_to_leaf(leaf1, leaf2, tunnel)
+    add_connection_to_leaf(leaf1, leaf2, tunnel, direction)
 
 
 def split_leaf(leaf: Leaf):

@@ -100,6 +100,21 @@ class GameResources:
                 my_map, fake_warps_layer, scaling=SPRITE_SCALING_TILES, use_spatial_hash=True
             )
 
+        self.doors_enabled = False
+
+        if "Doors" in generated_map:
+            fake_doors_layer = ObjectLayer(
+                id_=5,
+                name="Doors",
+                tiled_objects=generated_map["Doors"],
+                offset=None,
+                opacity=None,
+                properties=None,
+            )
+            self.doors_list = arcade.tilemap._process_object_layer(
+                my_map, fake_doors_layer, scaling=SPRITE_SCALING_TILES, use_spatial_hash=True
+            )
+
         self.wall_list = arcade.tilemap._process_tile_layer(
             my_map, fake_walls_layer, scaling=SPRITE_SCALING_TILES, use_spatial_hash=True
         )
@@ -191,6 +206,8 @@ class GameResources:
         self.floor_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         self.light_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         self.warps_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        if self.doors_enabled:
+            self.doors_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         self.bullet_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         self.player_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         self.object_manager.object_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
