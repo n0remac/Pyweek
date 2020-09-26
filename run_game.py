@@ -37,7 +37,6 @@ class GameWindow(arcade.Window):
     def on_update(self, delta_time):
         """ Movement and game logic """
         self.game_instance.on_update(delta_time)
-        self.game_instance.game_resources.player_sprite.update_animation(delta_time)
 
     def on_draw(self):
         """ Draw everything """

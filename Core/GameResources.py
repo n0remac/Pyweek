@@ -16,6 +16,7 @@ from Constants.Game import (
 from Core.ArcadeUtils import convert_from_tiled_coordinates
 from Core.LevelGenerator.generate_game_level import generate_game_level
 from Core.PlayerCharacter import PlayerCharacter
+from Core.ObjectManager import ObjectManager
 from Core.Projectile_Manager import ProjectileManager
 
 
@@ -132,6 +133,7 @@ class GameResources:
         self.player_list.append(self.player_sprite)
 
         # Game managers
+        self.object_manager = ObjectManager(self)
         self.projectile_manager = ProjectileManager(self)
         self.enemy_manager = EnemyManager(self)
         self.enemy_manager.setup()
@@ -143,9 +145,12 @@ class GameResources:
         self.wall_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         self.floor_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         self.light_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.warps_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         self.bullet_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         self.player_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
-        self.object_list.draw()
+        self.object_manager.object_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.enemy_manager.enemy_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+
         # --- Manage Scrolling ---
 
         # Track if we need to change the viewport
@@ -189,17 +194,14 @@ class GameResources:
                 self.view_bottom,
                 SCREEN_HEIGHT + self.view_bottom,
             )
-
-        self.wall_list.draw()
-        self.floor_list.draw()
-        self.light_list.draw()
-        self.warps_list.draw()
-        self.object_list.draw()
-        self.bullet_list.draw()
-        self.player_list.draw()
-
-        self.enemy_manager.enemy_list.draw()
-        self.enemy_manager.enemy.draw()
+        self.wall_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.floor_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.light_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.warps_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.bullet_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.player_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.object_manager.object_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        self.enemy_manager.enemy_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
 
     def on_update(self, delta_time):
         pass

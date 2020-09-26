@@ -18,7 +18,7 @@ def place_room(room: Rect, warp_next: Optional[int], warp_dest_room: Rect, outpu
     # Note: This function is not referentially transparent and relies on side effects to mutate output_level
     room_width = (room.x2 - room.x1) * 3
     room_height = (room.y2 - room.y1) * 3
-
+    warp_to_location = None
     # All rooms are 3x the size in the game versus the generator to allow hallways to have all tile types
     room_tiles = generate_room(room_width, room_height)
 

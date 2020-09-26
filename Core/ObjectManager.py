@@ -1,31 +1,36 @@
 import arcade
-import random
 
-from Constants.Game import SPRITE_SCALING_PLAYER, SPRITE_SCALING_TILES, SPRITE_SIZE
-
+from Core.Character import Character
 
 class ObjectManager:
     """ Creates objects in the dungeon. """
 
     def __init__(self, game_resources):
-
+        self.object_list = arcade.SpriteList()
         self.game_resources = game_resources
-        for i in range(0, 10):
-            self.create_object(random.randint(1, 10), random.randint(1, 10))
-
-    def create_object(self, x, y):
-        x = SPRITE_SIZE * x + SPRITE_SIZE / 2
-        y = SPRITE_SIZE * y + SPRITE_SIZE / 2
-        box = DestructableObject(
-            center_x=x,
-            center_y=y,
-            filename="Graphics/items and trap_animation/box_2/box_2_3.png",
-            scale=SPRITE_SCALING_TILES,
-        )
-        self.game_resources.object_list.append(box)
 
 
-class DestructableObject(arcade.Sprite):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        pass
+
+        #for floor in
+
+    def flask(self, x, y):
+        obj = Item((x, y), 'Graphics/items/flasks/flasks_1')
+        self.object_list.append(obj)
+
+    def candle(self, x, y):
+        obj = Item((x, y), 'Graphics/items/torch/candlestick_1')
+        self.object_list.append(obj)
+
+    def coin(self, x, y):
+        obj = Item((x, y), 'Graphics/items/coin/coin')
+        self.object_list.append(obj)
+
+    def on_update(self, delta_time):
+        for obj in self.object_list:
+            obj.update_animation(delta_time)
+
+class Item(Character):
+    def __init__(self, position, main_path):
+        super().__init__(position)
+        self.main_path = main_path
+        self.load_textures()

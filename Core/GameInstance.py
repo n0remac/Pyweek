@@ -130,10 +130,9 @@ class GameInstance:
             self.left_pressed = True
         elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.right_pressed = True
-        elif key == arcade.key.P:
-            self.player_health.health += 10.0
-        elif key == arcade.key.O:
-            self.player_health.health -= 10.0
+        elif key == arcade.key.SPACE:
+            self.game_resources.object_manager.candle(self.game_resources.player_sprite.position[0] - 5,
+                                                      self.game_resources.player_sprite.position[1])
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """
@@ -147,7 +146,6 @@ class GameInstance:
             self.left_pressed = False
         elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.right_pressed = False
-
 
     def on_mouse_motion(self, x, y, dx, dy):
         pass
@@ -217,4 +215,7 @@ class GameInstance:
             self.game_resources.player_sprite.center_x,
             self.game_resources.player_sprite.center_y,
         )
+        # update animations
+        self.game_resources.player_sprite.update_animation(delta_time)
+        self.game_resources.object_manager.on_update(delta_time)
 
