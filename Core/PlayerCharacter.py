@@ -37,6 +37,8 @@ class PlayerCharacter(Character):
         self.y_force = 0
         self.speed = 120
 
+        self.candles = 0
+
         self.walk_textures = []
         walk_path = 'Graphics/Character_animation/Acolyte/player_animation_down_walk'
         for i in range(1, 5):
@@ -103,8 +105,10 @@ class PlayerCharacter(Character):
         elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.right_pressed = True
         elif key == arcade.key.SPACE:
-            self.game_resources.object_manager.candle(self.game_resources.player_sprite.position[0] - 5,
-                                                      self.game_resources.player_sprite.position[1])
+            if self.candles > 0:
+                self.candles -= 1
+                self.game_resources.object_manager.candle(self.game_resources.player_sprite.position[0] - 5,
+                                                          self.game_resources.player_sprite.position[1])
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """
