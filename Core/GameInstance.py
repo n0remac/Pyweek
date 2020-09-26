@@ -3,6 +3,7 @@ import math
 
 from Constants.Physics import PLAYER_MOVEMENT_SPEED
 from Core.GameResources import GameResources
+from Core.ObjectManager import ObjectManager
 from Core.RendererFactory import RendererFactory
 from Core.HealthRing import Health
 from Physics.EnemyPhysicsEngine import setup_enemy_physics_engine
@@ -18,7 +19,7 @@ class GameInstance:
 
     def __init__(self, window):
 
-        # Refernce to main window object
+        # Reference to main window object
         self.window = window
 
         # Core game resources
