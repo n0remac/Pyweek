@@ -148,12 +148,13 @@ def generate_game_level(width, height):
                 )
             )]
 
+        warp_to_location = None
+
         if leaf.id in room_to_warp_map:
             warp_to_id = room_to_warp_map[leaf.id]
             warp_to_location = get_room_by_leaf_id(bsp_level, warp_to_id)
 
         place_room(leaf.room, warp_to_id, warp_to_location, output_level)
-
 
     # TODO: Fix this logic because it's totally broken
     for tunnel in bsp_level.tunnels:
