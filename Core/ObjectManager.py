@@ -8,24 +8,19 @@ class ObjectManager:
     """ Creates objects in the dungeon. """
 
     def __init__(self, game_resources):
-
+        self.object_list = arcade.SpriteList()
         self.game_resources = game_resources
-        for i in range(0, 10):
-            self.create_object(random.randint(1, 10), random.randint(1, 10))
 
-    def create_object(self, x, y):
-        x = SPRITE_SIZE * x + SPRITE_SIZE / 2
-        y = SPRITE_SIZE * y + SPRITE_SIZE / 2
-        box = DestructableObject(
-            center_x=x,
-            center_y=y,
-            filename="Graphics/items and trap_animation/box_2/box_2_3.png",
-            scale=SPRITE_SCALING_TILES,
-        )
-        self.game_resources.object_list.append(box)
+        #for floor in
 
+    def flask(self, x, y):
+        obj = arcade.Sprite('Graphics/items/flasks/flasks_1_1.png', scale=2, center_x=x, center_y=y)
+        self.object_list.append(obj)
 
-class DestructableObject(arcade.Sprite):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        pass
+    def candle(self, x, y):
+        obj = arcade.Sprite('Graphics/items/torch/candlestick_1_1.png', scale=2, center_x=x, center_y=y)
+        self.game_resources.light_list.append(obj)
+
+    def coin(self, x, y):
+        obj = arcade.Sprite('Graphics/items/coin/coin_1.png', scale=2, center_x=x, center_y=y)
+        self.game_resources.light_list.append(obj)
