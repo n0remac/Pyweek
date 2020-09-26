@@ -30,7 +30,7 @@ class GameInstance:
         self.game_resources = GameResources(self)
         self.object_manager = ObjectManager(self.game_resources, self)
 
-        self.screensize = [1920,1080]
+        self.screensize = 1920,1080
 
         # Fullscreen information get based on OS
         if platform.system() == 'Linux':
@@ -47,8 +47,6 @@ class GameInstance:
             self.screensize[0] = width
             self.screensize[1] = height
             """
-            self.screensize[0] = 1920
-            self.screensize[1] = 1080
         elif platform.system() == 'Windows':
             user32 = ctypes.windll.user32
             self.screensize = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
