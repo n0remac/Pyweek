@@ -36,6 +36,13 @@ class PlayerCharacter(Character):
         self.y_force = 0
         self.speed = 120
 
+        self.walk_textures = []
+        walk_path = 'Graphics/Character_animation/Acolyte/player_animation_down_walk'
+        for i in range(1, 5):
+            self.walk_textures.append(arcade.load_texture_pair(
+            f"{walk_path}_{i}.png"
+        ))
+
 
 
     def on_mouse_motion(self, x, y, dx, dy):
@@ -65,7 +72,10 @@ class PlayerCharacter(Character):
             if self.cur_texture > (self.frames-1):
                 self.cur_texture = 0
             # idle animation
-            self.texture = self.idle_list[self.cur_texture][self.character_face_direction_horizontal]
+            if self.x_force != 0 or self.y_force != 0:
+                self.texture = self.walk_textures[self.cur_texture][self.character_face_direction_horizontal]
+            else:
+                self.texture = self.idle_list[self.cur_texture][self.character_face_direction_horizontal]
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed. """
