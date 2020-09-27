@@ -28,6 +28,7 @@ class Enemy(arcade.Sprite):
         self.light = game_resources.game_instance.scene_renderer.light_renderer.create_point_light(
             (-1000, -1000), (1.5, 0.5, 0.25), 196
         )
+        self.barrier_list = barrier_list
 
     def draw(self):
         if self.path:
@@ -58,15 +59,17 @@ class Enemy(arcade.Sprite):
 
             impulse_force = (0, 0)
 
+            move_force = 20
+
             if position_difference_x > 0:
-                impulse_force = (-100, impulse_force[1])
+                impulse_force = (-move_force, impulse_force[1])
             elif position_difference_x < 0:
-                impulse_force = (100, impulse_force[1])
+                impulse_force = (move_force, impulse_force[1])
 
             if position_difference_y > 0:
-                impulse_force = (impulse_force[0], -100)
+                impulse_force = (impulse_force[0], -move_force)
             elif position_difference_y < 0:
-                impulse_force = (impulse_force[0], 100)
+                impulse_force = (impulse_force[0], move_force)
 
             physics_engine.apply_impulse(self, impulse_force)
             self.light.position = (self.center_x, self.center_y)
@@ -90,10 +93,6 @@ class EnemyManager:
         self.enemy_list.append(enemy)
 
         return enemy
-
-    def kill_enemy(self, enemy):
-        if enemy in self.enemy_list:
-            self.enemy_list.remove(enemy)
 
     def make_barrier_list(self):
         grid_size = SPRITE_SIZE
@@ -120,6 +119,10 @@ class EnemyManager:
             playing_field_bottom_boundary,
             playing_field_top_boundary,
         )
+
+    def kill_enemy(self, enemy):
+        if enemy in self.enemy_list:
+            self.enemy_list.remove(enemy)
 
     def setup(self):
         pass

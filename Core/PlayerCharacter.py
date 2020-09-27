@@ -35,7 +35,7 @@ class PlayerCharacter(Character):
 
         self.x_force = 0
         self.y_force = 0
-        self.speed = 120
+        self.speed = 40
 
         self.candles = 0
 
@@ -139,3 +139,4 @@ class PlayerCharacter(Character):
             self.game_resources.player_sprite.center_x,
             self.game_resources.player_sprite.center_y,
         )
+

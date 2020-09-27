@@ -15,7 +15,7 @@ class Leaf:
         self.width = width
         self.height = height
         self.MIN_LEAF_SIZE = 11
-        self.MAX_LEAF_SIZE = 22
+        self.MAX_LEAF_SIZE = 18
         self.child_1 = None
         self.child_2 = None
         self.parent = parent
