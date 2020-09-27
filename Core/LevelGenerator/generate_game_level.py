@@ -37,7 +37,7 @@ def place_room(room: Rect, warp_next: Optional[int], warp_dest_room: Rect, outpu
         properties_dict = dict()
         properties_dict["warp_to_id"] = warp_next
         properties_dict["warp_to_location"] = (warp_to_x, warp_to_y)
-        properties_dict["warp_room_size"] = room
+        properties_dict["warp_room_size"] = warp_dest_room
         output_level["Warps"].append(TiledObject(
             id_ = 1000 + warp_next,
             gid=get_tile_from_list(warps),
