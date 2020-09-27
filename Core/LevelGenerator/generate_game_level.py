@@ -52,7 +52,7 @@ def place_room(room: Rect, warp_next: Optional[int], warp_dest_room: Rect, outpu
     return output_level
 
 
-def place_tunnel(tunnel, output_level, room_id, direction):
+def place_tunnel(tunnel, output_level, direction):
     # Note: This function is not referentially transparent and relies on side effects to mutate output_level
     tunnel_width = (tunnel.x2 - tunnel.x1) * 3
     tunnel_height = (tunnel.y2 - tunnel.y1) * 3
@@ -77,7 +77,7 @@ def place_tunnel(tunnel, output_level, room_id, direction):
         output_level["Doors"] = []
 
     properties_dict = dict()
-    properties_dict["door_id"] = room_id
+    # properties_dict["door_id"] = room_id
 
     def generate_horizontal_door(left_x, right_x, y_pos):
         left = TiledObject(
@@ -230,11 +230,16 @@ def generate_game_level(width, height):
 
             direction = leaf.connections[connected_id][2]
 
-            place_tunnel(tunnel, output_level, leaf.id, direction)
+            # place_tunnel(tunnel, output_level, leaf.id, direction)
 
     # TODO: Fix this logic because it's totally broken
-    # for tunnel in bsp_level.tunnels:
-    #     place_tunnel(tunnel, output_level)
+    for tunnel in bsp_level.tunnels:
+        direction = "up"
+
+        if (tunnel.x2 - tunnel.x1) > (tunnel.y2 - tunnel.y1):
+            direction = "right"
+
+        place_tunnel(tunnel, output_level, direction)
 
     return output_level
 

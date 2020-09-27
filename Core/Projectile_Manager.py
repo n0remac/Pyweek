@@ -102,7 +102,8 @@ class ProjectileManager:
             _object_sprite.remove_from_sprite_lists()
             if _object_sprite.kind == 'flask':
                 self.game_resources.player_sprite.player_health.health += 10
-
+            elif _object_sprite.kind == 'candle_drop':
+                self.game_resources.player_sprite.candles += 1
         self.projectile_physics.add_collision_handler(
             "player", "object", post_handler=player_object_hit_handler
         )
@@ -141,8 +142,8 @@ class ProjectileManager:
                                                body_type=arcade.PymunkPhysicsEngine.DYNAMIC)
 
             game_resources.doors_enabled = True
-            # TODO: Spawn a door
-            # TODO: Spawn enemies
+
+            barrier_list = game_resources.enemy_manager.make_barrier_list()
 
             barrier_list = game_resources.enemy_manager.make_barrier_list()
 
@@ -188,15 +189,15 @@ class ProjectileManager:
                 enemy_sprite.remove_from_sprite_lists()
 
                 will_drop = random.randint(0, 10)
-                if will_drop > 7:
-                    obj = self.game_resources.object_manager.flask(enemy_sprite.center_x, enemy_sprite.center_y)
-                    self.projectile_physics.add_sprite(
-                        obj,
-                        collision_type="object",
-                        body_type=arcade.PymunkPhysicsEngine.STATIC,
-                    )
+                if will_drop > 5:
+                    self.game_resources.object_manager.flask(enemy_sprite.center_x, enemy_sprite.center_y)
                 elif will_drop >= 5 and will_drop <= 7:
                     self.game_resources.object_manager.candle_drop(enemy_sprite.center_x, enemy_sprite.center_y)
+                    self.projectile_physics.add_sprite_list(
+                    self.game_resources.object_manager.object_list,
+                            collision_type="object",
+                            body_type=arcade.PymunkPhysicsEngine.STATIC,
+                        )
                 enemy_sprite.on_death()
 
             if bullet_sprite:
@@ -237,6 +238,16 @@ class ProjectileManager:
 
         handler = self.projectile_physics.space.add_collision_handler(door_physics_id, player_physics_id)
         handler.begin = door_player_handler
+
+        def enemy_object_handler(_arbiter, _space, _data):
+            door_sprite, player_sprite = self.projectile_physics.get_sprites_from_arbiter(_arbiter)
+
+            return False
+
+        object_physics_id = self.projectile_physics.collision_types.index("object")
+
+        handler = self.projectile_physics.space.add_collision_handler(enemy_physics_id, object_physics_id)
+        handler.begin = enemy_object_handler
 
 
     light_colors = [

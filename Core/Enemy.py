@@ -23,6 +23,8 @@ class Enemy(arcade.Sprite):
         ]
         self.obstacles = self.game_resources.wall_list
 
+        self.barrier_list = barrier_list
+
         self.light = game_resources.game_instance.scene_renderer.light_renderer.create_point_light(
             (-1000, -1000), (1.5, 0.5, 0.25), 196
         )
