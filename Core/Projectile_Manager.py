@@ -8,7 +8,7 @@ import random
 
 from arcade import Sprite
 
-from Constants.Game import SCREEN_HEIGHT, SCREEN_WIDTH
+from Constants.Game import SCREEN_HEIGHT, SCREEN_WIDTH, SPRITE_IMAGE_SIZE
 from Constants.Physics import BULLET_MOVE_FORCE
 from Core.ArcadeUtils import convert_from_tiled_coordinates
 from Graphics.Lights.PointLight import DynamicPointLight
@@ -97,13 +97,16 @@ class ProjectileManager:
         )
 
         def player_object_hit_handler(bullet_sprite, _object_sprite, _arbiter, _space, _data):
-            """ Called for bullet/wall collision """
+            """ Called for player/object collision """
 
             _object_sprite.remove_from_sprite_lists()
+
             if _object_sprite.kind == 'flask':
                 self.game_resources.player_sprite.player_health.health += 10
-            elif _object_sprite.kind == 'candle_drop':
+
+            if _object_sprite.kind == 'candle_drop':
                 self.game_resources.player_sprite.candles += 1
+
         self.projectile_physics.add_collision_handler(
             "player", "object", post_handler=player_object_hit_handler
         )
@@ -156,14 +159,14 @@ class ProjectileManager:
                 x_range = room_raw.x2 - room_raw.x1
                 y_range = room_raw.y2 - room_raw.y1
 
-                rand_x = random.randint(room_raw.x1, room_raw.x2 + x_range - 1)
-                rand_y = random.randint(room_raw.y1, room_raw.y2 + y_range - 1)
+                rand_x = random.randint(room_raw.x1, room_raw.x1 + x_range - 1)
+                rand_y = random.randint(room_raw.y1, room_raw.y1 + y_range - 1)
 
                 enemy_location = convert_from_tiled_coordinates(
                     game_resources.my_map,
                     (
-                        round(warp_sprite.properties["warp_to_location"][0] + round(rand_x * 3)),
-                        round(warp_sprite.properties["warp_to_location"][1] + round(rand_y * 3))
+                        round(round(rand_x * 3) * SPRITE_IMAGE_SIZE),
+                        round(round(rand_y * 3) * SPRITE_IMAGE_SIZE)
                     )
                 )
 
