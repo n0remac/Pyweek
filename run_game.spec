@@ -9,7 +9,12 @@ import os
 a = Analysis(['run_game.py'],
              pathex=['/home/free/code/Pyweek'],
              binaries=[ (pymunk.chipmunk_path, '.') ],
-             datas=[(os.path.abspath(arcade.__file__ + '/../'), 'arcade')],
+             datas=[
+               (os.path.abspath(arcade.__file__ + '/../'), 'arcade'),
+               ('README.md', 'README.md'),
+               ('Graphics', 'Graphics'),
+               ('Sounds', 'Sounds')
+             ],
              hiddenimports=['arcade', 'pymunk'],
              hookspath=[],
              runtime_hooks=[],
