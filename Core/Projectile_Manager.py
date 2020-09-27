@@ -200,10 +200,10 @@ class ProjectileManager:
                 elif will_drop >= 5 and will_drop <= 7:
                     self.game_resources.object_manager.candle_drop(enemy_sprite.center_x, enemy_sprite.center_y)
                     self.projectile_physics.add_sprite_list(
-                    self.game_resources.object_manager.object_list,
-                            collision_type="object",
-                            body_type=arcade.PymunkPhysicsEngine.STATIC,
-                        )
+                self.game_resources.object_manager.object_list,
+                        collision_type="object",
+                        body_type=arcade.PymunkPhysicsEngine.STATIC,
+                    )
                 enemy_sprite.on_death()
 
             if bullet_sprite:
