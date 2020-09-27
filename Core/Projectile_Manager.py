@@ -1,4 +1,5 @@
 import random
+import sys
 from typing import TYPE_CHECKING
 
 import arcade
@@ -72,7 +73,6 @@ class ProjectileManager:
             bullet_sprite.remove_from_sprite_lists()
             self.on_projectile_death(bullet_sprite)
 
-            self.on_bullet_death(bullet_sprite)
             if self.on_bullet_death is not None:
                 self.on_bullet_death(bullet_sprite)
                 
@@ -111,6 +111,9 @@ class ProjectileManager:
         def player_enemy_hit_handler(bullet_sprite, _object_sprite, _arbiter, _space, _data):
             """ Called for bullet/wall collision """
             self.game_resources.player_sprite.player_health.health -= 1
+
+            if self.game_resources.player_sprite.player_health.health == 0:
+                game_resources.dead = True
 
         self.projectile_physics.add_collision_handler(
             "player", "enemy", post_handler=player_enemy_hit_handler

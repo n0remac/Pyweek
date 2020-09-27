@@ -1,4 +1,6 @@
 import random
+import sys
+
 import arcade
 from pytiled_parser.objects import TileLayer, Size, ObjectLayer
 
@@ -48,6 +50,8 @@ class GameResources:
 
         # Procedurally generated map
         generated_map = generate_game_level(100, 100)
+
+        self.dead = False
 
         # Static map for testing
         # generated_map = generate_tiled_compatible_level(70, 70)
@@ -214,4 +218,6 @@ class GameResources:
         self.enemy_manager.enemy_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
 
     def on_update(self, delta_time):
-        pass
+        if self.dead:
+            sys.exit(0)
+
