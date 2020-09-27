@@ -11,9 +11,15 @@ a = Analysis(['run_game.py'],
              binaries=[ (pymunk.chipmunk_path, '.') ],
              datas=[
                (os.path.abspath(arcade.__file__ + '/../'), 'arcade'),
-               ('README.md', 'README.md'),
+               ('README.md', '.'),
                ('Graphics', 'Graphics'),
-               ('Sounds', 'Sounds')
+               ('Sounds', 'Sounds'),
+               ('Constants', 'Constants'),
+               ('Core', 'Core'),
+               ('Physics', 'Physics'),
+               ('run_game.py', '.'),
+               ('run_graphics_dev.py', '.'),
+               ('requirements.txt', '.')
              ],
              hiddenimports=['arcade', 'pymunk'],
              hookspath=[],
