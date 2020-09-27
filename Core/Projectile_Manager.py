@@ -75,7 +75,7 @@ class ProjectileManager:
 
             if self.on_bullet_death is not None:
                 self.on_bullet_death(bullet_sprite)
-                
+
 
         self.projectile_physics.add_collision_handler(
             "bullet", "wall", post_handler=wall_hit_handler
@@ -344,6 +344,7 @@ class ProjectileManager:
     def on_projectile_death(self, bullet_sprite):
         #arcade.Sound.play(self.explosion_sound)
         self.explosion_sounds[bullet_sprite.art_type].play(0.2)
+        self.game_resources.screenshake(random.randrange(2,8),random.randrange(8,16))
 
 class BulletSprite(arcade.SpriteSolidColor):
     """ Bullet Sprite """

@@ -202,3 +202,7 @@ class GameResources:
             self.view_bottom+self.shake_y,
             (SCREEN_HEIGHT) + self.view_bottom+self.shake_y,
         )
+
+    def screenshake(self,magnitude,frames):
+        self.shake_remain = frames
+        self.shake_strength = magnitude
