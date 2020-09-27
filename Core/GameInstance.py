@@ -156,6 +156,7 @@ class GameInstance:
         # self.physics_engine.update()
 
         self.game_resources.enemy_manager.on_update(delta_time)
+        self.game_resources.on_update(delta_time)
 
         # move projectiles
         self.game_resources.projectile_manager.on_update(delta_time)
