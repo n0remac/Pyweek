@@ -1,4 +1,6 @@
 import random
+import sys
+
 import arcade
 import math
 from Core.lerp import lerp
@@ -54,6 +56,8 @@ class GameResources:
         self.shake_strength = 1
         self.shake_x = 0
         self.shake_y = 0
+
+        self.dead = False
 
         # Static map for testing
         # generated_map = generate_tiled_compatible_level(70, 70)
@@ -188,6 +192,9 @@ class GameResources:
         else:
             self.shake_x = 0
             self.shake_y = 0
+
+        if self.dead:
+            sys.exit(0)
 
         arcade.set_viewport(
             self.view_left+self.shake_x,
