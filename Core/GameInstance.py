@@ -48,8 +48,8 @@ class GameInstance:
         )
 
         # dim the ambient lighting to make the player's light more vibrant
-        self.scene_renderer.light_renderer.ambient_light = (0.2, 0.2, 0.2)
-        #self.scene_renderer.light_renderer.ambient_light = (0.01, 0.01, 0.01)
+        #self.scene_renderer.light_renderer.ambient_light = (0.2, 0.2, 0.2)
+        self.scene_renderer.light_renderer.ambient_light = (0.05, 0.05, 0.05)
 
         # Core game resources
         self.game_resources = GameResources(self)
