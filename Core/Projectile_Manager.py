@@ -159,8 +159,8 @@ class ProjectileManager:
                 x_range = room_raw.x2 - room_raw.x1
                 y_range = room_raw.y2 - room_raw.y1
 
-                rand_x = random.randint(room_raw.x1, room_raw.x1 + x_range - 1)
-                rand_y = random.randint(room_raw.y1, room_raw.y1 + y_range - 1)
+                rand_x = random.randint(room_raw.x1 + 1, room_raw.x1 + x_range - 1)
+                rand_y = random.randint(room_raw.y1 + 1, room_raw.y1 + y_range - 1)
 
                 enemy_location = convert_from_tiled_coordinates(
                     game_resources.my_map,
@@ -195,11 +195,13 @@ class ProjectileManager:
                 enemy_sprite.remove_from_sprite_lists()
 
                 will_drop = random.randint(0, 10)
-                if will_drop > 5:
+                if will_drop > 6:
                     self.game_resources.object_manager.flask(enemy_sprite.center_x, enemy_sprite.center_y)
-                elif will_drop >= 5 and will_drop <= 7:
+
+                elif will_drop > 3:
                     self.game_resources.object_manager.candle_drop(enemy_sprite.center_x, enemy_sprite.center_y)
-                    self.projectile_physics.add_sprite_list(
+                    self.game_resources.object_manager.object_list
+                self.projectile_physics.add_sprite_list(
                 self.game_resources.object_manager.object_list,
                         collision_type="object",
                         body_type=arcade.PymunkPhysicsEngine.STATIC,
