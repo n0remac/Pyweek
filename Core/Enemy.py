@@ -1,3 +1,5 @@
+import random
+
 import arcade
 from arcade import SpriteList
 from typing import List, Union
@@ -9,9 +11,8 @@ from Constants.Physics import PLAYER_MOVEMENT_SPEED
 
 class Enemy(Character):
     def __init__(self, barrier_list, game_resources):
-        super().__init__(
-            "Graphics/Character_animation/monsters_idle/vampire/v2/vampire_v2",
-        )
+        super().__init__()
+        self.randomize_enemy_sprite()
         self.load_textures()
         self.game_resources = game_resources
         self.speed = PLAYER_MOVEMENT_SPEED
@@ -27,7 +28,15 @@ class Enemy(Character):
             (-1000, -1000), (1.5, 0.5, 0.25), 196
         )
         self.barrier_list = barrier_list
-
+    def randomize_enemy_sprite(self):
+        sprites = [
+            "Graphics/Character_animation/monsters_idle/vampire/v2/vampire_v2",
+            "Graphics/Character_animation/monsters_idle/skull/v2/skull_v2",
+            "Graphics/Character_animation/monsters_idle/skeleton2/v2/skeleton2_v2",
+            "Graphics/Character_animation/monsters_idle/skeleton1/v2/skeleton_v2",
+                   ]
+        choice = random.choice(sprites)
+        self.main_path = choice
     def draw(self):
         if self.path:
             arcade.draw_line_strip(self.path, arcade.color.BLUE, 2)      
