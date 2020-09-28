@@ -1,15 +1,5 @@
-
-import arcade
-import math
 import arcade
 
-from Constants.Game import SCREEN_WIDTH, SCREEN_HEIGHT
-from Core.GameResources import GameResources
-import ctypes
-import platform
-import subprocess
-
-from Constants.Physics import PLAYER_MOVEMENT_SPEED
 from Constants.Game import SCREEN_WIDTH, SCREEN_HEIGHT
 
 from Core.GameResources import GameResources
@@ -38,27 +28,7 @@ class GameInstance:
         self.game_resources = GameResources(self)
         self.object_manager = ObjectManager(self.game_resources, self)
 
-        self.screensize = 1920,1080
-
-        # Fullscreen information get based on OS
-        if platform.system() == 'Linux':
-            print("This game expects linux users to be using a 1080p, 16:9 monitor.  Other aspect ratios or resolutions on linux may cause issues.")
-            """
-            cmd = ['xrandr']
-            cmd2 = ['grep', '*']
-            p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-            p2 = subprocess.Popen(cmd2, stdin=p.stdout, stdout=subprocess.PIPE)
-            p.stdout.close()
-            resolution_string, junk = p2.communicate()
-            resolution = resolution_string.split()[0]
-            width, height = resolution.split('x')
-            self.screensize[0] = width
-            self.screensize[1] = height
-            """
-            self.screensize = (1920, 1080)
-        elif platform.system() == 'Windows':
-            user32 = ctypes.windll.user32
-            self.screensize = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
+        self.screensize = arcade.get_display_size()
 
         # Physics engine
         self.physics_engine = setup_physics_engine(self.game_resources)
@@ -86,7 +56,7 @@ class GameInstance:
         )
 
         # dim the ambient lighting to make the player's light more vibrant
-        self.scene_renderer.light_renderer.ambient_light = (0.2, 0.2, 0.2)
+        self.scene_renderer.light_renderer.ambient_light = (0.1, 0.1, 0.1)
         #self.scene_renderer.light_renderer.ambient_light = (0.01, 0.01, 0.01)
 
         # Core game resources
