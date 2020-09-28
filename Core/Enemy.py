@@ -28,6 +28,7 @@ class Enemy(Character):
             (-1000, -1000), (1.5, 0.5, 0.25), 196
         )
         self.barrier_list = barrier_list
+
     def randomize_enemy_sprite(self):
         sprites = [
             "Graphics/Character_animation/monsters_idle/vampire/v2/vampire_v2",
@@ -37,6 +38,7 @@ class Enemy(Character):
                    ]
         choice = random.choice(sprites)
         self.main_path = choice
+
     def draw(self):
         if self.path:
             arcade.draw_line_strip(self.path, arcade.color.BLUE, 2)      
