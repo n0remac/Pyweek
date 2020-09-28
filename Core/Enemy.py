@@ -5,7 +5,7 @@ from arcade import SpriteList
 from typing import List, Union
 
 from Core.Character import Character
-from Constants.Game import SPRITE_SIZE, SPRITE_SCALING_PLAYER, ENEMY_AWARENESS
+from Constants.Game import SPRITE_SIZE, SPRITE_IMAGE_SIZE, ENEMY_AWARENESS
 from Constants.Physics import PLAYER_MOVEMENT_SPEED
 
 
@@ -27,7 +27,6 @@ class Enemy(Character):
         self.light = game_resources.scene_renderer.light_renderer.create_point_light(
             (-1000, -1000), (1.5, 0.5, 0.25), 196
         )
-        self.barrier_list = barrier_list
 
     def randomize_enemy_sprite(self):
         sprites = [
@@ -103,6 +102,21 @@ class EnemyManager:
 
         return enemy
 
+    def spawn_random_enemy(self):
+        radius = self.game_resources.player_sprite.player_health.max_light_radius
+        player_pos = self.game_resources.player_sprite.position
+        rand_x = random.randint(player_pos[0]-radius, player_pos[0]+radius)
+        rand_y = random.randint(player_pos[1] - radius, player_pos[1] + radius)
+
+
+        for floor in self.game_resources.floor_list:
+            if floor.position[0] < rand_x + 100 and floor.position[0] > rand_x - 100 and floor.position[1] < rand_x + 100 and floor.position[1] > rand_x - 100:
+                self.spawn_enemy(self.make_barrier_list(), floor.position)
+
+    def spawn_continual_enemies(self):
+        if len(self.enemy_list) < 10:
+            self.spawn_random_enemy()
+
     def make_barrier_list(self):
         grid_size = SPRITE_SIZE
 
@@ -137,7 +151,7 @@ class EnemyManager:
         pass
 
     def on_update(self, delta_time):
-
+        self.spawn_continual_enemies()
         for enemy in self.enemy_list:
             position = self.game_resources.player_sprite.position
             if arcade.get_distance(position[0], position[1], enemy.position[0], enemy.position[1]) < 500:
