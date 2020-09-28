@@ -166,6 +166,21 @@ class GameResources:
         self.enemy_manager.enemy_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
 
     def on_update(self, delta_time):
+
+        x_force = self.player_sprite.x_force
+        y_force = self.player_sprite.y_force
+        self.player_sprite.on_update(delta_time)
+        self.projectile_manager.projectile_physics.apply_impulse(self.player_sprite,
+                                                                (x_force, y_force))
+        self.enemy_manager.on_update(delta_time)
+
+        # move projectiles
+        self.projectile_manager.on_update(delta_time)
+
+        # update animations
+        self.player_sprite.update_animation(delta_time)
+        self.object_manager.on_update(delta_time)
+
         if self.shake_remain > 0:
             self.shake_x = random.randrange(-self.shake_strength,self.shake_strength)
             self.shake_y = random.randrange(-self.shake_strength,self.shake_strength)

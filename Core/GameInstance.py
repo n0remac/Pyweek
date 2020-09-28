@@ -145,20 +145,4 @@ class GameInstance:
 
     def on_update(self, delta_time):
         """ Movement and game logic """
-
-        x_force = self.game_resources.player_sprite.x_force
-        y_force = self.game_resources.player_sprite.y_force
-        self.game_resources.player_sprite.on_update(delta_time)
-        self.game_resources.projectile_manager.projectile_physics.apply_impulse(self.game_resources.player_sprite, (x_force, y_force))
-
-
-        self.game_resources.enemy_manager.on_update(delta_time)
-
-        # move projectiles
-        self.game_resources.projectile_manager.on_update(delta_time)
-
-
-        # update animations
-        self.game_resources.player_sprite.update_animation(delta_time)
-        self.game_resources.object_manager.on_update(delta_time)
         self.game_resources.on_update(delta_time)
