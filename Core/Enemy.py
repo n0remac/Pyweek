@@ -1,20 +1,18 @@
+import arcade
+from arcade import SpriteList
 from typing import List, Union
 
-import arcade
-import random
-
-from arcade import SpriteList
-
+from Core.Character import Character
 from Constants.Game import SPRITE_SIZE, SPRITE_SCALING_PLAYER, ENEMY_AWARENESS
 from Constants.Physics import PLAYER_MOVEMENT_SPEED
 
 
-class Enemy(arcade.Sprite):
+class Enemy(Character):
     def __init__(self, barrier_list, game_resources):
         super().__init__(
-            "Graphics/Character_animation/monsters_idle/skeleton1/v1/skeleton_v1_1.png",
-            SPRITE_SCALING_PLAYER,
+            "Graphics/Character_animation/monsters_idle/vampire/v2/vampire_v2",
         )
+        self.load_textures()
         self.game_resources = game_resources
         self.speed = PLAYER_MOVEMENT_SPEED
         self.path = [

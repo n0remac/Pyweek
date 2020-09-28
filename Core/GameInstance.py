@@ -24,9 +24,6 @@ class GameInstance:
         # This configures the post processing stack and default lighting
         self.scene_renderer = RendererFactory.create_renderer(window)
 
-        # Core game resources
-        self.game_resources = GameResources(self.scene_renderer)
-
         self.screensize = arcade.get_display_size()
 
         # bind rendering callbacks
@@ -51,9 +48,6 @@ class GameInstance:
 
         # Core game resources
         self.game_resources = GameResources(self.scene_renderer)
-
-        # create light sources
-        self.light_list = []
 
         # torch particle system
         self.torch_particle_system = TorchSystem(window.ctx)
