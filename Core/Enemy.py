@@ -25,7 +25,7 @@ class Enemy(arcade.Sprite):
 
         self.barrier_list = barrier_list
 
-        self.light = game_resources.game_instance.scene_renderer.light_renderer.create_point_light(
+        self.light = game_resources.scene_renderer.light_renderer.create_point_light(
             (-1000, -1000), (1.5, 0.5, 0.25), 196
         )
         self.barrier_list = barrier_list
@@ -35,7 +35,7 @@ class Enemy(arcade.Sprite):
             arcade.draw_line_strip(self.path, arcade.color.BLUE, 2)      
 
     def on_death(self):
-        self.game_resources.game_instance.scene_renderer.light_renderer.destroy_light(self.light)
+        self.game_resources.scene_renderer.light_renderer.destroy_light(self.light)
 
 
     def calculate_astar(self):

@@ -27,9 +27,9 @@ class GameResources:
     Load arcade resources
     """
 
-    def __init__(self, game_instance):
+    def __init__(self, scene_renderer):
 
-        self.game_instance = game_instance
+        self.scene_renderer = scene_renderer
         # Create the sprite lists
         self.sprite_list = arcade.SpriteList(use_spatial_hash=True)
         self.player_list = arcade.SpriteList()
@@ -58,14 +58,6 @@ class GameResources:
         self.shake_y = 0
 
         self.dead = False
-
-        # Static map for testing
-        # generated_map = generate_tiled_compatible_level(70, 70)
-        # place_room(Rect(1, 1, 5, 5), generated_map)
-        # place_room(Rect(10, 1, 10, 10), generated_map)
-        # place_room(Rect(1, 10, 8, 8), generated_map)
-        # place_tunnel(Rect(6, 3, 5, 1), generated_map)
-        # place_tunnel(Rect(3, 6, 1, 5), generated_map)
 
         fake_walls_layer = TileLayer(
             id_=1,
@@ -135,21 +127,10 @@ class GameResources:
             my_map, fake_floor_layer, scaling=SPRITE_SCALING_TILES, use_spatial_hash=True
         )
 
-        # Uncomment if you want to actually load the level from the Tiled map.
-        # self.wall_list = arcade.tilemap.process_layer(
-        #     my_map, "Walls", SPRITE_SCALING_TILES
-        # )
-        # self.floor_list = arcade.tilemap.process_layer(
-        #     my_map, "Floor", SPRITE_SCALING_TILES
-        # )
-        # self.light_list = arcade.tilemap.process_layer(
-        #     my_map, "Lighting", SPRITE_SCALING_TILES
-        # )
-
         self.start_location = generated_map["start_location"][0].location
 
         # Create player sprite
-        self.player_sprite = PlayerCharacter(convert_from_tiled_coordinates(my_map, generated_map["start_location"][0].location), self, game_instance.scene_renderer)
+        self.player_sprite = PlayerCharacter(convert_from_tiled_coordinates(my_map, generated_map["start_location"][0].location), self, self.scene_renderer)
 
         # Set player location
         i = random.randint(0, len(self.floor_list))
@@ -159,7 +140,7 @@ class GameResources:
         self.player_list.append(self.player_sprite)
 
         # Game managers
-        self.object_manager = ObjectManager(self, game_instance)
+        self.object_manager = ObjectManager(self, scene_renderer)
         self.enemy_manager = EnemyManager(self)
         self.enemy_manager.setup()
         self.projectile_manager = ProjectileManager(self)

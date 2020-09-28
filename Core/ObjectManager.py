@@ -5,13 +5,10 @@ from Core.Character import Character
 class ObjectManager:
     """ Creates objects in the dungeon. """
 
-    def __init__(self, game_resources, game_instance):
+    def __init__(self, game_resources, scene_renderer):
         self.object_list = arcade.SpriteList()
         self.game_resources = game_resources
-        self.game_instance = game_instance
-
-
-        #for floor in
+        self.scene_renderer = scene_renderer
 
     def flask(self, x, y):
         obj = Item((x, y), 'Graphics/items/flasks/flasks_1', 'flask')
@@ -25,7 +22,7 @@ class ObjectManager:
         obj = Item((x, y), 'Graphics/items/torch/candlestick_1', 'candle')
         self.object_list.append(obj)
         self.game_resources.torch_particle_system.add_candle((x,y))
-        self.game_instance.scene_renderer.light_renderer.create_point_light(
+        self.scene_renderer.scene_renderer.light_renderer.create_point_light(
                     (x,y),  # Position
                     (
                         2.5,

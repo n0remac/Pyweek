@@ -25,19 +25,9 @@ class GameInstance:
         self.scene_renderer = RendererFactory.create_renderer(window)
 
         # Core game resources
-        self.game_resources = GameResources(self)
-        self.object_manager = ObjectManager(self.game_resources, self)
+        self.game_resources = GameResources(self.scene_renderer)
 
         self.screensize = arcade.get_display_size()
-
-        # Physics engine
-        self.physics_engine = setup_physics_engine(self.game_resources)
-
-        self.horizontal_key_list = []
-        self.verticle_key_list = []
-
-
-
 
         # bind rendering callbacks
         self.scene_renderer.draw_primary_callback = self.on_draw_scene
@@ -60,17 +50,10 @@ class GameInstance:
         #self.scene_renderer.light_renderer.ambient_light = (0.01, 0.01, 0.01)
 
         # Core game resources
-        self.game_resources = GameResources(self)
-        self.object_manager = ObjectManager(self.game_resources, self)
-
-        # Physics engine
-        self.physics_engine = setup_physics_engine(self.game_resources)
+        self.game_resources = GameResources(self.scene_renderer)
 
         # create light sources
         self.light_list = []
-
-
-
 
         # torch particle system
         self.torch_particle_system = TorchSystem(window.ctx)
@@ -90,17 +73,15 @@ class GameInstance:
 
         for light in self.game_resources.light_list:
             radius = radius_by_type.get(light.properties["type"])
-            self.light_list.append(
-                self.scene_renderer.light_renderer.create_point_light(
-                    (light.center_x, light.center_y),  # Position
-                    (
-                        2.5,
-                        1.25,
-                        0.5,
-                    ),  # Color, 0 = black, 1 = white, 0.5 = grey, order is RGB This can go over 1.0 because of HDR
-                    radius,
-                )  # Radius
-            )
+            self.scene_renderer.light_renderer.create_point_light(
+                (light.center_x, light.center_y),  # Position
+                (
+                    2.5,
+                    1.25,
+                    0.5,
+                ),  # Color, 0 = black, 1 = white, 0.5 = grey, order is RGB This can go over 1.0 because of HDR
+                radius,
+            )  # Radius
 
             if light.properties["type"] == "torch":
                 self.torch_particle_system.add_torch((light.center_x, light.center_y))
@@ -170,8 +151,6 @@ class GameInstance:
         self.game_resources.player_sprite.on_update(delta_time)
         self.game_resources.projectile_manager.projectile_physics.apply_impulse(self.game_resources.player_sprite, (x_force, y_force))
 
-        # Move the player with the physics engine
-        # self.physics_engine.update()
 
         self.game_resources.enemy_manager.on_update(delta_time)
 
