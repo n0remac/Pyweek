@@ -38,7 +38,7 @@ class PlayerCharacter(Character):
         self.y_force = 0
         self.speed = 40
 
-        self.candles = 0
+        self.candles = 5
 
         self.walk_textures = []
         walk_path = 'Graphics/Character_animation/Acolyte/player_animation_down_walk'

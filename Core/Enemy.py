@@ -132,3 +132,4 @@ class EnemyManager:
             if arcade.get_distance(position[0], position[1], enemy.position[0], enemy.position[1]) < 500:
                 enemy.calculate_astar()
                 enemy.update_position()
+                enemy.update_animation(delta_time)

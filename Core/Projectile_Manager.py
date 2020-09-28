@@ -195,17 +195,19 @@ class ProjectileManager:
                 enemy_sprite.remove_from_sprite_lists()
 
                 will_drop = random.randint(0, 10)
+                obj = ''
                 if will_drop > 6:
-                    self.game_resources.object_manager.flask(enemy_sprite.center_x, enemy_sprite.center_y)
+                    obj = self.game_resources.object_manager.flask(enemy_sprite.center_x, enemy_sprite.center_y)
 
                 elif will_drop > 3:
-                    self.game_resources.object_manager.candle_drop(enemy_sprite.center_x, enemy_sprite.center_y)
-                    self.game_resources.object_manager.object_list
-                self.projectile_physics.add_sprite_list(
-                self.game_resources.object_manager.object_list,
+                    obj = self.game_resources.object_manager.candle_drop(enemy_sprite.center_x, enemy_sprite.center_y)
+
+                if obj != '':
+                    self.projectile_physics.add_sprite(
+                        obj,
                         collision_type="object",
                         body_type=arcade.PymunkPhysicsEngine.STATIC,
-                    )
+                        )
                 enemy_sprite.on_death()
 
             if bullet_sprite:
