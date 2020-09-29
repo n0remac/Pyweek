@@ -9,11 +9,12 @@ from pytiled_parser.objects import TileLayer, Size, ObjectLayer
 from Core.Enemy import EnemyManager
 from Constants.Game import (
     SPRITE_SCALING_TILES,
+    SPRITE_SCALING_PLAYER,
     SPRITE_SIZE,
     SCREEN_WIDTH,
     SCREEN_HEIGHT,
     LERP_MARGIN,
-    CAMERA_SPEED
+    CAMERA_SPEED,
 )
 from Core.ArcadeUtils import convert_from_tiled_coordinates
 from Core.LevelGenerator.generate_game_level import generate_game_level
@@ -59,6 +60,7 @@ class GameResources:
 
         self.dead = False
 
+        '''
         fake_walls_layer = TileLayer(
             id_=1,
             name="Walls",
@@ -101,7 +103,7 @@ class GameResources:
             self.warps_list = arcade.tilemap._process_object_layer(
                 my_map, fake_warps_layer, scaling=SPRITE_SCALING_TILES, use_spatial_hash=True
             )
-
+        
         self.doors_enabled = False
 
         if "Doors" in generated_map:
@@ -116,26 +118,57 @@ class GameResources:
             self.doors_list = arcade.tilemap._process_object_layer(
                 my_map, fake_doors_layer, scaling=SPRITE_SCALING_TILES, use_spatial_hash=True
             )
+        
 
         self.wall_list = arcade.tilemap._process_tile_layer(
-            my_map, fake_walls_layer, scaling=SPRITE_SCALING_TILES, use_spatial_hash=True
+            my_map, self.wall_list, scaling=SPRITE_SCALING_TILES, use_spatial_hash=True
         )
         self.light_list = arcade.tilemap._process_tile_layer(
-            my_map, fake_lighting_layer, scaling=SPRITE_SCALING_TILES, use_spatial_hash=True
+            my_map, self.light_list, scaling=SPRITE_SCALING_TILES, use_spatial_hash=True
         )
         self.floor_list = arcade.tilemap._process_tile_layer(
-            my_map, fake_floor_layer, scaling=SPRITE_SCALING_TILES, use_spatial_hash=True
+            my_map, self.floor_list, scaling=SPRITE_SCALING_TILES, use_spatial_hash=True
         )
 
         self.start_location = generated_map["start_location"][0].location
 
         # Create player sprite
-        self.player_sprite = PlayerCharacter(convert_from_tiled_coordinates(my_map, generated_map["start_location"][0].location), self, self.scene_renderer)
+        #self.player_sprite = PlayerCharacter(convert_from_tiled_coordinates(my_map, generated_map["start_location"][0].location), self, self.scene_renderer)
+
+        self.player_sprite = PlayerCharacter(
+            (5,5), self,
+            self.scene_renderer)
 
         # Set player location
         i = random.randint(0, len(self.floor_list))
         start_pos = self.floor_list[i].position
 
+        # Add to player sprite list
+        self.player_list.append(self.player_sprite)
+        '''
+        # Read in the tiled map
+        map_name = "Graphics/test_map.tmx"
+        my_map = arcade.tilemap.read_tmx(map_name)
+        self.wall_list = arcade.tilemap.process_layer(
+            my_map, "Walls", SPRITE_SCALING_TILES
+        )
+        self.floor_list = arcade.tilemap.process_layer(
+            my_map, "Floor", SPRITE_SCALING_TILES
+        )
+        self.light_list = arcade.tilemap.process_layer(
+            my_map, "Lighting", SPRITE_SCALING_TILES
+        )
+
+        # Create player sprite
+        self.player_sprite = PlayerCharacter(
+            (5, 5), self,
+            self.scene_renderer)
+
+        # Set player location
+        grid_x = 10
+        grid_y = 5
+        self.player_sprite.center_x = SPRITE_SIZE * grid_x + SPRITE_SIZE / 2
+        self.player_sprite.center_y = SPRITE_SIZE * grid_y + SPRITE_SIZE / 2
         # Add to player sprite list
         self.player_list.append(self.player_sprite)
 
@@ -157,13 +190,16 @@ class GameResources:
         self.wall_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         self.floor_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         self.light_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        '''
         self.warps_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         if self.doors_enabled:
             self.doors_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        '''
         self.bullet_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         self.player_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         self.object_manager.object_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         self.enemy_manager.enemy_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+
     def on_update(self, delta_time):
 
         x_force = self.player_sprite.x_force
