@@ -91,16 +91,19 @@ class EnemyManager:
         self.enemy_list = arcade.SpriteList()
         self.next_to_path = 0
         self.time_elapsed = 0
+        self.barrier_list = self.make_barrier_list()
 
-    def spawn_enemy(self, barrier_list, position):
+    def spawn_enemy(self, position=(0,0)):
         # Enemy
-        enemy = Enemy(barrier_list, self.game_resources)
+        enemy = Enemy(self.barrier_list, self.game_resources)
         enemy.position = position
 
         self.path = enemy.path
 
         # Add to enemy sprite list
         self.enemy_list.append(enemy)
+
+        self.game_resources.projectile_manager.add_enemy(enemy)
 
         return enemy
 
@@ -122,7 +125,6 @@ class EnemyManager:
 
     def make_barrier_list(self):
         grid_size = SPRITE_SIZE
-        print()
         playing_field_left_boundary = self.game_resources.player_sprite.position[0] - (
                 ENEMY_AWARENESS * SPRITE_SIZE
         )

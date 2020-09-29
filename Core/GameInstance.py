@@ -104,7 +104,10 @@ class GameInstance:
         self.game_resources.player_sprite.on_mouse_motion(x, y, dx, dy)
 
     def on_mouse_press(self, x, y, button, modifiers):
-        self.game_resources.projectile_manager.on_mouse_press(x, y, button, modifiers)
+        if button == 4:
+            self.game_resources.enemy_manager.spawn_enemy(position=(x,y))
+        else:
+            self.game_resources.projectile_manager.on_mouse_press(x, y, button, modifiers)
 
     # This method should idealy do nothing but invoke the scene renderer. use the following drawing methods instead
     def on_draw(self):
