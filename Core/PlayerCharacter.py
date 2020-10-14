@@ -23,7 +23,8 @@ class PlayerCharacter(Character):
     def __init__(self, position, game_resources, scene_renderer):
 
         # Set up parent class
-        super().__init__(position)
+        super().__init__()
+        self.position = position
         self.game_resources = game_resources
         self.main_path = "Graphics/Character_animation/Acolyte/player_animation_down_idle"
         self.load_textures()
@@ -37,7 +38,7 @@ class PlayerCharacter(Character):
         self.y_force = 0
         self.speed = 40
 
-        self.candles = 0
+        self.candles = 5
 
         self.walk_textures = []
         walk_path = 'Graphics/Character_animation/Acolyte/player_animation_down_walk'

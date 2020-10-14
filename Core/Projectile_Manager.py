@@ -49,12 +49,13 @@ class ProjectileManager:
             max_vertical_velocity=1200,
             body_type=arcade.PymunkPhysicsEngine.DYNAMIC
         )
-
+        '''
         self.projectile_physics.add_sprite_list(
             self.game_resources.warps_list,
             collision_type="warp",
             body_type=arcade.PymunkPhysicsEngine.STATIC,
         )
+        '''
 
         self.explosion_sounds = [
             SoundPool("Sounds/explosion.wav", 5, 0.2),
@@ -195,17 +196,19 @@ class ProjectileManager:
                 enemy_sprite.remove_from_sprite_lists()
 
                 will_drop = random.randint(0, 10)
+                obj = ''
                 if will_drop > 6:
-                    self.game_resources.object_manager.flask(enemy_sprite.center_x, enemy_sprite.center_y)
+                    obj = self.game_resources.object_manager.flask(enemy_sprite.center_x, enemy_sprite.center_y)
 
                 elif will_drop > 3:
-                    self.game_resources.object_manager.candle_drop(enemy_sprite.center_x, enemy_sprite.center_y)
-                    self.game_resources.object_manager.object_list
-                self.projectile_physics.add_sprite_list(
-                self.game_resources.object_manager.object_list,
+                    obj = self.game_resources.object_manager.candle_drop(enemy_sprite.center_x, enemy_sprite.center_y)
+
+                if obj != '':
+                    self.projectile_physics.add_sprite(
+                        obj,
                         collision_type="object",
                         body_type=arcade.PymunkPhysicsEngine.STATIC,
-                    )
+                        )
                 enemy_sprite.on_death()
 
             if bullet_sprite:
@@ -229,12 +232,14 @@ class ProjectileManager:
         handler = self.projectile_physics.space.add_collision_handler(bullet_physics_id, enemy_physics_id)
         handler.begin = enemy_bullet_handler
 
+        '''
         self.projectile_physics.add_sprite_list(
             self.game_resources.doors_list,
             collision_type="door",
             friction=1.0,
             body_type=arcade.PymunkPhysicsEngine.STATIC,
         )
+        '''
 
         def door_player_handler(_arbiter, _space, _data):
             door_sprite, player_sprite = self.projectile_physics.get_sprites_from_arbiter(_arbiter)

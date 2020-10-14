@@ -1,7 +1,5 @@
 import arcade
-import math
 
-from Constants.Physics import PLAYER_MOVEMENT_SPEED
 from Constants.Game import (
     SPRITE_SCALING_PLAYER,
     DOWN_FACING,
@@ -11,13 +9,11 @@ from Constants.Game import (
     SPRITE_SIZE)
 from Constants.Animation import WALK_CYCLE_LENGTH, IDLE_CYCLE_LENGTH
 
-# from Core.Projectiles.Projectile_Manager import angle
-
 
 class Character(arcade.Sprite):
     """ Player Sprite"""
 
-    def __init__(self, position):
+    def __init__(self, main_path=''):
 
         # Set up parent class
         super().__init__()
@@ -40,17 +36,11 @@ class Character(arcade.Sprite):
 
         # --- Load Textures ---
 
-        self.main_path = ''
+        self.main_path = main_path
 
         # Set the initial texture
         self.texture = None
 
-        grid_x = 20
-        grid_y = 25
-        self.center_x = SPRITE_SIZE * grid_x + SPRITE_SIZE / 2
-        self.center_y = SPRITE_SIZE * grid_y + SPRITE_SIZE / 2
-
-        self.position = position
 
     def load_textures(self):
         # Load textures for idle standing
