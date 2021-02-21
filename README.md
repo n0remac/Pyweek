@@ -1,5 +1,7 @@
 # Pyweek Pirates Project
 
+![Acolyte](https://i.imgur.com/9MEDAQy.png)
+
 ## Setup 
 Clone the repository  
 `git clone https://github.com/n0remac/Pyweek.git`  
