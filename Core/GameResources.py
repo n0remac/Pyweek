@@ -9,11 +9,12 @@ from pytiled_parser.objects import TileLayer, Size, ObjectLayer
 from Core.Enemy import EnemyManager
 from Constants.Game import (
     SPRITE_SCALING_TILES,
+    SPRITE_SCALING_PLAYER,
     SPRITE_SIZE,
     SCREEN_WIDTH,
     SCREEN_HEIGHT,
     LERP_MARGIN,
-    CAMERA_SPEED
+    CAMERA_SPEED,
 )
 from Core.ArcadeUtils import convert_from_tiled_coordinates
 from Core.LevelGenerator.generate_game_level import generate_game_level
@@ -27,9 +28,9 @@ class GameResources:
     Load arcade resources
     """
 
-    def __init__(self, game_instance):
+    def __init__(self, scene_renderer):
 
-        self.game_instance = game_instance
+        self.scene_renderer = scene_renderer
         # Create the sprite lists
         self.sprite_list = arcade.SpriteList(use_spatial_hash=True)
         self.player_list = arcade.SpriteList()
@@ -59,14 +60,7 @@ class GameResources:
 
         self.dead = False
 
-        # Static map for testing
-        # generated_map = generate_tiled_compatible_level(70, 70)
-        # place_room(Rect(1, 1, 5, 5), generated_map)
-        # place_room(Rect(10, 1, 10, 10), generated_map)
-        # place_room(Rect(1, 10, 8, 8), generated_map)
-        # place_tunnel(Rect(6, 3, 5, 1), generated_map)
-        # place_tunnel(Rect(3, 6, 1, 5), generated_map)
-
+        '''
         fake_walls_layer = TileLayer(
             id_=1,
             name="Walls",
@@ -109,7 +103,7 @@ class GameResources:
             self.warps_list = arcade.tilemap._process_object_layer(
                 my_map, fake_warps_layer, scaling=SPRITE_SCALING_TILES, use_spatial_hash=True
             )
-
+        
         self.doors_enabled = False
 
         if "Doors" in generated_map:
@@ -124,32 +118,26 @@ class GameResources:
             self.doors_list = arcade.tilemap._process_object_layer(
                 my_map, fake_doors_layer, scaling=SPRITE_SCALING_TILES, use_spatial_hash=True
             )
+        
 
         self.wall_list = arcade.tilemap._process_tile_layer(
-            my_map, fake_walls_layer, scaling=SPRITE_SCALING_TILES, use_spatial_hash=True
+            my_map, self.wall_list, scaling=SPRITE_SCALING_TILES, use_spatial_hash=True
         )
         self.light_list = arcade.tilemap._process_tile_layer(
-            my_map, fake_lighting_layer, scaling=SPRITE_SCALING_TILES, use_spatial_hash=True
+            my_map, self.light_list, scaling=SPRITE_SCALING_TILES, use_spatial_hash=True
         )
         self.floor_list = arcade.tilemap._process_tile_layer(
-            my_map, fake_floor_layer, scaling=SPRITE_SCALING_TILES, use_spatial_hash=True
+            my_map, self.floor_list, scaling=SPRITE_SCALING_TILES, use_spatial_hash=True
         )
-
-        # Uncomment if you want to actually load the level from the Tiled map.
-        # self.wall_list = arcade.tilemap.process_layer(
-        #     my_map, "Walls", SPRITE_SCALING_TILES
-        # )
-        # self.floor_list = arcade.tilemap.process_layer(
-        #     my_map, "Floor", SPRITE_SCALING_TILES
-        # )
-        # self.light_list = arcade.tilemap.process_layer(
-        #     my_map, "Lighting", SPRITE_SCALING_TILES
-        # )
 
         self.start_location = generated_map["start_location"][0].location
 
         # Create player sprite
-        self.player_sprite = PlayerCharacter(convert_from_tiled_coordinates(my_map, generated_map["start_location"][0].location), self, game_instance.scene_renderer)
+        #self.player_sprite = PlayerCharacter(convert_from_tiled_coordinates(my_map, generated_map["start_location"][0].location), self, self.scene_renderer)
+
+        self.player_sprite = PlayerCharacter(
+            (5,5), self,
+            self.scene_renderer)
 
         # Set player location
         i = random.randint(0, len(self.floor_list))
@@ -157,9 +145,35 @@ class GameResources:
 
         # Add to player sprite list
         self.player_list.append(self.player_sprite)
+        '''
+        # Read in the tiled map
+        map_name = "Graphics/test_map.tmx"
+        my_map = arcade.tilemap.read_tmx(map_name)
+        self.wall_list = arcade.tilemap.process_layer(
+            my_map, "Walls", SPRITE_SCALING_TILES
+        )
+        self.floor_list = arcade.tilemap.process_layer(
+            my_map, "Floor", SPRITE_SCALING_TILES
+        )
+        self.light_list = arcade.tilemap.process_layer(
+            my_map, "Lighting", SPRITE_SCALING_TILES
+        )
+
+        # Create player sprite
+        self.player_sprite = PlayerCharacter(
+            (5, 5), self,
+            self.scene_renderer)
+
+        # Set player location
+        grid_x = 10
+        grid_y = 5
+        self.player_sprite.center_x = SPRITE_SIZE * grid_x + SPRITE_SIZE / 2
+        self.player_sprite.center_y = SPRITE_SIZE * grid_y + SPRITE_SIZE / 2
+        # Add to player sprite list
+        self.player_list.append(self.player_sprite)
 
         # Game managers
-        self.object_manager = ObjectManager(self, game_instance)
+        self.object_manager = ObjectManager(self, scene_renderer)
         self.enemy_manager = EnemyManager(self)
         self.enemy_manager.setup()
         self.projectile_manager = ProjectileManager(self)
@@ -176,15 +190,33 @@ class GameResources:
         self.wall_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         self.floor_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         self.light_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        '''
         self.warps_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         if self.doors_enabled:
             self.doors_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
+        '''
         self.bullet_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         self.player_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         self.object_manager.object_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
         self.enemy_manager.enemy_list.draw(filter=(arcade.gl.NEAREST, arcade.gl.NEAREST))
 
     def on_update(self, delta_time):
+
+        x_force = self.player_sprite.x_force
+        y_force = self.player_sprite.y_force
+        self.player_sprite.on_update(delta_time)
+        self.enemy_manager.on_update(delta_time)
+
+        self.projectile_manager.projectile_physics.apply_impulse(self.player_sprite,
+                                                                (x_force, y_force))
+
+        # move projectiles
+        self.projectile_manager.on_update(delta_time)
+
+        # update animations
+        self.player_sprite.update_animation(delta_time)
+        self.object_manager.on_update(delta_time)
+
         if self.shake_remain > 0:
             self.shake_x = random.randrange(-self.shake_strength,self.shake_strength)
             self.shake_y = random.randrange(-self.shake_strength,self.shake_strength)

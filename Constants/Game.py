@@ -43,3 +43,6 @@ TOP_VIEWPORT_MARGIN = 400
 # How close the player needs to be for the enemy to track it.
 # starts to break above 15
 ENEMY_AWARENESS = 40
+
+# How often in should a star be ran
+PATHING_RATE = 1.0
